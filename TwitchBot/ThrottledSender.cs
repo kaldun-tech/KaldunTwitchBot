@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading;
 
 namespace TwitchBot
 {
 	public class ThrottledSender : IDisposable
 	{
-		public ThrottledSender(int messageLimit, TimeSpan period, ShowTextDelegate showText, TextWriter writer)
+		public ThrottledSender(int messageLimit, TimeSpan period, TextWriter writer)
 		{
 			_exit = false;
 			_history = new List<DateTime>();
@@ -17,11 +16,16 @@ namespace TwitchBot
 			_queue = new List<string>();
 			_sender = new Thread(DoSend);
 			_sender.Name = "Throttled Sender";
-			_showText = showText;
 			_signal = new AutoResetEvent(false);
 			_writer = writer;
 			_sender.Start();
 		}
+
+		/// <summary>
+		/// Occurs when any traffic is sent actually sent to the server, not when it is added to
+		/// queue to be sent.
+		/// </summary>
+		public event Connection.MessageEventHandler MessageSent;
 
 		private bool _exit;
 		private IList<DateTime> _history;
@@ -29,7 +33,6 @@ namespace TwitchBot
 		private TimeSpan _period;
 		private IList<string> _queue;
 		private Thread _sender;
-		private ShowTextDelegate _showText;
 		private AutoResetEvent _signal;
 		private TextWriter _writer;
 
@@ -65,6 +68,15 @@ namespace TwitchBot
 			_signal.Close();
 		}
 
+		protected virtual void OnMessageSent(string text)
+		{
+			if (MessageSent != null)
+			{
+				Connection.MessageEventArgs e = new Connection.MessageEventArgs(text, false);
+				MessageSent(this, e);
+			}
+		}
+
 		private void DoSend()
 		{
 			while (!_exit)
@@ -96,7 +108,7 @@ namespace TwitchBot
 					_queue.RemoveAt(0);
 					_writer.WriteLine(text);
 					_writer.Flush();
-					_showText(text, false);
+					OnMessageSent(text);
 					_history.Add(DateTime.UtcNow);
 				}
 				if (_queue.Count == 0)

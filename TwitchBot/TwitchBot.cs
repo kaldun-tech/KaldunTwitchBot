@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace TwitchBot
 {
-	public delegate void ShowTextDelegate(string text, bool isReceived);
-
 	public partial class TwitchBot : Form
 	{
 		public TwitchBot()
@@ -24,6 +21,7 @@ namespace TwitchBot
 			_imageForm = new Images();
 			_imageForm.VisibleChanged += new EventHandler(image_VisibilityChanged);
 			_isConnecting = false;
+			_log = null;
 			_raffleUsers = new Dictionary<string, object>();
 			_windowColor = textBoxR.BackColor;
 		}
@@ -33,49 +31,53 @@ namespace TwitchBot
 		private Random _generator;
 		private Images _imageForm;
 		private bool _isConnecting;
+		private TextWriter _log;
 		private IDictionary<string, object> _raffleUsers;
 		private Color _windowColor;
 
-		private void SaveLog()
+		private void StartLog(bool append)
 		{
-			using (TextWriter writer = File.CreateText(saveFileDialogLog.FileName))
+			saveFileDialogLog.OverwritePrompt = !append;
+			switch (saveFileDialogLog.ShowDialog(this))
 			{
-				writer.Write(textBoxLog.Text);
+				case DialogResult.OK:
+					break;
+				case DialogResult.Cancel:
+					return;
+				default:
+					throw new Exception();
 			}
+
+			if (_log != null)
+			{
+				_log.Dispose();
+			}
+
+			_log = new StreamWriter(saveFileDialogLog.FileName, append);
+			_log.Write(textBoxLog.Text);
 		}
 
-		private void ShowText(string text, bool isReceived)
+		private void ConnectionMessageTransfer(object sender, Connection.MessageEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				BeginInvoke(new ShowTextDelegate(ShowText), text, isReceived);
+				BeginInvoke(new Connection.MessageEventHandler(ConnectionMessageTransfer), sender, e);
 				return;
 			}
 
-			textBoxLog.Text += DateTime.Now.ToString("HH:mm:ss.f") + (isReceived ? " >" : " <") + text + Environment.NewLine;
+			string toAppend = DateTime.Now.ToString("HH:mm:ss.f") + (e.IsReceived ? " >" : " <") + e.Text;
+
+			textBoxLog.Text += toAppend + Environment.NewLine;
 			if (scrollToNewMessageToolStripMenuItem.Checked)
 			{
 				textBoxLog.Select(textBoxLog.Text.Length, 0);
 				textBoxLog.ScrollToCaret();
 			}
-		}
 
-		private bool UpdateLogFile()
-		{
-			switch (saveFileDialogLog.ShowDialog(this))
+			if (_log != null)
 			{
-				case DialogResult.OK:
-					return true;
-				case DialogResult.Cancel:
-					return false;
-				default:
-					throw new Exception();
+				_log.WriteLine(toAppend);
 			}
-		}
-
-		private void ConnectionMessageReceived(object sender, Connection.MessageReceivedEventArgs e)
-		{
-			ShowText(e.Text, true);
 		}
 
 		private void ConnectionPrivateMessageReceived(object sender, Connection.PrivateMessageReceivedEventArgs e)
@@ -122,8 +124,10 @@ namespace TwitchBot
 						{
 							return;
 						}
-						_connection = new Connection(hostname, 6667, textBoxUser.Text, textBoxPassword.Text, textBoxChat.Text, new ShowTextDelegate(ShowText));
-						_connection.MessageReceived += ConnectionMessageReceived;
+						_connection = new Connection(textBoxUser.Text, textBoxChat.Text);
+						_connection.Connect(hostname, 443, textBoxPassword.Text, true);
+						_connection.MessageReceived += ConnectionMessageTransfer;
+						_connection.MessageSent += ConnectionMessageTransfer;
 						_connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
 						_isConnecting = false;
 					}
@@ -166,6 +170,7 @@ namespace TwitchBot
 			Close();
 		}
 
+		// Clean up here since the Dispose method is implemented in the designer code.
 		private void TwitchBot_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			lock (_connectionLock)
@@ -180,32 +185,16 @@ namespace TwitchBot
 					_connection = null;
 				}
 			}
+			if (_log != null)
+			{
+				_log.Dispose();
+				_log = null;
+			}
 		}
 
 		private void clearToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			textBoxLog.Clear();
-		}
-
-		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (saveFileDialogLog.FileName == string.Empty &&
-				!UpdateLogFile())
-			{
-				return;
-			}
-
-			SaveLog();
-		}
-
-		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (!UpdateLogFile())
-			{
-				return;
-			}
-
-			SaveLog();
 		}
 
 		private void imageWindowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -275,6 +264,28 @@ namespace TwitchBot
 			}
 
 			listBoxRaffle.SelectedIndex = _generator.Next(_raffleUsers.Count);
+		}
+
+		private void newToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			StartLog(false);
+		}
+
+		private void appendToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			StartLog(true);
+		}
+
+		private void logToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!logToolStripMenuItem.Checked)
+			{
+				return;
+			}
+
+			_log.Dispose();
+			_log = null;
+			logToolStripMenuItem.Checked = false;
 		}
 	}
 }

@@ -1,34 +1,39 @@
 ﻿using System;
 using System.IO;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace TwitchBot
 {
 	public class Connection : IDisposable
 	{
-		public Connection(string hostname, int port, string user, string oAuth, string chat, ShowTextDelegate showText)
+		public Connection(string user, string chat)
 		{
 			_channel = chat;
-			Encoding utf8 = new UTF8Encoding(false, true);
-			_client = new TcpClient(hostname, port);
+			_client = new TcpClient();
 			_disposeLock = new object();
-			Stream stream = _client.GetStream();
-			TextWriter writer = new StreamWriter(stream, utf8);
-			_reader = new StreamReader(stream, utf8);
-			_sender = new ThrottledSender(20, new TimeSpan(0, 0, 30), showText, writer);
-			_sender.Send("PASS " + oAuth, false);
-			_sender.Send("NICK " + user, false);
-			// Register for IRCv3 membership capability so we get notifications for people joining
-			// and leaving.
-			_sender.Send("CAP REQ :twitch.tv/membership", false);
-			_sender.Send("JOIN #" + chat, false);
+			_reader = null;
+			_sender = null;
 			_user = user;
 		}
 
-		public event MessageReceivedEventHandler MessageReceived;
+		/// <summary>
+		/// Occurs when any traffic is received from the server, including internal IRC protocol.
+		/// </summary>
+		public event MessageEventHandler MessageReceived;
+
+		/// <summary>
+		/// Occurs when any traffic is sent actually sent to the server, not when it is added to
+		/// queue to be sent.
+		/// </summary>
+		public event MessageEventHandler MessageSent;
+
+		/// <summary>
+		/// Occurs when a user sends a message to the chat. It is a 'private' message as far as the
+		/// IRC protocal is concerned, not because it is sent to a particular user.
+		/// </summary>
 		public event PrivateMessageReceivedEventHandler PrivateMessageReceived;
 
 		private string _channel;
@@ -38,16 +43,51 @@ namespace TwitchBot
 		private ThrottledSender _sender;
 		private string _user;
 
+		public void Connect(string hostname, int port, string oAuth, bool useSSL)
+		{
+			_client.Connect(hostname, port);
+			Stream stream = _client.GetStream();
+			if (useSSL)
+			{
+				SslStream ssl = new SslStream(_client.GetStream(), false);
+				ssl.AuthenticateAsClient(hostname);
+				stream = ssl;
+			}
+
+			Encoding utf8 = new UTF8Encoding(false, true);
+			TextWriter writer = new StreamWriter(stream, utf8);
+			_reader = new StreamReader(stream, utf8);
+			_sender = new ThrottledSender(20, new TimeSpan(0, 0, 30), writer);
+			_sender.MessageSent += OnMessageSent;
+			_sender.Send("PASS " + oAuth, false);
+			_sender.Send("NICK " + _user, false);
+			// Register for IRCv3 membership capability so we get notifications for people joining
+			// and leaving.
+			_sender.Send("CAP REQ :twitch.tv/membership", false);
+			_sender.Send("JOIN #" + _channel, false);
+		}
+
+		/// <summary>
+		/// Add a chat message to the queue to be sent.
+		/// </summary>
+		/// <param name="text">Chat message to send.</param>
 		public void Send(string text)
 		{
 			_sender.Send("PRIVMSG #" + _channel + " :" + text, true);
 		}
 
+		/// <summary>
+		/// Add an IRC command message to the queue to be sent.
+		/// </summary>
+		/// <param name="text">IRC command to send.</param>
 		public void SendRaw(string text)
 		{
 			_sender.Send(text, true);
 		}
 
+		/// <summary>
+		/// Begin the main listener loop to handle incoming traffic. Blocks until the connection is closed.
+		/// </summary>
 		public void DoWork()
 		{
 			Regex ping = new Regex("^PING :(.+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
@@ -100,11 +140,30 @@ namespace TwitchBot
 		{
 			if (MessageReceived != null)
 			{
-				MessageReceivedEventArgs e = new MessageReceivedEventArgs(text);
+				MessageEventArgs e = new MessageEventArgs(text, true);
 				MessageReceived(this, e);
 			}
 		}
 
+		/// <summary>
+		/// Raise the MessageSent event.
+		/// </summary>
+		/// <param name="sender">The original sender of the event. Ignored because we are
+		/// forwarding it, so we are the new sender.</param>
+		/// <param name="e"></param>
+		protected virtual void OnMessageSent(object sender, MessageEventArgs e)
+		{
+			if (MessageSent != null)
+			{
+				MessageSent(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raise the PrivateMessageReceived event.
+		/// </summary>
+		/// <param name="from">The user sending the message.</param>
+		/// <param name="content">The content of the message.</param>
 		protected virtual void OnPrivateMessageReceived(string from, string content)
 		{
 			if (PrivateMessageReceived != null)
@@ -128,17 +187,27 @@ namespace TwitchBot
 			return retval;
 		}
 
-		public delegate void MessageReceivedEventHandler(object sender, MessageReceivedEventArgs e);
+		public delegate void MessageEventHandler(object sender, MessageEventArgs e);
 		public delegate void PrivateMessageReceivedEventHandler(object sender, PrivateMessageReceivedEventArgs e);
 
-		public class MessageReceivedEventArgs : EventArgs
+		public class MessageEventArgs : EventArgs
 		{
-			public MessageReceivedEventArgs(string text)
+			public MessageEventArgs(string text, bool isReceived)
 			{
+				_isReceived = isReceived;
 				_text = text;
 			}
 
+			private bool _isReceived;
 			private string _text;
+
+			/// <summary>
+			/// Whether the message was received. Otherwise, it was sent.
+			/// </summary>
+			public bool IsReceived
+			{
+				get { return _isReceived; }
+			}
 
 			public string Text
 			{

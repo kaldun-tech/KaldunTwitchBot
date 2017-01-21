@@ -34,8 +34,9 @@
 			this.buttonSendRaw = new System.Windows.Forms.Button();
 			this.menuStripMain = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.appendToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,8 +52,6 @@
 			this.labelR = new System.Windows.Forms.Label();
 			this.listBoxRaffle = new System.Windows.Forms.ListBox();
 			this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.buttonSend = new System.Windows.Forms.Button();
 			this.buttonDraw = new System.Windows.Forms.Button();
 			this.buttonClear = new System.Windows.Forms.Button();
 			this.labelUser = new System.Windows.Forms.Label();
@@ -61,6 +60,8 @@
 			this.textBoxPassword = new System.Windows.Forms.TextBox();
 			this.labelChat = new System.Windows.Forms.Label();
 			this.textBoxChat = new System.Windows.Forms.TextBox();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.buttonSend = new System.Windows.Forms.Button();
 			this.menuStripMain.SuspendLayout();
 			this.tableLayoutPanelMain.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -72,7 +73,7 @@
 			this.buttonDoWork.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.buttonDoWork.Location = new System.Drawing.Point(3, 32);
 			this.buttonDoWork.Name = "buttonDoWork";
-			this.buttonDoWork.Size = new System.Drawing.Size(244, 23);
+			this.buttonDoWork.Size = new System.Drawing.Size(284, 23);
 			this.buttonDoWork.TabIndex = 0;
 			this.buttonDoWork.Text = "Connect";
 			this.buttonDoWork.UseVisualStyleBackColor = true;
@@ -89,24 +90,22 @@
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxLog.Size = new System.Drawing.Size(244, 183);
+			this.textBoxLog.Size = new System.Drawing.Size(284, 191);
 			this.textBoxLog.TabIndex = 1;
 			// 
 			// textBoxInput
 			// 
 			this.textBoxInput.AcceptsTab = true;
-			this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxInput.Location = new System.Drawing.Point(3, 2);
+			this.textBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.textBoxInput.Location = new System.Drawing.Point(3, 258);
 			this.textBoxInput.Name = "textBoxInput";
-			this.textBoxInput.Size = new System.Drawing.Size(118, 20);
+			this.textBoxInput.Size = new System.Drawing.Size(139, 20);
 			this.textBoxInput.TabIndex = 2;
 			// 
 			// buttonSendRaw
 			// 
-			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSendRaw.Location = new System.Drawing.Point(174, 0);
+			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonSendRaw.Location = new System.Drawing.Point(69, 0);
 			this.buttonSendRaw.Name = "buttonSendRaw";
 			this.buttonSendRaw.Size = new System.Drawing.Size(67, 23);
 			this.buttonSendRaw.TabIndex = 3;
@@ -122,40 +121,48 @@
             this.viewToolStripMenuItem});
 			this.menuStripMain.Location = new System.Drawing.Point(0, 0);
 			this.menuStripMain.Name = "menuStripMain";
-			this.menuStripMain.Size = new System.Drawing.Size(503, 24);
+			this.menuStripMain.Size = new System.Drawing.Size(580, 24);
 			this.menuStripMain.TabIndex = 4;
 			this.menuStripMain.Text = "menuStripMain";
 			// 
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
+            this.logToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
-			// saveToolStripMenuItem
+			// logToolStripMenuItem
 			// 
-			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-			this.saveToolStripMenuItem.Text = "Save";
-			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+			this.logToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
+            this.appendToolStripMenuItem});
+			this.logToolStripMenuItem.Name = "logToolStripMenuItem";
+			this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.logToolStripMenuItem.Text = "Log";
+			this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
 			// 
-			// saveAsToolStripMenuItem
+			// newToolStripMenuItem
 			// 
-			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-			this.saveAsToolStripMenuItem.Text = "Save As...";
-			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+			this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newToolStripMenuItem.Text = "New...";
+			this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+			// 
+			// appendToolStripMenuItem
+			// 
+			this.appendToolStripMenuItem.Name = "appendToolStripMenuItem";
+			this.appendToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.appendToolStripMenuItem.Text = "Append...";
+			this.appendToolStripMenuItem.Click += new System.EventHandler(this.appendToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -206,9 +213,9 @@
 			// textBoxB
 			// 
 			this.textBoxB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxB.Location = new System.Drawing.Point(458, 33);
+			this.textBoxB.Location = new System.Drawing.Point(533, 33);
 			this.textBoxB.Name = "textBoxB";
-			this.textBoxB.Size = new System.Drawing.Size(42, 20);
+			this.textBoxB.Size = new System.Drawing.Size(44, 20);
 			this.textBoxB.TabIndex = 5;
 			this.textBoxB.Text = "0";
 			this.textBoxB.TextChanged += new System.EventHandler(this.textBoxRGB_TextChanged);
@@ -217,7 +224,7 @@
 			// 
 			this.labelB.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelB.AutoSize = true;
-			this.labelB.Location = new System.Drawing.Point(438, 37);
+			this.labelB.Location = new System.Drawing.Point(513, 37);
 			this.labelB.Name = "labelB";
 			this.labelB.Size = new System.Drawing.Size(14, 13);
 			this.labelB.TabIndex = 6;
@@ -227,9 +234,9 @@
 			// 
 			this.textBoxR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxR.BackColor = System.Drawing.SystemColors.Window;
-			this.textBoxR.Location = new System.Drawing.Point(294, 33);
+			this.textBoxR.Location = new System.Drawing.Point(341, 33);
 			this.textBoxR.Name = "textBoxR";
-			this.textBoxR.Size = new System.Drawing.Size(35, 20);
+			this.textBoxR.Size = new System.Drawing.Size(42, 20);
 			this.textBoxR.TabIndex = 7;
 			this.textBoxR.Text = "0";
 			this.textBoxR.TextChanged += new System.EventHandler(this.textBoxRGB_TextChanged);
@@ -237,9 +244,9 @@
 			// textBoxG
 			// 
 			this.textBoxG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxG.Location = new System.Drawing.Point(376, 33);
+			this.textBoxG.Location = new System.Drawing.Point(437, 33);
 			this.textBoxG.Name = "textBoxG";
-			this.textBoxG.Size = new System.Drawing.Size(35, 20);
+			this.textBoxG.Size = new System.Drawing.Size(42, 20);
 			this.textBoxG.TabIndex = 8;
 			this.textBoxG.Text = "255";
 			this.textBoxG.TextChanged += new System.EventHandler(this.textBoxRGB_TextChanged);
@@ -248,7 +255,7 @@
 			// 
 			this.labelG.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelG.AutoSize = true;
-			this.labelG.Location = new System.Drawing.Point(355, 37);
+			this.labelG.Location = new System.Drawing.Point(416, 37);
 			this.labelG.Name = "labelG";
 			this.labelG.Size = new System.Drawing.Size(15, 13);
 			this.labelG.TabIndex = 9;
@@ -258,7 +265,7 @@
 			// 
 			this.labelR.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelR.AutoSize = true;
-			this.labelR.Location = new System.Drawing.Point(273, 37);
+			this.labelR.Location = new System.Drawing.Point(320, 37);
 			this.labelR.Name = "labelR";
 			this.labelR.Size = new System.Drawing.Size(15, 13);
 			this.labelR.TabIndex = 10;
@@ -268,9 +275,9 @@
 			// 
 			this.tableLayoutPanelMain.SetColumnSpan(this.listBoxRaffle, 6);
 			this.listBoxRaffle.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listBoxRaffle.Location = new System.Drawing.Point(253, 61);
+			this.listBoxRaffle.Location = new System.Drawing.Point(293, 61);
 			this.listBoxRaffle.Name = "listBoxRaffle";
-			this.listBoxRaffle.Size = new System.Drawing.Size(247, 173);
+			this.listBoxRaffle.Size = new System.Drawing.Size(284, 186);
 			this.listBoxRaffle.TabIndex = 11;
 			// 
 			// tableLayoutPanelMain
@@ -286,13 +293,13 @@
 			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
 			this.tableLayoutPanelMain.Controls.Add(this.listBoxRaffle, 2, 2);
 			this.tableLayoutPanelMain.Controls.Add(this.textBoxB, 7, 1);
+			this.tableLayoutPanelMain.Controls.Add(this.textBoxInput, 0, 3);
 			this.tableLayoutPanelMain.Controls.Add(this.textBoxG, 5, 1);
 			this.tableLayoutPanelMain.Controls.Add(this.labelG, 4, 1);
 			this.tableLayoutPanelMain.Controls.Add(this.labelB, 6, 1);
 			this.tableLayoutPanelMain.Controls.Add(this.labelR, 2, 1);
 			this.tableLayoutPanelMain.Controls.Add(this.textBoxLog, 0, 2);
 			this.tableLayoutPanelMain.Controls.Add(this.textBoxR, 3, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.panel1, 0, 3);
 			this.tableLayoutPanelMain.Controls.Add(this.buttonDraw, 2, 3);
 			this.tableLayoutPanelMain.Controls.Add(this.buttonClear, 5, 3);
 			this.tableLayoutPanelMain.Controls.Add(this.buttonDoWork, 0, 1);
@@ -302,6 +309,7 @@
 			this.tableLayoutPanelMain.Controls.Add(this.textBoxPassword, 4, 0);
 			this.tableLayoutPanelMain.Controls.Add(this.labelChat, 5, 0);
 			this.tableLayoutPanelMain.Controls.Add(this.textBoxChat, 6, 0);
+			this.tableLayoutPanelMain.Controls.Add(this.panel1, 1, 3);
 			this.tableLayoutPanelMain.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanelMain.Location = new System.Drawing.Point(0, 24);
 			this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
@@ -310,39 +318,16 @@
 			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
 			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-			this.tableLayoutPanelMain.Size = new System.Drawing.Size(503, 276);
+			this.tableLayoutPanelMain.Size = new System.Drawing.Size(580, 284);
 			this.tableLayoutPanelMain.TabIndex = 12;
-			// 
-			// panel1
-			// 
-			this.tableLayoutPanelMain.SetColumnSpan(this.panel1, 2);
-			this.panel1.Controls.Add(this.buttonSend);
-			this.panel1.Controls.Add(this.buttonSendRaw);
-			this.panel1.Controls.Add(this.textBoxInput);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(3, 250);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(244, 23);
-			this.panel1.TabIndex = 12;
-			// 
-			// buttonSend
-			// 
-			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSend.Location = new System.Drawing.Point(127, 0);
-			this.buttonSend.Name = "buttonSend";
-			this.buttonSend.Size = new System.Drawing.Size(41, 23);
-			this.buttonSend.TabIndex = 4;
-			this.buttonSend.Text = "Send";
-			this.buttonSend.UseVisualStyleBackColor = true;
-			this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
 			// 
 			// buttonDraw
 			// 
 			this.tableLayoutPanelMain.SetColumnSpan(this.buttonDraw, 3);
 			this.buttonDraw.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonDraw.Location = new System.Drawing.Point(253, 250);
+			this.buttonDraw.Location = new System.Drawing.Point(293, 258);
 			this.buttonDraw.Name = "buttonDraw";
-			this.buttonDraw.Size = new System.Drawing.Size(117, 23);
+			this.buttonDraw.Size = new System.Drawing.Size(138, 23);
 			this.buttonDraw.TabIndex = 13;
 			this.buttonDraw.Text = "Draw";
 			this.buttonDraw.UseVisualStyleBackColor = true;
@@ -352,9 +337,9 @@
 			// 
 			this.tableLayoutPanelMain.SetColumnSpan(this.buttonClear, 3);
 			this.buttonClear.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonClear.Location = new System.Drawing.Point(376, 250);
+			this.buttonClear.Location = new System.Drawing.Point(437, 258);
 			this.buttonClear.Name = "buttonClear";
-			this.buttonClear.Size = new System.Drawing.Size(124, 23);
+			this.buttonClear.Size = new System.Drawing.Size(140, 23);
 			this.buttonClear.TabIndex = 14;
 			this.buttonClear.Text = "Clear";
 			this.buttonClear.UseVisualStyleBackColor = true;
@@ -364,7 +349,7 @@
 			// 
 			this.labelUser.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelUser.AutoSize = true;
-			this.labelUser.Location = new System.Drawing.Point(93, 8);
+			this.labelUser.Location = new System.Drawing.Point(113, 8);
 			this.labelUser.Name = "labelUser";
 			this.labelUser.Size = new System.Drawing.Size(29, 13);
 			this.labelUser.TabIndex = 15;
@@ -373,9 +358,9 @@
 			// textBoxUser
 			// 
 			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxUser.Location = new System.Drawing.Point(128, 4);
+			this.textBoxUser.Location = new System.Drawing.Point(148, 4);
 			this.textBoxUser.Name = "textBoxUser";
-			this.textBoxUser.Size = new System.Drawing.Size(119, 20);
+			this.textBoxUser.Size = new System.Drawing.Size(139, 20);
 			this.textBoxUser.TabIndex = 16;
 			// 
 			// labelPassword
@@ -383,18 +368,18 @@
 			this.labelPassword.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelPassword.AutoSize = true;
 			this.tableLayoutPanelMain.SetColumnSpan(this.labelPassword, 2);
-			this.labelPassword.Location = new System.Drawing.Point(274, 0);
+			this.labelPassword.Location = new System.Drawing.Point(295, 1);
 			this.labelPassword.Name = "labelPassword";
-			this.labelPassword.Size = new System.Drawing.Size(55, 29);
+			this.labelPassword.Size = new System.Drawing.Size(88, 26);
 			this.labelPassword.TabIndex = 17;
 			this.labelPassword.Text = "OAuth (including \"oauth:\")";
 			// 
 			// textBoxPassword
 			// 
 			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxPassword.Location = new System.Drawing.Point(335, 4);
+			this.textBoxPassword.Location = new System.Drawing.Point(389, 4);
 			this.textBoxPassword.Name = "textBoxPassword";
-			this.textBoxPassword.Size = new System.Drawing.Size(35, 20);
+			this.textBoxPassword.Size = new System.Drawing.Size(42, 20);
 			this.textBoxPassword.TabIndex = 18;
 			this.textBoxPassword.UseSystemPasswordChar = true;
 			// 
@@ -402,7 +387,7 @@
 			// 
 			this.labelChat.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelChat.AutoSize = true;
-			this.labelChat.Location = new System.Drawing.Point(382, 8);
+			this.labelChat.Location = new System.Drawing.Point(450, 8);
 			this.labelChat.Name = "labelChat";
 			this.labelChat.Size = new System.Drawing.Size(29, 13);
 			this.labelChat.TabIndex = 19;
@@ -411,17 +396,39 @@
 			// textBoxChat
 			// 
 			this.tableLayoutPanelMain.SetColumnSpan(this.textBoxChat, 2);
-			this.textBoxChat.Location = new System.Drawing.Point(417, 3);
+			this.textBoxChat.Location = new System.Drawing.Point(485, 3);
 			this.textBoxChat.Name = "textBoxChat";
 			this.textBoxChat.Size = new System.Drawing.Size(83, 20);
 			this.textBoxChat.TabIndex = 20;
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.buttonSend);
+			this.panel1.Controls.Add(this.buttonSendRaw);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(148, 258);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(139, 23);
+			this.panel1.TabIndex = 12;
+			// 
+			// buttonSend
+			// 
+			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonSend.Location = new System.Drawing.Point(3, 0);
+			this.buttonSend.Name = "buttonSend";
+			this.buttonSend.Size = new System.Drawing.Size(60, 23);
+			this.buttonSend.TabIndex = 4;
+			this.buttonSend.Text = "Send";
+			this.buttonSend.UseVisualStyleBackColor = true;
+			this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
 			// 
 			// TwitchBot
 			// 
 			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(503, 300);
+			this.ClientSize = new System.Drawing.Size(580, 308);
 			this.Controls.Add(this.tableLayoutPanelMain);
 			this.Controls.Add(this.menuStripMain);
 			this.MainMenuStrip = this.menuStripMain;
@@ -434,7 +441,6 @@
 			this.tableLayoutPanelMain.ResumeLayout(false);
 			this.tableLayoutPanelMain.PerformLayout();
 			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -449,8 +455,6 @@
 		private System.Windows.Forms.MenuStrip menuStripMain;
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogLog;
@@ -475,6 +479,9 @@
 		private System.Windows.Forms.TextBox textBoxPassword;
 		private System.Windows.Forms.Label labelChat;
 		private System.Windows.Forms.TextBox textBoxChat;
+		private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem appendToolStripMenuItem;
 	}
 }
 
