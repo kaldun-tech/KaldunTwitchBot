@@ -36,6 +36,16 @@ namespace TwitchBot
 		/// </summary>
 		public event PrivateMessageReceivedEventHandler PrivateMessageReceived;
 
+		/// <summary>
+		/// Occurs when a user joins the chat.
+		/// </summary>
+		public event UserEventHandler UserJoined;
+
+		/// <summary>
+		/// Occurs when a user leaves the chat.
+		/// </summary>
+		public event UserEventHandler UserLeft;
+
 		private string _channel;
 		private TcpClient _client;
 		private object _disposeLock;
@@ -90,6 +100,7 @@ namespace TwitchBot
 		{
 			Regex ping = new Regex("^PING :(.+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 			Regex join = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv JOIN #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+			Regex part = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PART #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 			Regex privMsg = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PRIVMSG #[^ ]* :(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 			string line;
 			while ((line = Receive()) != null)
@@ -113,6 +124,14 @@ namespace TwitchBot
 				Match joinMatch = join.Match(line);
 				if (joinMatch.Success)
 				{
+					OnUserJoined(joinMatch.Groups[1].Value);
+					continue;
+				}
+
+				Match partMatch = part.Match(line);
+				if (partMatch.Success)
+				{
+					OnUserLeft(partMatch.Groups[1].Value);
 					continue;
 				}
 			}
@@ -135,6 +154,10 @@ namespace TwitchBot
 			}
 		}
 
+		/// <summary>
+		/// Raise the MessageReceived event.
+		/// </summary>
+		/// <param name="text">The traffic that was received.</param>
 		protected virtual void OnMessageReceived(string text)
 		{
 			if (MessageReceived != null)
@@ -171,6 +194,32 @@ namespace TwitchBot
 			}
 		}
 
+		/// <summary>
+		/// Raise the UserJoined event.
+		/// </summary>
+		/// <param name="user">The user that joined the chat.</param>
+		protected virtual void OnUserJoined(string user)
+		{
+			if (UserJoined != null)
+			{
+				UserEventArgs e = new UserEventArgs(user);
+				UserJoined(this, e);
+			}
+		}
+
+		/// <summary>
+		/// Raise the UserLeft event.
+		/// </summary>
+		/// <param name="user">The user that left the chat.</param>
+		protected virtual void OnUserLeft(string user)
+		{
+			if (UserLeft != null)
+			{
+				UserEventArgs e = new UserEventArgs(user);
+				UserLeft(this, e);
+			}
+		}
+
 		private string Receive()
 		{
 			string retval;
@@ -187,6 +236,7 @@ namespace TwitchBot
 
 		public delegate void MessageEventHandler(object sender, MessageEventArgs e);
 		public delegate void PrivateMessageReceivedEventHandler(object sender, PrivateMessageReceivedEventArgs e);
+		public delegate void UserEventHandler(object sender, UserEventArgs e);
 
 		public class MessageEventArgs : EventArgs
 		{
@@ -232,6 +282,21 @@ namespace TwitchBot
 			public string From
 			{
 				get { return _from; }
+			}
+		}
+
+		public class UserEventArgs : EventArgs
+		{
+			public UserEventArgs(string user)
+			{
+				_user = user;
+			}
+
+			private string _user;
+
+			public string User
+			{
+				get { return _user; }
 			}
 		}
 	}
