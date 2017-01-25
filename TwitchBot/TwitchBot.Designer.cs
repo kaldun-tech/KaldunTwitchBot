@@ -45,13 +45,12 @@
 			this.scrollToNewMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialogLog = new System.Windows.Forms.SaveFileDialog();
 			this.textBoxB = new System.Windows.Forms.TextBox();
-			this.labelB = new System.Windows.Forms.Label();
+			this.labelBlue = new System.Windows.Forms.Label();
 			this.textBoxR = new System.Windows.Forms.TextBox();
 			this.textBoxG = new System.Windows.Forms.TextBox();
-			this.labelG = new System.Windows.Forms.Label();
-			this.labelR = new System.Windows.Forms.Label();
+			this.labelGreen = new System.Windows.Forms.Label();
+			this.labelRed = new System.Windows.Forms.Label();
 			this.listBoxRaffle = new System.Windows.Forms.ListBox();
-			this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
 			this.buttonDraw = new System.Windows.Forms.Button();
 			this.buttonClear = new System.Windows.Forms.Button();
 			this.labelUser = new System.Windows.Forms.Label();
@@ -60,20 +59,27 @@
 			this.textBoxPassword = new System.Windows.Forms.TextBox();
 			this.labelChat = new System.Windows.Forms.Label();
 			this.textBoxChat = new System.Windows.Forms.TextBox();
-			this.panel1 = new System.Windows.Forms.Panel();
 			this.buttonSend = new System.Windows.Forms.Button();
+			this.tabControlConnected = new System.Windows.Forms.TabControl();
+			this.tabPageRaffle = new System.Windows.Forms.TabPage();
+			this.tabPageTraffic = new System.Windows.Forms.TabPage();
+			this.tabPageEffects = new System.Windows.Forms.TabPage();
+			this.tabPageConnect = new System.Windows.Forms.TabPage();
 			this.menuStripMain.SuspendLayout();
-			this.tableLayoutPanelMain.SuspendLayout();
-			this.panel1.SuspendLayout();
+			this.tabControlConnected.SuspendLayout();
+			this.tabPageRaffle.SuspendLayout();
+			this.tabPageTraffic.SuspendLayout();
+			this.tabPageEffects.SuspendLayout();
+			this.tabPageConnect.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// buttonDoWork
 			// 
-			this.tableLayoutPanelMain.SetColumnSpan(this.buttonDoWork, 2);
-			this.buttonDoWork.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonDoWork.Location = new System.Drawing.Point(3, 32);
+			this.buttonDoWork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonDoWork.Location = new System.Drawing.Point(8, 95);
 			this.buttonDoWork.Name = "buttonDoWork";
-			this.buttonDoWork.Size = new System.Drawing.Size(284, 23);
+			this.buttonDoWork.Size = new System.Drawing.Size(556, 23);
 			this.buttonDoWork.TabIndex = 0;
 			this.buttonDoWork.Text = "Connect";
 			this.buttonDoWork.UseVisualStyleBackColor = true;
@@ -84,28 +90,28 @@
 			this.textBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanelMain.SetColumnSpan(this.textBoxLog, 2);
-			this.textBoxLog.Location = new System.Drawing.Point(3, 61);
+			this.textBoxLog.Location = new System.Drawing.Point(6, 6);
 			this.textBoxLog.Multiline = true;
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxLog.Size = new System.Drawing.Size(284, 191);
+			this.textBoxLog.Size = new System.Drawing.Size(560, 59);
 			this.textBoxLog.TabIndex = 1;
 			// 
 			// textBoxInput
 			// 
 			this.textBoxInput.AcceptsTab = true;
-			this.textBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textBoxInput.Location = new System.Drawing.Point(3, 258);
+			this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxInput.Location = new System.Drawing.Point(6, 71);
 			this.textBoxInput.Name = "textBoxInput";
-			this.textBoxInput.Size = new System.Drawing.Size(139, 20);
+			this.textBoxInput.Size = new System.Drawing.Size(560, 20);
 			this.textBoxInput.TabIndex = 2;
 			// 
 			// buttonSendRaw
 			// 
-			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSendRaw.Location = new System.Drawing.Point(69, 0);
+			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonSendRaw.Location = new System.Drawing.Point(499, 97);
 			this.buttonSendRaw.Name = "buttonSendRaw";
 			this.buttonSendRaw.Size = new System.Drawing.Size(67, 23);
 			this.buttonSendRaw.TabIndex = 3;
@@ -140,21 +146,22 @@
             this.newToolStripMenuItem,
             this.appendToolStripMenuItem});
 			this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-			this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.logToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.logToolStripMenuItem.Text = "Log";
+			this.logToolStripMenuItem.Visible = false;
 			this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
 			// 
 			// newToolStripMenuItem
 			// 
 			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-			this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
 			this.newToolStripMenuItem.Text = "New...";
 			this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
 			// 
 			// appendToolStripMenuItem
 			// 
 			this.appendToolStripMenuItem.Name = "appendToolStripMenuItem";
-			this.appendToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.appendToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
 			this.appendToolStripMenuItem.Text = "Append...";
 			this.appendToolStripMenuItem.Click += new System.EventHandler(this.appendToolStripMenuItem_Click);
 			// 
@@ -162,7 +169,7 @@
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -173,6 +180,7 @@
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			this.editToolStripMenuItem.Text = "Edit";
+			this.editToolStripMenuItem.Visible = false;
 			// 
 			// clearToolStripMenuItem
 			// 
@@ -205,6 +213,7 @@
 			this.scrollToNewMessageToolStripMenuItem.Name = "scrollToNewMessageToolStripMenuItem";
 			this.scrollToNewMessageToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
 			this.scrollToNewMessageToolStripMenuItem.Text = "Scroll to New Message";
+			this.scrollToNewMessageToolStripMenuItem.Visible = false;
 			// 
 			// saveFileDialogLog
 			// 
@@ -212,122 +221,82 @@
 			// 
 			// textBoxB
 			// 
-			this.textBoxB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxB.Location = new System.Drawing.Point(533, 33);
+			this.textBoxB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxB.Location = new System.Drawing.Point(46, 63);
 			this.textBoxB.Name = "textBoxB";
-			this.textBoxB.Size = new System.Drawing.Size(44, 20);
+			this.textBoxB.Size = new System.Drawing.Size(499, 20);
 			this.textBoxB.TabIndex = 5;
 			this.textBoxB.Text = "0";
 			this.textBoxB.TextChanged += new System.EventHandler(this.textBoxRGB_TextChanged);
 			// 
-			// labelB
+			// labelBlue
 			// 
-			this.labelB.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this.labelB.AutoSize = true;
-			this.labelB.Location = new System.Drawing.Point(513, 37);
-			this.labelB.Name = "labelB";
-			this.labelB.Size = new System.Drawing.Size(14, 13);
-			this.labelB.TabIndex = 6;
-			this.labelB.Text = "B";
+			this.labelBlue.AutoSize = true;
+			this.labelBlue.Location = new System.Drawing.Point(4, 40);
+			this.labelBlue.Name = "labelBlue";
+			this.labelBlue.Size = new System.Drawing.Size(28, 13);
+			this.labelBlue.TabIndex = 6;
+			this.labelBlue.Text = "Blue";
 			// 
 			// textBoxR
 			// 
-			this.textBoxR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxR.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxR.BackColor = System.Drawing.SystemColors.Window;
-			this.textBoxR.Location = new System.Drawing.Point(341, 33);
+			this.textBoxR.Location = new System.Drawing.Point(46, 11);
 			this.textBoxR.Name = "textBoxR";
-			this.textBoxR.Size = new System.Drawing.Size(42, 20);
+			this.textBoxR.Size = new System.Drawing.Size(499, 20);
 			this.textBoxR.TabIndex = 7;
 			this.textBoxR.Text = "0";
 			this.textBoxR.TextChanged += new System.EventHandler(this.textBoxRGB_TextChanged);
 			// 
 			// textBoxG
 			// 
-			this.textBoxG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxG.Location = new System.Drawing.Point(437, 33);
+			this.textBoxG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxG.Location = new System.Drawing.Point(46, 37);
 			this.textBoxG.Name = "textBoxG";
-			this.textBoxG.Size = new System.Drawing.Size(42, 20);
+			this.textBoxG.Size = new System.Drawing.Size(499, 20);
 			this.textBoxG.TabIndex = 8;
 			this.textBoxG.Text = "255";
 			this.textBoxG.TextChanged += new System.EventHandler(this.textBoxRGB_TextChanged);
 			// 
-			// labelG
+			// labelGreen
 			// 
-			this.labelG.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this.labelG.AutoSize = true;
-			this.labelG.Location = new System.Drawing.Point(416, 37);
-			this.labelG.Name = "labelG";
-			this.labelG.Size = new System.Drawing.Size(15, 13);
-			this.labelG.TabIndex = 9;
-			this.labelG.Text = "G";
+			this.labelGreen.AutoSize = true;
+			this.labelGreen.Location = new System.Drawing.Point(4, 66);
+			this.labelGreen.Name = "labelGreen";
+			this.labelGreen.Size = new System.Drawing.Size(36, 13);
+			this.labelGreen.TabIndex = 9;
+			this.labelGreen.Text = "Green";
 			// 
-			// labelR
+			// labelRed
 			// 
-			this.labelR.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this.labelR.AutoSize = true;
-			this.labelR.Location = new System.Drawing.Point(320, 37);
-			this.labelR.Name = "labelR";
-			this.labelR.Size = new System.Drawing.Size(15, 13);
-			this.labelR.TabIndex = 10;
-			this.labelR.Text = "R";
+			this.labelRed.AutoSize = true;
+			this.labelRed.Location = new System.Drawing.Point(3, 14);
+			this.labelRed.Name = "labelRed";
+			this.labelRed.Size = new System.Drawing.Size(27, 13);
+			this.labelRed.TabIndex = 10;
+			this.labelRed.Text = "Red";
 			// 
 			// listBoxRaffle
 			// 
-			this.tableLayoutPanelMain.SetColumnSpan(this.listBoxRaffle, 6);
-			this.listBoxRaffle.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listBoxRaffle.Location = new System.Drawing.Point(293, 61);
+			this.listBoxRaffle.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxRaffle.Location = new System.Drawing.Point(6, 6);
 			this.listBoxRaffle.Name = "listBoxRaffle";
-			this.listBoxRaffle.Size = new System.Drawing.Size(284, 186);
+			this.listBoxRaffle.Size = new System.Drawing.Size(560, 56);
 			this.listBoxRaffle.TabIndex = 11;
-			// 
-			// tableLayoutPanelMain
-			// 
-			this.tableLayoutPanelMain.ColumnCount = 8;
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8.333332F));
-			this.tableLayoutPanelMain.Controls.Add(this.listBoxRaffle, 2, 2);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxB, 7, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxInput, 0, 3);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxG, 5, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.labelG, 4, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.labelB, 6, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.labelR, 2, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxLog, 0, 2);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxR, 3, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.buttonDraw, 2, 3);
-			this.tableLayoutPanelMain.Controls.Add(this.buttonClear, 5, 3);
-			this.tableLayoutPanelMain.Controls.Add(this.buttonDoWork, 0, 1);
-			this.tableLayoutPanelMain.Controls.Add(this.labelUser, 0, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxUser, 1, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.labelPassword, 2, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxPassword, 4, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.labelChat, 5, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.textBoxChat, 6, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.panel1, 1, 3);
-			this.tableLayoutPanelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanelMain.Location = new System.Drawing.Point(0, 24);
-			this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-			this.tableLayoutPanelMain.RowCount = 4;
-			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-			this.tableLayoutPanelMain.Size = new System.Drawing.Size(580, 284);
-			this.tableLayoutPanelMain.TabIndex = 12;
 			// 
 			// buttonDraw
 			// 
-			this.tableLayoutPanelMain.SetColumnSpan(this.buttonDraw, 3);
-			this.buttonDraw.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonDraw.Location = new System.Drawing.Point(293, 258);
+			this.buttonDraw.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonDraw.Location = new System.Drawing.Point(6, 97);
 			this.buttonDraw.Name = "buttonDraw";
-			this.buttonDraw.Size = new System.Drawing.Size(138, 23);
+			this.buttonDraw.Size = new System.Drawing.Size(498, 23);
 			this.buttonDraw.TabIndex = 13;
 			this.buttonDraw.Text = "Draw";
 			this.buttonDraw.UseVisualStyleBackColor = true;
@@ -335,11 +304,10 @@
 			// 
 			// buttonClear
 			// 
-			this.tableLayoutPanelMain.SetColumnSpan(this.buttonClear, 3);
-			this.buttonClear.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonClear.Location = new System.Drawing.Point(437, 258);
+			this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonClear.Location = new System.Drawing.Point(510, 97);
 			this.buttonClear.Name = "buttonClear";
-			this.buttonClear.Size = new System.Drawing.Size(140, 23);
+			this.buttonClear.Size = new System.Drawing.Size(56, 23);
 			this.buttonClear.TabIndex = 14;
 			this.buttonClear.Text = "Clear";
 			this.buttonClear.UseVisualStyleBackColor = true;
@@ -347,9 +315,8 @@
 			// 
 			// labelUser
 			// 
-			this.labelUser.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelUser.AutoSize = true;
-			this.labelUser.Location = new System.Drawing.Point(113, 8);
+			this.labelUser.Location = new System.Drawing.Point(3, 6);
 			this.labelUser.Name = "labelUser";
 			this.labelUser.Size = new System.Drawing.Size(29, 13);
 			this.labelUser.TabIndex = 15;
@@ -357,37 +324,36 @@
 			// 
 			// textBoxUser
 			// 
-			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxUser.Location = new System.Drawing.Point(148, 4);
+			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxUser.Location = new System.Drawing.Point(140, 3);
 			this.textBoxUser.Name = "textBoxUser";
-			this.textBoxUser.Size = new System.Drawing.Size(139, 20);
+			this.textBoxUser.Size = new System.Drawing.Size(424, 20);
 			this.textBoxUser.TabIndex = 16;
 			// 
 			// labelPassword
 			// 
-			this.labelPassword.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelPassword.AutoSize = true;
-			this.tableLayoutPanelMain.SetColumnSpan(this.labelPassword, 2);
-			this.labelPassword.Location = new System.Drawing.Point(295, 1);
+			this.labelPassword.Location = new System.Drawing.Point(3, 32);
 			this.labelPassword.Name = "labelPassword";
-			this.labelPassword.Size = new System.Drawing.Size(88, 26);
+			this.labelPassword.Size = new System.Drawing.Size(131, 13);
 			this.labelPassword.TabIndex = 17;
 			this.labelPassword.Text = "OAuth (including \"oauth:\")";
 			// 
 			// textBoxPassword
 			// 
-			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxPassword.Location = new System.Drawing.Point(389, 4);
+			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxPassword.Location = new System.Drawing.Point(140, 29);
 			this.textBoxPassword.Name = "textBoxPassword";
-			this.textBoxPassword.Size = new System.Drawing.Size(42, 20);
+			this.textBoxPassword.Size = new System.Drawing.Size(424, 20);
 			this.textBoxPassword.TabIndex = 18;
 			this.textBoxPassword.UseSystemPasswordChar = true;
 			// 
 			// labelChat
 			// 
-			this.labelChat.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.labelChat.AutoSize = true;
-			this.labelChat.Location = new System.Drawing.Point(450, 8);
+			this.labelChat.Location = new System.Drawing.Point(8, 58);
 			this.labelChat.Name = "labelChat";
 			this.labelChat.Size = new System.Drawing.Size(29, 13);
 			this.labelChat.TabIndex = 19;
@@ -395,52 +361,118 @@
 			// 
 			// textBoxChat
 			// 
-			this.tableLayoutPanelMain.SetColumnSpan(this.textBoxChat, 2);
-			this.textBoxChat.Location = new System.Drawing.Point(485, 3);
+			this.textBoxChat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxChat.Location = new System.Drawing.Point(140, 55);
 			this.textBoxChat.Name = "textBoxChat";
-			this.textBoxChat.Size = new System.Drawing.Size(83, 20);
+			this.textBoxChat.Size = new System.Drawing.Size(424, 20);
 			this.textBoxChat.TabIndex = 20;
-			// 
-			// panel1
-			// 
-			this.panel1.Controls.Add(this.buttonSend);
-			this.panel1.Controls.Add(this.buttonSendRaw);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(148, 258);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(139, 23);
-			this.panel1.TabIndex = 12;
 			// 
 			// buttonSend
 			// 
-			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSend.Location = new System.Drawing.Point(3, 0);
+			this.buttonSend.Location = new System.Drawing.Point(6, 97);
 			this.buttonSend.Name = "buttonSend";
-			this.buttonSend.Size = new System.Drawing.Size(60, 23);
+			this.buttonSend.Size = new System.Drawing.Size(487, 23);
 			this.buttonSend.TabIndex = 4;
 			this.buttonSend.Text = "Send";
 			this.buttonSend.UseVisualStyleBackColor = true;
 			this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
 			// 
+			// tabControlConnected
+			// 
+			this.tabControlConnected.Controls.Add(this.tabPageConnect);
+			this.tabControlConnected.Controls.Add(this.tabPageRaffle);
+			this.tabControlConnected.Controls.Add(this.tabPageTraffic);
+			this.tabControlConnected.Controls.Add(this.tabPageEffects);
+			this.tabControlConnected.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabControlConnected.Location = new System.Drawing.Point(0, 24);
+			this.tabControlConnected.Name = "tabControlConnected";
+			this.tabControlConnected.SelectedIndex = 0;
+			this.tabControlConnected.Size = new System.Drawing.Size(580, 284);
+			this.tabControlConnected.TabIndex = 13;
+			this.tabControlConnected.SelectedIndexChanged += new System.EventHandler(this.tabControlConnected_SelectedIndexChanged);
+			// 
+			// tabPageRaffle
+			// 
+			this.tabPageRaffle.Controls.Add(this.listBoxRaffle);
+			this.tabPageRaffle.Controls.Add(this.buttonDraw);
+			this.tabPageRaffle.Controls.Add(this.buttonClear);
+			this.tabPageRaffle.Location = new System.Drawing.Point(4, 22);
+			this.tabPageRaffle.Name = "tabPageRaffle";
+			this.tabPageRaffle.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageRaffle.Size = new System.Drawing.Size(572, 126);
+			this.tabPageRaffle.TabIndex = 0;
+			this.tabPageRaffle.Text = "Raffle";
+			this.tabPageRaffle.UseVisualStyleBackColor = true;
+			// 
+			// tabPageTraffic
+			// 
+			this.tabPageTraffic.Controls.Add(this.buttonSend);
+			this.tabPageTraffic.Controls.Add(this.textBoxInput);
+			this.tabPageTraffic.Controls.Add(this.textBoxLog);
+			this.tabPageTraffic.Controls.Add(this.buttonSendRaw);
+			this.tabPageTraffic.Location = new System.Drawing.Point(4, 22);
+			this.tabPageTraffic.Name = "tabPageTraffic";
+			this.tabPageTraffic.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageTraffic.Size = new System.Drawing.Size(572, 126);
+			this.tabPageTraffic.TabIndex = 1;
+			this.tabPageTraffic.Text = "Traffic";
+			this.tabPageTraffic.UseVisualStyleBackColor = true;
+			// 
+			// tabPageEffects
+			// 
+			this.tabPageEffects.Controls.Add(this.labelBlue);
+			this.tabPageEffects.Controls.Add(this.textBoxB);
+			this.tabPageEffects.Controls.Add(this.labelRed);
+			this.tabPageEffects.Controls.Add(this.textBoxG);
+			this.tabPageEffects.Controls.Add(this.textBoxR);
+			this.tabPageEffects.Controls.Add(this.labelGreen);
+			this.tabPageEffects.Location = new System.Drawing.Point(4, 22);
+			this.tabPageEffects.Name = "tabPageEffects";
+			this.tabPageEffects.Size = new System.Drawing.Size(572, 126);
+			this.tabPageEffects.TabIndex = 2;
+			this.tabPageEffects.Text = "Effects";
+			this.tabPageEffects.UseVisualStyleBackColor = true;
+			// 
+			// tabPageConnect
+			// 
+			this.tabPageConnect.Controls.Add(this.labelUser);
+			this.tabPageConnect.Controls.Add(this.textBoxUser);
+			this.tabPageConnect.Controls.Add(this.labelChat);
+			this.tabPageConnect.Controls.Add(this.labelPassword);
+			this.tabPageConnect.Controls.Add(this.buttonDoWork);
+			this.tabPageConnect.Controls.Add(this.textBoxChat);
+			this.tabPageConnect.Controls.Add(this.textBoxPassword);
+			this.tabPageConnect.Location = new System.Drawing.Point(4, 22);
+			this.tabPageConnect.Name = "tabPageConnect";
+			this.tabPageConnect.Size = new System.Drawing.Size(572, 258);
+			this.tabPageConnect.TabIndex = 3;
+			this.tabPageConnect.Text = "Connect";
+			this.tabPageConnect.UseVisualStyleBackColor = true;
+			// 
 			// TwitchBot
 			// 
-			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(580, 308);
-			this.Controls.Add(this.tableLayoutPanelMain);
+			this.Controls.Add(this.tabControlConnected);
 			this.Controls.Add(this.menuStripMain);
 			this.MainMenuStrip = this.menuStripMain;
 			this.Name = "TwitchBot";
 			this.Text = "TwitchBot";
-			this.TransparencyKey = System.Drawing.Color.PaleTurquoise;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TwitchBot_FormClosed);
 			this.menuStripMain.ResumeLayout(false);
 			this.menuStripMain.PerformLayout();
-			this.tableLayoutPanelMain.ResumeLayout(false);
-			this.tableLayoutPanelMain.PerformLayout();
-			this.panel1.ResumeLayout(false);
+			this.tabControlConnected.ResumeLayout(false);
+			this.tabPageRaffle.ResumeLayout(false);
+			this.tabPageTraffic.ResumeLayout(false);
+			this.tabPageTraffic.PerformLayout();
+			this.tabPageEffects.ResumeLayout(false);
+			this.tabPageEffects.PerformLayout();
+			this.tabPageConnect.ResumeLayout(false);
+			this.tabPageConnect.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -461,14 +493,12 @@
 		private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem imageWindowToolStripMenuItem;
 		private System.Windows.Forms.TextBox textBoxB;
-		private System.Windows.Forms.Label labelB;
+		private System.Windows.Forms.Label labelBlue;
 		private System.Windows.Forms.TextBox textBoxR;
 		private System.Windows.Forms.TextBox textBoxG;
-		private System.Windows.Forms.Label labelG;
-		private System.Windows.Forms.Label labelR;
+		private System.Windows.Forms.Label labelGreen;
+		private System.Windows.Forms.Label labelRed;
 		private System.Windows.Forms.ListBox listBoxRaffle;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelMain;
-		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Button buttonDraw;
 		private System.Windows.Forms.Button buttonClear;
 		private System.Windows.Forms.ToolStripMenuItem scrollToNewMessageToolStripMenuItem;
@@ -482,6 +512,11 @@
 		private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem appendToolStripMenuItem;
+		private System.Windows.Forms.TabControl tabControlConnected;
+		private System.Windows.Forms.TabPage tabPageRaffle;
+		private System.Windows.Forms.TabPage tabPageTraffic;
+		private System.Windows.Forms.TabPage tabPageEffects;
+		private System.Windows.Forms.TabPage tabPageConnect;
 	}
 }
 

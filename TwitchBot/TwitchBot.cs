@@ -287,5 +287,16 @@ namespace TwitchBot
 			_log = null;
 			logToolStripMenuItem.Checked = false;
 		}
+
+		/// <summary>
+		/// Update the menu based on which tab is currently selected.
+		/// </summary>
+		private void tabControlConnected_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			bool isTrafficSelected = (tabControlConnected.SelectedTab == tabPageTraffic);
+			editToolStripMenuItem.Visible = isTrafficSelected;
+			logToolStripMenuItem.Visible = isTrafficSelected;
+			scrollToNewMessageToolStripMenuItem.Visible = isTrafficSelected;
+		}
 	}
 }

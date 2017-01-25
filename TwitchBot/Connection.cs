@@ -70,7 +70,6 @@ namespace TwitchBot
 		/// <summary>
 		/// Add a chat message to the queue to be sent.
 		/// </summary>
-		/// <param name="text">Chat message to send.</param>
 		public void Send(string text)
 		{
 			_sender.Send("PRIVMSG #" + _channel + " :" + text, true);
@@ -79,7 +78,6 @@ namespace TwitchBot
 		/// <summary>
 		/// Add an IRC command message to the queue to be sent.
 		/// </summary>
-		/// <param name="text">IRC command to send.</param>
 		public void SendRaw(string text)
 		{
 			_sender.Send(text, true);
@@ -124,6 +122,7 @@ namespace TwitchBot
 		{
 			_sender.Send("QUIT", true);
 			_sender.RequestExit();
+			_sender.MessageSent -= OnMessageSent;
 			_sender.Dispose();
 			_sender = null;
 			lock (_disposeLock)
@@ -150,7 +149,6 @@ namespace TwitchBot
 		/// </summary>
 		/// <param name="sender">The original sender of the event. Ignored because we are
 		/// forwarding it, so we are the new sender.</param>
-		/// <param name="e"></param>
 		protected virtual void OnMessageSent(object sender, MessageEventArgs e)
 		{
 			if (MessageSent != null)
