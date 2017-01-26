@@ -4,19 +4,19 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace TwitchBot
 {
 	public class Connection : IDisposable
 	{
-		public Connection(string user, string chat)
+		public Connection(string chat)
 		{
 			_channel = chat;
-			_client = new TcpClient();
-			_disposeLock = new object();
-			_reader = null;
+			_client = null;
+			_connecting = new ManualResetEvent(false);
+			_listener = null;
 			_sender = null;
-			_user = user;
 		}
 
 		/// <summary>
@@ -48,33 +48,50 @@ namespace TwitchBot
 
 		private string _channel;
 		private TcpClient _client;
-		private object _disposeLock;
-		private TextReader _reader;
+		private ManualResetEvent _connecting;
+		private Thread _listener;
 		private ThrottledSender _sender;
-		private string _user;
 
-		public void Connect(string hostname, int port, string oAuth, bool useSSL)
+		/// <summary>
+		/// Start a background thread that connects and handles incoming traffic.
+		/// </summary>
+		/// <param name="hostname"></param>
+		/// <param name="port"></param>
+		/// <param name="oAuth"></param>
+		/// <param name="useSSL"></param>
+		public void Connect(string hostname, int port, bool useSSL, string user, string oAuth)
 		{
-			_client.Connect(hostname, port);
-			Stream stream = _client.GetStream();
-			if (useSSL)
-			{
-				SslStream ssl = new SslStream(_client.GetStream(), false);
-				ssl.AuthenticateAsClient(hostname);
-				stream = ssl;
-			}
+			_listener = new Thread(delegate()
+				{
+					_client = new TcpClient(hostname, port);
+					Stream stream = _client.GetStream();
+					if (useSSL)
+					{
+						SslStream ssl = new SslStream(stream, false);
+						ssl.AuthenticateAsClient(hostname);
+						stream = ssl;
+					}
 
-			Encoding utf8 = new UTF8Encoding(false, true);
-			TextWriter writer = new StreamWriter(stream, utf8);
-			_reader = new StreamReader(stream, utf8);
-			_sender = new ThrottledSender(20, new TimeSpan(0, 0, 30), writer);
-			_sender.MessageSent += OnMessageSent;
-			_sender.Send("PASS " + oAuth, false);
-			_sender.Send("NICK " + _user, false);
-			// Register for IRCv3 membership capability so we get notifications for people joining
-			// and leaving.
-			_sender.Send("CAP REQ :twitch.tv/membership", false);
-			_sender.Send("JOIN #" + _channel, false);
+					Encoding utf8 = new UTF8Encoding(false, true);
+					TextWriter writer = new StreamWriter(stream, utf8);
+					TextReader reader = new StreamReader(stream, utf8);
+					_sender = new ThrottledSender(20, new TimeSpan(0, 0, 30), writer);
+					_sender.MessageSent += OnMessageSent;
+
+					_sender.Send("PASS " + oAuth, true);
+					_sender.Send("NICK " + user, true);
+
+					_connecting.Set();
+
+					// Register for IRCv3 membership capability so we get notifications for people joining
+					// and leaving.
+					_sender.Send("CAP REQ :twitch.tv/membership", false);
+					_sender.Send("JOIN #" + _channel, false);
+
+					Listen(reader);
+				});
+			_listener.Name = "Connection";
+			_listener.Start();
 		}
 
 		/// <summary>
@@ -82,6 +99,7 @@ namespace TwitchBot
 		/// </summary>
 		public void Send(string text)
 		{
+			_connecting.WaitOne();
 			_sender.Send("PRIVMSG #" + _channel + " :" + text, true);
 		}
 
@@ -90,68 +108,25 @@ namespace TwitchBot
 		/// </summary>
 		public void SendRaw(string text)
 		{
+			_connecting.WaitOne();
 			_sender.Send(text, true);
-		}
-
-		/// <summary>
-		/// Begin the main listener loop to handle incoming traffic. Blocks until the connection is closed.
-		/// </summary>
-		public void DoWork()
-		{
-			Regex ping = new Regex("^PING :(.+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-			Regex join = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv JOIN #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-			Regex part = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PART #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-			Regex privMsg = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PRIVMSG #[^ ]* :(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-			string line;
-			while ((line = Receive()) != null)
-			{
-				OnMessageReceived(line);
-
-				Match pingMatch = ping.Match(line);
-				if (pingMatch.Success)
-				{
-					_sender.Send("PONG :" + pingMatch.Groups[1].Value, true);
-					continue;
-				}
-
-				Match privMsgMatch = privMsg.Match(line);
-				if (privMsgMatch.Success)
-				{
-					OnPrivateMessageReceived(privMsgMatch.Groups[1].Value, privMsgMatch.Groups[2].Value);
-					continue;
-				}
-
-				Match joinMatch = join.Match(line);
-				if (joinMatch.Success)
-				{
-					OnUserJoined(joinMatch.Groups[1].Value);
-					continue;
-				}
-
-				Match partMatch = part.Match(line);
-				if (partMatch.Success)
-				{
-					OnUserLeft(partMatch.Groups[1].Value);
-					continue;
-				}
-			}
 		}
 
 		public void Dispose()
 		{
+			if (_listener == null)
+			{
+				_connecting.Close();
+				return;
+			}
+			_connecting.WaitOne();
+			_connecting.Close();
 			_sender.Send("QUIT", true);
 			_sender.RequestExit();
+			_listener.Join();
 			_sender.MessageSent -= OnMessageSent;
 			_sender.Dispose();
-			_sender = null;
-			lock (_disposeLock)
-			{
-				if (_client != null)
-				{
-					_client.Close();
-					_client = null;
-				}
-			}
+			_client.Close();
 		}
 
 		/// <summary>
@@ -202,7 +177,7 @@ namespace TwitchBot
 		{
 			if (UserJoined != null)
 			{
-				UserEventArgs e = new UserEventArgs(user);
+				UserEventArgs e = new UserEventArgs(user, true);
 				UserJoined(this, e);
 			}
 		}
@@ -215,23 +190,50 @@ namespace TwitchBot
 		{
 			if (UserLeft != null)
 			{
-				UserEventArgs e = new UserEventArgs(user);
+				UserEventArgs e = new UserEventArgs(user, false);
 				UserLeft(this, e);
 			}
 		}
 
-		private string Receive()
+		private void Listen(TextReader reader)
 		{
-			string retval;
-			lock (_disposeLock)
+			Regex ping = new Regex("^PING :(.+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+			Regex join = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv JOIN #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+			Regex part = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PART #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+			Regex privMsg = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PRIVMSG #[^ ]* :(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+			string line;
+			while ((line = reader.ReadLine()) != null)
 			{
-				if (_client == null)
+				OnMessageReceived(line);
+
+				Match pingMatch = ping.Match(line);
+				if (pingMatch.Success)
 				{
-					return null;
+					_sender.Send("PONG :" + pingMatch.Groups[1].Value, true);
+					continue;
 				}
-				retval = _reader.ReadLine();
+
+				Match privMsgMatch = privMsg.Match(line);
+				if (privMsgMatch.Success)
+				{
+					OnPrivateMessageReceived(privMsgMatch.Groups[1].Value, privMsgMatch.Groups[2].Value);
+					continue;
+				}
+
+				Match joinMatch = join.Match(line);
+				if (joinMatch.Success)
+				{
+					OnUserJoined(joinMatch.Groups[1].Value);
+					continue;
+				}
+
+				Match partMatch = part.Match(line);
+				if (partMatch.Success)
+				{
+					OnUserLeft(partMatch.Groups[1].Value);
+					continue;
+				}
 			}
-			return retval;
 		}
 
 		public delegate void MessageEventHandler(object sender, MessageEventArgs e);
@@ -287,12 +289,22 @@ namespace TwitchBot
 
 		public class UserEventArgs : EventArgs
 		{
-			public UserEventArgs(string user)
+			public UserEventArgs(string user, bool isJoin)
 			{
+				_isJoin = isJoin;
 				_user = user;
 			}
 
+			private bool _isJoin;
 			private string _user;
+
+			/// <summary>
+			/// Whether the user joined. Otherwise, the user left.
+			/// </summary>
+			public bool IsJoin
+			{
+				get { return _isJoin; }
+			}
 
 			public string User
 			{

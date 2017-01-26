@@ -61,23 +61,23 @@
 			this.textBoxChat = new System.Windows.Forms.TextBox();
 			this.buttonSend = new System.Windows.Forms.Button();
 			this.tabControlConnected = new System.Windows.Forms.TabControl();
+			this.tabPageConnect = new System.Windows.Forms.TabPage();
 			this.tabPageRaffle = new System.Windows.Forms.TabPage();
 			this.tabPageTraffic = new System.Windows.Forms.TabPage();
 			this.tabPageEffects = new System.Windows.Forms.TabPage();
-			this.tabPageConnect = new System.Windows.Forms.TabPage();
 			this.menuStripMain.SuspendLayout();
 			this.tabControlConnected.SuspendLayout();
+			this.tabPageConnect.SuspendLayout();
 			this.tabPageRaffle.SuspendLayout();
 			this.tabPageTraffic.SuspendLayout();
 			this.tabPageEffects.SuspendLayout();
-			this.tabPageConnect.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// buttonDoWork
 			// 
 			this.buttonDoWork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDoWork.Location = new System.Drawing.Point(8, 95);
+			this.buttonDoWork.Location = new System.Drawing.Point(8, 81);
 			this.buttonDoWork.Name = "buttonDoWork";
 			this.buttonDoWork.Size = new System.Drawing.Size(556, 23);
 			this.buttonDoWork.TabIndex = 0;
@@ -95,7 +95,7 @@
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxLog.Size = new System.Drawing.Size(560, 59);
+			this.textBoxLog.Size = new System.Drawing.Size(560, 189);
 			this.textBoxLog.TabIndex = 1;
 			// 
 			// textBoxInput
@@ -103,7 +103,7 @@
 			this.textBoxInput.AcceptsTab = true;
 			this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxInput.Location = new System.Drawing.Point(6, 71);
+			this.textBoxInput.Location = new System.Drawing.Point(6, 201);
 			this.textBoxInput.Name = "textBoxInput";
 			this.textBoxInput.Size = new System.Drawing.Size(560, 20);
 			this.textBoxInput.TabIndex = 2;
@@ -111,9 +111,9 @@
 			// buttonSendRaw
 			// 
 			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSendRaw.Location = new System.Drawing.Point(499, 97);
+			this.buttonSendRaw.Location = new System.Drawing.Point(499, 227);
 			this.buttonSendRaw.Name = "buttonSendRaw";
-			this.buttonSendRaw.Size = new System.Drawing.Size(67, 23);
+			this.buttonSendRaw.Size = new System.Drawing.Size(65, 23);
 			this.buttonSendRaw.TabIndex = 3;
 			this.buttonSendRaw.Text = "Send Raw";
 			this.buttonSendRaw.UseVisualStyleBackColor = true;
@@ -287,16 +287,16 @@
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.listBoxRaffle.Location = new System.Drawing.Point(6, 6);
 			this.listBoxRaffle.Name = "listBoxRaffle";
-			this.listBoxRaffle.Size = new System.Drawing.Size(560, 56);
+			this.listBoxRaffle.Size = new System.Drawing.Size(560, 212);
 			this.listBoxRaffle.TabIndex = 11;
 			// 
 			// buttonDraw
 			// 
 			this.buttonDraw.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDraw.Location = new System.Drawing.Point(6, 97);
+			this.buttonDraw.Location = new System.Drawing.Point(8, 227);
 			this.buttonDraw.Name = "buttonDraw";
-			this.buttonDraw.Size = new System.Drawing.Size(498, 23);
+			this.buttonDraw.Size = new System.Drawing.Size(485, 23);
 			this.buttonDraw.TabIndex = 13;
 			this.buttonDraw.Text = "Draw";
 			this.buttonDraw.UseVisualStyleBackColor = true;
@@ -305,9 +305,9 @@
 			// buttonClear
 			// 
 			this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonClear.Location = new System.Drawing.Point(510, 97);
+			this.buttonClear.Location = new System.Drawing.Point(499, 227);
 			this.buttonClear.Name = "buttonClear";
-			this.buttonClear.Size = new System.Drawing.Size(56, 23);
+			this.buttonClear.Size = new System.Drawing.Size(65, 23);
 			this.buttonClear.TabIndex = 14;
 			this.buttonClear.Text = "Clear";
 			this.buttonClear.UseVisualStyleBackColor = true;
@@ -353,7 +353,7 @@
 			// labelChat
 			// 
 			this.labelChat.AutoSize = true;
-			this.labelChat.Location = new System.Drawing.Point(8, 58);
+			this.labelChat.Location = new System.Drawing.Point(3, 58);
 			this.labelChat.Name = "labelChat";
 			this.labelChat.Size = new System.Drawing.Size(29, 13);
 			this.labelChat.TabIndex = 19;
@@ -372,9 +372,9 @@
 			// 
 			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSend.Location = new System.Drawing.Point(6, 97);
+			this.buttonSend.Location = new System.Drawing.Point(8, 227);
 			this.buttonSend.Name = "buttonSend";
-			this.buttonSend.Size = new System.Drawing.Size(487, 23);
+			this.buttonSend.Size = new System.Drawing.Size(485, 23);
 			this.buttonSend.TabIndex = 4;
 			this.buttonSend.Text = "Send";
 			this.buttonSend.UseVisualStyleBackColor = true;
@@ -394,48 +394,6 @@
 			this.tabControlConnected.TabIndex = 13;
 			this.tabControlConnected.SelectedIndexChanged += new System.EventHandler(this.tabControlConnected_SelectedIndexChanged);
 			// 
-			// tabPageRaffle
-			// 
-			this.tabPageRaffle.Controls.Add(this.listBoxRaffle);
-			this.tabPageRaffle.Controls.Add(this.buttonDraw);
-			this.tabPageRaffle.Controls.Add(this.buttonClear);
-			this.tabPageRaffle.Location = new System.Drawing.Point(4, 22);
-			this.tabPageRaffle.Name = "tabPageRaffle";
-			this.tabPageRaffle.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageRaffle.Size = new System.Drawing.Size(572, 126);
-			this.tabPageRaffle.TabIndex = 0;
-			this.tabPageRaffle.Text = "Raffle";
-			this.tabPageRaffle.UseVisualStyleBackColor = true;
-			// 
-			// tabPageTraffic
-			// 
-			this.tabPageTraffic.Controls.Add(this.buttonSend);
-			this.tabPageTraffic.Controls.Add(this.textBoxInput);
-			this.tabPageTraffic.Controls.Add(this.textBoxLog);
-			this.tabPageTraffic.Controls.Add(this.buttonSendRaw);
-			this.tabPageTraffic.Location = new System.Drawing.Point(4, 22);
-			this.tabPageTraffic.Name = "tabPageTraffic";
-			this.tabPageTraffic.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageTraffic.Size = new System.Drawing.Size(572, 126);
-			this.tabPageTraffic.TabIndex = 1;
-			this.tabPageTraffic.Text = "Traffic";
-			this.tabPageTraffic.UseVisualStyleBackColor = true;
-			// 
-			// tabPageEffects
-			// 
-			this.tabPageEffects.Controls.Add(this.labelBlue);
-			this.tabPageEffects.Controls.Add(this.textBoxB);
-			this.tabPageEffects.Controls.Add(this.labelRed);
-			this.tabPageEffects.Controls.Add(this.textBoxG);
-			this.tabPageEffects.Controls.Add(this.textBoxR);
-			this.tabPageEffects.Controls.Add(this.labelGreen);
-			this.tabPageEffects.Location = new System.Drawing.Point(4, 22);
-			this.tabPageEffects.Name = "tabPageEffects";
-			this.tabPageEffects.Size = new System.Drawing.Size(572, 126);
-			this.tabPageEffects.TabIndex = 2;
-			this.tabPageEffects.Text = "Effects";
-			this.tabPageEffects.UseVisualStyleBackColor = true;
-			// 
 			// tabPageConnect
 			// 
 			this.tabPageConnect.Controls.Add(this.labelUser);
@@ -450,7 +408,48 @@
 			this.tabPageConnect.Size = new System.Drawing.Size(572, 258);
 			this.tabPageConnect.TabIndex = 3;
 			this.tabPageConnect.Text = "Connect";
-			this.tabPageConnect.UseVisualStyleBackColor = true;
+			// 
+			// tabPageRaffle
+			// 
+			this.tabPageRaffle.Controls.Add(this.listBoxRaffle);
+			this.tabPageRaffle.Controls.Add(this.buttonDraw);
+			this.tabPageRaffle.Controls.Add(this.buttonClear);
+			this.tabPageRaffle.Location = new System.Drawing.Point(4, 22);
+			this.tabPageRaffle.Name = "tabPageRaffle";
+			this.tabPageRaffle.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageRaffle.Size = new System.Drawing.Size(572, 258);
+			this.tabPageRaffle.TabIndex = 0;
+			this.tabPageRaffle.Text = "Raffle";
+			this.tabPageRaffle.UseVisualStyleBackColor = true;
+			// 
+			// tabPageTraffic
+			// 
+			this.tabPageTraffic.Controls.Add(this.buttonSend);
+			this.tabPageTraffic.Controls.Add(this.textBoxInput);
+			this.tabPageTraffic.Controls.Add(this.textBoxLog);
+			this.tabPageTraffic.Controls.Add(this.buttonSendRaw);
+			this.tabPageTraffic.Location = new System.Drawing.Point(4, 22);
+			this.tabPageTraffic.Name = "tabPageTraffic";
+			this.tabPageTraffic.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageTraffic.Size = new System.Drawing.Size(572, 258);
+			this.tabPageTraffic.TabIndex = 1;
+			this.tabPageTraffic.Text = "Traffic";
+			this.tabPageTraffic.UseVisualStyleBackColor = true;
+			// 
+			// tabPageEffects
+			// 
+			this.tabPageEffects.Controls.Add(this.labelBlue);
+			this.tabPageEffects.Controls.Add(this.textBoxB);
+			this.tabPageEffects.Controls.Add(this.labelRed);
+			this.tabPageEffects.Controls.Add(this.textBoxG);
+			this.tabPageEffects.Controls.Add(this.textBoxR);
+			this.tabPageEffects.Controls.Add(this.labelGreen);
+			this.tabPageEffects.Location = new System.Drawing.Point(4, 22);
+			this.tabPageEffects.Name = "tabPageEffects";
+			this.tabPageEffects.Size = new System.Drawing.Size(572, 258);
+			this.tabPageEffects.TabIndex = 2;
+			this.tabPageEffects.Text = "Effects";
+			this.tabPageEffects.UseVisualStyleBackColor = true;
 			// 
 			// TwitchBot
 			// 
@@ -466,13 +465,13 @@
 			this.menuStripMain.ResumeLayout(false);
 			this.menuStripMain.PerformLayout();
 			this.tabControlConnected.ResumeLayout(false);
+			this.tabPageConnect.ResumeLayout(false);
+			this.tabPageConnect.PerformLayout();
 			this.tabPageRaffle.ResumeLayout(false);
 			this.tabPageTraffic.ResumeLayout(false);
 			this.tabPageTraffic.PerformLayout();
 			this.tabPageEffects.ResumeLayout(false);
 			this.tabPageEffects.PerformLayout();
-			this.tabPageConnect.ResumeLayout(false);
-			this.tabPageConnect.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

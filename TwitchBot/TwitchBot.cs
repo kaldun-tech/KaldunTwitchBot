@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace TwitchBot
@@ -16,21 +15,17 @@ namespace TwitchBot
 			InitializeComponent();
 
 			_connection = null;
-			_connectionLock = new object();
 			_generator = new Random();
 			_imageForm = new Images();
 			_imageForm.VisibleChanged += new EventHandler(image_VisibilityChanged);
-			_isConnecting = false;
 			_log = null;
 			_raffleUsers = new Dictionary<string, object>();
 			_windowColor = textBoxR.BackColor;
 		}
 
 		private Connection _connection;
-		private object _connectionLock;
 		private Random _generator;
 		private Images _imageForm;
-		private bool _isConnecting;
 		private TextWriter _log;
 		private IDictionary<string, object> _raffleUsers;
 		private Color _windowColor;
@@ -106,61 +101,31 @@ namespace TwitchBot
 
 		private void buttonDoWork_Click(object sender, EventArgs e)
 		{
-			lock (_connectionLock)
-			{
-				if (_isConnecting)
-				{
-					return;
-				}
-				_isConnecting = true;
-			}
+			string hostname = "irc.chat.twitch.tv";
 
-			Thread handleReceive = new Thread(delegate()
-				{
-					string hostname = "irc.chat.twitch.tv";
-					lock (_connectionLock)
-					{
-						if (!_isConnecting)
-						{
-							return;
-						}
-						_connection = new Connection(textBoxUser.Text, textBoxChat.Text);
-						_connection.Connect(hostname, 443, textBoxPassword.Text, true);
-						_connection.MessageReceived += ConnectionMessageTransfer;
-						_connection.MessageSent += ConnectionMessageTransfer;
-						_connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
-						_isConnecting = false;
-					}
-					_connection.DoWork();
-				});
-			handleReceive.Name = "Connection";
-			handleReceive.Start();
+			_connection = new Connection(textBoxChat.Text);
+			_connection.MessageReceived += ConnectionMessageTransfer;
+			_connection.MessageSent += ConnectionMessageTransfer;
+			_connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
+			_connection.Connect(hostname, 443, true, textBoxUser.Text, textBoxPassword.Text);
 		}
 
 		private void buttonSendRaw_Click(object sender, EventArgs e)
 		{
-			lock (_connectionLock)
+			if (_connection == null)
 			{
-				if (_isConnecting || _connection == null)
-				{
-					return;
-				}
+				return;
 			}
-
 			_connection.SendRaw(textBoxInput.Text);
 			textBoxInput.Clear();
 		}
 
 		private void buttonSend_Click(object sender, EventArgs e)
 		{
-			lock (_connectionLock)
+			if (_connection == null)
 			{
-				if (_isConnecting || _connection == null)
-				{
-					return;
-				}
+				return;
 			}
-
 			_connection.Send(textBoxInput.Text);
 			textBoxInput.Clear();
 		}
@@ -173,17 +138,9 @@ namespace TwitchBot
 		// Clean up here since the Dispose method is implemented in the designer code.
 		private void TwitchBot_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			lock (_connectionLock)
+			if (_connection != null)
 			{
-				if (_isConnecting)
-				{
-					_isConnecting = false;
-				}
-				else if (_connection != null)
-				{
-					_connection.Dispose();
-					_connection = null;
-				}
+				_connection.Dispose();
 			}
 			if (_log != null)
 			{

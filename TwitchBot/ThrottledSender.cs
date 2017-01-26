@@ -49,15 +49,8 @@ namespace TwitchBot
 		{
 			lock (_queue)
 			{
-				if (isHighPriority)
-				{
-					// TODO: Make this a priority queue so we're not pre-empting other high priority items.
-					_queue.Insert(0, text);
-				}
-				else
-				{
-					_queue.Add(text);
-				}
+				// TODO: Use a priority queue to respect high priority items.
+				_queue.Add(text);
 				_signal.Set();
 			}
 		}
