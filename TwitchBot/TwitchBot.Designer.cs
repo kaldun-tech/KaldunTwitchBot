@@ -61,25 +61,27 @@
 			this.textBoxChat = new System.Windows.Forms.TextBox();
 			this.buttonSend = new System.Windows.Forms.Button();
 			this.tabControlConnected = new System.Windows.Forms.TabControl();
-			this.tabPageConnect = new System.Windows.Forms.TabPage();
 			this.tabPageRaffle = new System.Windows.Forms.TabPage();
 			this.tabPageTraffic = new System.Windows.Forms.TabPage();
 			this.tabPageEffects = new System.Windows.Forms.TabPage();
+			this.panelDisconnected = new System.Windows.Forms.Panel();
+			this.checkBoxSSL = new System.Windows.Forms.CheckBox();
+			this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStripMain.SuspendLayout();
 			this.tabControlConnected.SuspendLayout();
-			this.tabPageConnect.SuspendLayout();
 			this.tabPageRaffle.SuspendLayout();
 			this.tabPageTraffic.SuspendLayout();
 			this.tabPageEffects.SuspendLayout();
+			this.panelDisconnected.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// buttonDoWork
 			// 
 			this.buttonDoWork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDoWork.Location = new System.Drawing.Point(8, 81);
+			this.buttonDoWork.Location = new System.Drawing.Point(149, 105);
 			this.buttonDoWork.Name = "buttonDoWork";
-			this.buttonDoWork.Size = new System.Drawing.Size(556, 23);
+			this.buttonDoWork.Size = new System.Drawing.Size(419, 23);
 			this.buttonDoWork.TabIndex = 0;
 			this.buttonDoWork.Text = "Connect";
 			this.buttonDoWork.UseVisualStyleBackColor = true;
@@ -95,7 +97,7 @@
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxLog.Size = new System.Drawing.Size(560, 189);
+			this.textBoxLog.Size = new System.Drawing.Size(560, 79);
 			this.textBoxLog.TabIndex = 1;
 			// 
 			// textBoxInput
@@ -103,7 +105,7 @@
 			this.textBoxInput.AcceptsTab = true;
 			this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxInput.Location = new System.Drawing.Point(6, 201);
+			this.textBoxInput.Location = new System.Drawing.Point(6, 91);
 			this.textBoxInput.Name = "textBoxInput";
 			this.textBoxInput.Size = new System.Drawing.Size(560, 20);
 			this.textBoxInput.TabIndex = 2;
@@ -111,7 +113,7 @@
 			// buttonSendRaw
 			// 
 			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSendRaw.Location = new System.Drawing.Point(499, 227);
+			this.buttonSendRaw.Location = new System.Drawing.Point(499, 117);
 			this.buttonSendRaw.Name = "buttonSendRaw";
 			this.buttonSendRaw.Size = new System.Drawing.Size(65, 23);
 			this.buttonSendRaw.TabIndex = 3;
@@ -134,6 +136,7 @@
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.disconnectToolStripMenuItem,
             this.logToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -145,8 +148,9 @@
 			this.logToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.appendToolStripMenuItem});
+			this.logToolStripMenuItem.Enabled = false;
 			this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-			this.logToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.logToolStripMenuItem.Text = "Log";
 			this.logToolStripMenuItem.Visible = false;
 			this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
@@ -177,6 +181,7 @@
 			// 
 			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearToolStripMenuItem});
+			this.editToolStripMenuItem.Enabled = false;
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			this.editToolStripMenuItem.Text = "Edit";
@@ -184,9 +189,11 @@
 			// 
 			// clearToolStripMenuItem
 			// 
+			this.clearToolStripMenuItem.Enabled = false;
 			this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-			this.clearToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
+			this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.clearToolStripMenuItem.Text = "Clear";
+			this.clearToolStripMenuItem.Visible = false;
 			this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
 			// 
 			// viewToolStripMenuItem
@@ -316,7 +323,7 @@
 			// labelUser
 			// 
 			this.labelUser.AutoSize = true;
-			this.labelUser.Location = new System.Drawing.Point(3, 6);
+			this.labelUser.Location = new System.Drawing.Point(12, 30);
 			this.labelUser.Name = "labelUser";
 			this.labelUser.Size = new System.Drawing.Size(29, 13);
 			this.labelUser.TabIndex = 15;
@@ -326,15 +333,15 @@
 			// 
 			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxUser.Location = new System.Drawing.Point(140, 3);
+			this.textBoxUser.Location = new System.Drawing.Point(149, 27);
 			this.textBoxUser.Name = "textBoxUser";
-			this.textBoxUser.Size = new System.Drawing.Size(424, 20);
+			this.textBoxUser.Size = new System.Drawing.Size(419, 20);
 			this.textBoxUser.TabIndex = 16;
 			// 
 			// labelPassword
 			// 
 			this.labelPassword.AutoSize = true;
-			this.labelPassword.Location = new System.Drawing.Point(3, 32);
+			this.labelPassword.Location = new System.Drawing.Point(12, 56);
 			this.labelPassword.Name = "labelPassword";
 			this.labelPassword.Size = new System.Drawing.Size(131, 13);
 			this.labelPassword.TabIndex = 17;
@@ -344,16 +351,16 @@
 			// 
 			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxPassword.Location = new System.Drawing.Point(140, 29);
+			this.textBoxPassword.Location = new System.Drawing.Point(149, 53);
 			this.textBoxPassword.Name = "textBoxPassword";
-			this.textBoxPassword.Size = new System.Drawing.Size(424, 20);
+			this.textBoxPassword.Size = new System.Drawing.Size(419, 20);
 			this.textBoxPassword.TabIndex = 18;
 			this.textBoxPassword.UseSystemPasswordChar = true;
 			// 
 			// labelChat
 			// 
 			this.labelChat.AutoSize = true;
-			this.labelChat.Location = new System.Drawing.Point(3, 58);
+			this.labelChat.Location = new System.Drawing.Point(12, 82);
 			this.labelChat.Name = "labelChat";
 			this.labelChat.Size = new System.Drawing.Size(29, 13);
 			this.labelChat.TabIndex = 19;
@@ -363,16 +370,16 @@
 			// 
 			this.textBoxChat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxChat.Location = new System.Drawing.Point(140, 55);
+			this.textBoxChat.Location = new System.Drawing.Point(149, 79);
 			this.textBoxChat.Name = "textBoxChat";
-			this.textBoxChat.Size = new System.Drawing.Size(424, 20);
+			this.textBoxChat.Size = new System.Drawing.Size(419, 20);
 			this.textBoxChat.TabIndex = 20;
 			// 
 			// buttonSend
 			// 
 			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSend.Location = new System.Drawing.Point(8, 227);
+			this.buttonSend.Location = new System.Drawing.Point(8, 117);
 			this.buttonSend.Name = "buttonSend";
 			this.buttonSend.Size = new System.Drawing.Size(485, 23);
 			this.buttonSend.TabIndex = 4;
@@ -382,32 +389,18 @@
 			// 
 			// tabControlConnected
 			// 
-			this.tabControlConnected.Controls.Add(this.tabPageConnect);
 			this.tabControlConnected.Controls.Add(this.tabPageRaffle);
 			this.tabControlConnected.Controls.Add(this.tabPageTraffic);
 			this.tabControlConnected.Controls.Add(this.tabPageEffects);
 			this.tabControlConnected.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabControlConnected.Enabled = false;
 			this.tabControlConnected.Location = new System.Drawing.Point(0, 24);
 			this.tabControlConnected.Name = "tabControlConnected";
 			this.tabControlConnected.SelectedIndex = 0;
 			this.tabControlConnected.Size = new System.Drawing.Size(580, 284);
 			this.tabControlConnected.TabIndex = 13;
+			this.tabControlConnected.Visible = false;
 			this.tabControlConnected.SelectedIndexChanged += new System.EventHandler(this.tabControlConnected_SelectedIndexChanged);
-			// 
-			// tabPageConnect
-			// 
-			this.tabPageConnect.Controls.Add(this.labelUser);
-			this.tabPageConnect.Controls.Add(this.textBoxUser);
-			this.tabPageConnect.Controls.Add(this.labelChat);
-			this.tabPageConnect.Controls.Add(this.labelPassword);
-			this.tabPageConnect.Controls.Add(this.buttonDoWork);
-			this.tabPageConnect.Controls.Add(this.textBoxChat);
-			this.tabPageConnect.Controls.Add(this.textBoxPassword);
-			this.tabPageConnect.Location = new System.Drawing.Point(4, 22);
-			this.tabPageConnect.Name = "tabPageConnect";
-			this.tabPageConnect.Size = new System.Drawing.Size(572, 258);
-			this.tabPageConnect.TabIndex = 3;
-			this.tabPageConnect.Text = "Connect";
 			// 
 			// tabPageRaffle
 			// 
@@ -431,7 +424,7 @@
 			this.tabPageTraffic.Location = new System.Drawing.Point(4, 22);
 			this.tabPageTraffic.Name = "tabPageTraffic";
 			this.tabPageTraffic.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageTraffic.Size = new System.Drawing.Size(572, 258);
+			this.tabPageTraffic.Size = new System.Drawing.Size(572, 148);
 			this.tabPageTraffic.TabIndex = 1;
 			this.tabPageTraffic.Text = "Traffic";
 			this.tabPageTraffic.UseVisualStyleBackColor = true;
@@ -446,10 +439,47 @@
 			this.tabPageEffects.Controls.Add(this.labelGreen);
 			this.tabPageEffects.Location = new System.Drawing.Point(4, 22);
 			this.tabPageEffects.Name = "tabPageEffects";
-			this.tabPageEffects.Size = new System.Drawing.Size(572, 258);
+			this.tabPageEffects.Size = new System.Drawing.Size(572, 148);
 			this.tabPageEffects.TabIndex = 2;
 			this.tabPageEffects.Text = "Effects";
 			this.tabPageEffects.UseVisualStyleBackColor = true;
+			// 
+			// panelDisconnected
+			// 
+			this.panelDisconnected.Controls.Add(this.checkBoxSSL);
+			this.panelDisconnected.Controls.Add(this.buttonDoWork);
+			this.panelDisconnected.Controls.Add(this.labelChat);
+			this.panelDisconnected.Controls.Add(this.textBoxUser);
+			this.panelDisconnected.Controls.Add(this.labelPassword);
+			this.panelDisconnected.Controls.Add(this.labelUser);
+			this.panelDisconnected.Controls.Add(this.textBoxPassword);
+			this.panelDisconnected.Controls.Add(this.textBoxChat);
+			this.panelDisconnected.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panelDisconnected.Location = new System.Drawing.Point(0, 0);
+			this.panelDisconnected.Name = "panelDisconnected";
+			this.panelDisconnected.Size = new System.Drawing.Size(580, 308);
+			this.panelDisconnected.TabIndex = 14;
+			// 
+			// checkBoxSSL
+			// 
+			this.checkBoxSSL.AutoSize = true;
+			this.checkBoxSSL.Checked = true;
+			this.checkBoxSSL.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBoxSSL.Location = new System.Drawing.Point(13, 110);
+			this.checkBoxSSL.Name = "checkBoxSSL";
+			this.checkBoxSSL.Size = new System.Drawing.Size(68, 17);
+			this.checkBoxSSL.TabIndex = 21;
+			this.checkBoxSSL.Text = "Use SSL";
+			this.checkBoxSSL.UseVisualStyleBackColor = true;
+			// 
+			// disconnectToolStripMenuItem
+			// 
+			this.disconnectToolStripMenuItem.Enabled = false;
+			this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+			this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.disconnectToolStripMenuItem.Text = "Disconnect";
+			this.disconnectToolStripMenuItem.Visible = false;
+			this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
 			// 
 			// TwitchBot
 			// 
@@ -458,6 +488,7 @@
 			this.ClientSize = new System.Drawing.Size(580, 308);
 			this.Controls.Add(this.tabControlConnected);
 			this.Controls.Add(this.menuStripMain);
+			this.Controls.Add(this.panelDisconnected);
 			this.MainMenuStrip = this.menuStripMain;
 			this.Name = "TwitchBot";
 			this.Text = "TwitchBot";
@@ -465,13 +496,13 @@
 			this.menuStripMain.ResumeLayout(false);
 			this.menuStripMain.PerformLayout();
 			this.tabControlConnected.ResumeLayout(false);
-			this.tabPageConnect.ResumeLayout(false);
-			this.tabPageConnect.PerformLayout();
 			this.tabPageRaffle.ResumeLayout(false);
 			this.tabPageTraffic.ResumeLayout(false);
 			this.tabPageTraffic.PerformLayout();
 			this.tabPageEffects.ResumeLayout(false);
 			this.tabPageEffects.PerformLayout();
+			this.panelDisconnected.ResumeLayout(false);
+			this.panelDisconnected.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -515,7 +546,9 @@
 		private System.Windows.Forms.TabPage tabPageRaffle;
 		private System.Windows.Forms.TabPage tabPageTraffic;
 		private System.Windows.Forms.TabPage tabPageEffects;
-		private System.Windows.Forms.TabPage tabPageConnect;
+		private System.Windows.Forms.Panel panelDisconnected;
+		private System.Windows.Forms.CheckBox checkBoxSSL;
+		private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
 	}
 }
 

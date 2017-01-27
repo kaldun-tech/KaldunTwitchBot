@@ -52,6 +52,59 @@ namespace TwitchBot
 			_log.Write(textBoxLog.Text);
 		}
 
+		private void HandleConnectionChange(bool isConnect)
+		{
+			panelDisconnected.Enabled = !isConnect;
+			panelDisconnected.Visible = !isConnect;
+			tabControlConnected.Visible = isConnect;
+			tabControlConnected.Enabled = isConnect;
+			disconnectToolStripMenuItem.Enabled = isConnect;
+			disconnectToolStripMenuItem.Visible = isConnect;
+			HandleTabChange(isConnect ? tabControlConnected.SelectedTab : null);
+		}
+
+		/// <summary>
+		/// Update the menu based on which tab is currently selected.
+		/// </summary>
+		/// <param name="selected">The newly-selected tab, or null if the tab control is disabled.</param>
+		private void HandleTabChange(TabPage selected)
+		{
+			bool isTrafficSelected = (selected == tabPageTraffic);
+			appendToolStripMenuItem.Enabled = isTrafficSelected;
+			appendToolStripMenuItem.Visible = isTrafficSelected;
+			clearToolStripMenuItem.Enabled = isTrafficSelected;
+			clearToolStripMenuItem.Visible = isTrafficSelected;
+			editToolStripMenuItem.Enabled = isTrafficSelected;
+			editToolStripMenuItem.Visible = isTrafficSelected;
+			logToolStripMenuItem.Enabled = isTrafficSelected;
+			logToolStripMenuItem.Visible = isTrafficSelected;
+			newToolStripMenuItem.Enabled = isTrafficSelected;
+			newToolStripMenuItem.Visible = isTrafficSelected;
+			scrollToNewMessageToolStripMenuItem.Enabled = isTrafficSelected;
+			scrollToNewMessageToolStripMenuItem.Visible = isTrafficSelected;
+		}
+
+		private void ConnectionDisconnected(object sender, EventArgs e)
+		{
+			if (InvokeRequired)
+			{
+				BeginInvoke(new EventHandler(ConnectionDisconnected), sender, e);
+				return;
+			}
+
+			if (_connection != null)
+			{
+				_connection.Disconnected -= ConnectionDisconnected;
+				_connection.MessageReceived -= ConnectionMessageTransfer;
+				_connection.MessageSent -= ConnectionMessageTransfer;
+				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+				_connection.Dispose();
+				_connection = null;
+			}
+
+			HandleConnectionChange(false);
+		}
+
 		private void ConnectionMessageTransfer(object sender, Connection.MessageEventArgs e)
 		{
 			if (InvokeRequired)
@@ -101,13 +154,25 @@ namespace TwitchBot
 
 		private void buttonDoWork_Click(object sender, EventArgs e)
 		{
+			if (_connection != null)
+			{
+				_connection.Disconnected -= ConnectionDisconnected;
+				_connection.MessageReceived -= ConnectionMessageTransfer;
+				_connection.MessageSent -= ConnectionMessageTransfer;
+				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+				_connection.Dispose();
+			}
+
 			string hostname = "irc.chat.twitch.tv";
 
 			_connection = new Connection(textBoxChat.Text);
+			_connection.Disconnected += ConnectionDisconnected;
 			_connection.MessageReceived += ConnectionMessageTransfer;
 			_connection.MessageSent += ConnectionMessageTransfer;
 			_connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
-			_connection.Connect(hostname, 443, true, textBoxUser.Text, textBoxPassword.Text);
+			_connection.Connect(hostname, checkBoxSSL.Checked ? 443 : 6667, checkBoxSSL.Checked, textBoxUser.Text, textBoxPassword.Text);
+
+			HandleConnectionChange(true);
 		}
 
 		private void buttonSendRaw_Click(object sender, EventArgs e)
@@ -140,7 +205,12 @@ namespace TwitchBot
 		{
 			if (_connection != null)
 			{
+				_connection.Disconnected -= ConnectionDisconnected;
+				_connection.MessageReceived -= ConnectionMessageTransfer;
+				_connection.MessageSent -= ConnectionMessageTransfer;
+				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
 				_connection.Dispose();
+				_connection = null;
 			}
 			if (_log != null)
 			{
@@ -245,15 +315,25 @@ namespace TwitchBot
 			logToolStripMenuItem.Checked = false;
 		}
 
-		/// <summary>
-		/// Update the menu based on which tab is currently selected.
-		/// </summary>
 		private void tabControlConnected_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			bool isTrafficSelected = (tabControlConnected.SelectedTab == tabPageTraffic);
-			editToolStripMenuItem.Visible = isTrafficSelected;
-			logToolStripMenuItem.Visible = isTrafficSelected;
-			scrollToNewMessageToolStripMenuItem.Visible = isTrafficSelected;
+			HandleTabChange(tabControlConnected.SelectedTab);
+		}
+
+		private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (_connection == null)
+			{
+				return;
+			}
+
+			_connection.Disconnected -= ConnectionDisconnected;
+			_connection.MessageReceived -= ConnectionMessageTransfer;
+			_connection.MessageSent -= ConnectionMessageTransfer;
+			_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+			_connection.Dispose();
+			_connection = null;
+			HandleConnectionChange(false);
 		}
 	}
 }

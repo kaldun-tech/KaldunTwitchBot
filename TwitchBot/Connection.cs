@@ -14,10 +14,13 @@ namespace TwitchBot
 		{
 			_channel = chat;
 			_client = null;
+			_connectSuccess = false;
 			_connecting = new ManualResetEvent(false);
 			_listener = null;
 			_sender = null;
 		}
+
+		public event EventHandler Disconnected;
 
 		/// <summary>
 		/// Occurs when any traffic is received from the server, including internal IRC protocol.
@@ -48,6 +51,7 @@ namespace TwitchBot
 
 		private string _channel;
 		private TcpClient _client;
+		private bool _connectSuccess;
 		private ManualResetEvent _connecting;
 		private Thread _listener;
 		private ThrottledSender _sender;
@@ -63,7 +67,18 @@ namespace TwitchBot
 		{
 			_listener = new Thread(delegate()
 				{
-					_client = new TcpClient(hostname, port);
+					try
+					{
+						_client = new TcpClient(hostname, port);
+					}
+					catch (SocketException)
+					{
+						_connectSuccess = false;
+						OnDisconnected();
+						_connecting.Set();
+						return;
+					}
+
 					Stream stream = _client.GetStream();
 					if (useSSL)
 					{
@@ -75,12 +90,13 @@ namespace TwitchBot
 					Encoding utf8 = new UTF8Encoding(false, true);
 					TextWriter writer = new StreamWriter(stream, utf8);
 					TextReader reader = new StreamReader(stream, utf8);
+					writer.WriteLine("PASS " + oAuth);
+					writer.WriteLine("NICK " + user);
+					writer.Flush();
 					_sender = new ThrottledSender(20, new TimeSpan(0, 0, 30), writer);
 					_sender.MessageSent += OnMessageSent;
 
-					_sender.Send("PASS " + oAuth, true);
-					_sender.Send("NICK " + user, true);
-
+					_connectSuccess = true;
 					_connecting.Set();
 
 					// Register for IRCv3 membership capability so we get notifications for people joining
@@ -100,6 +116,10 @@ namespace TwitchBot
 		public void Send(string text)
 		{
 			_connecting.WaitOne();
+			if (!_connectSuccess)
+			{
+				return;
+			}
 			_sender.Send("PRIVMSG #" + _channel + " :" + text, true);
 		}
 
@@ -109,6 +129,10 @@ namespace TwitchBot
 		public void SendRaw(string text)
 		{
 			_connecting.WaitOne();
+			if (!_connectSuccess)
+			{
+				return;
+			}
 			_sender.Send(text, true);
 		}
 
@@ -119,14 +143,32 @@ namespace TwitchBot
 				_connecting.Close();
 				return;
 			}
+
 			_connecting.WaitOne();
 			_connecting.Close();
+
+			if (!_connectSuccess)
+			{
+				return;
+			}
+
 			_sender.Send("QUIT", true);
 			_sender.RequestExit();
 			_listener.Join();
 			_sender.MessageSent -= OnMessageSent;
 			_sender.Dispose();
 			_client.Close();
+		}
+
+		/// <summary>
+		/// Raise the Disconnected event.
+		/// </summary>
+		protected virtual void OnDisconnected()
+		{
+			if (Disconnected != null)
+			{
+				Disconnected(this, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -202,7 +244,7 @@ namespace TwitchBot
 			Regex part = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PART #(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 			Regex privMsg = new Regex(":([^!]+)!\\1@\\1.tmi.twitch.tv PRIVMSG #[^ ]* :(.*)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 			string line;
-			while ((line = reader.ReadLine()) != null)
+			while (TryReadLine(reader, out line))
 			{
 				OnMessageReceived(line);
 
@@ -234,6 +276,23 @@ namespace TwitchBot
 					continue;
 				}
 			}
+
+			OnDisconnected();
+		}
+
+		private bool TryReadLine(TextReader reader, out string result)
+		{
+			try
+			{
+				result = reader.ReadLine();
+			}
+			catch (IOException)
+			{
+				result = null;
+				return false;
+			}
+
+			return (result != null);
 		}
 
 		public delegate void MessageEventHandler(object sender, MessageEventArgs e);
