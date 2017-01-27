@@ -233,11 +233,14 @@ namespace TwitchBot
 
 			if (checkBoxPlay.Checked && !_drunkestIntroductions.ContainsKey(e.From))
 			{
-				_connection.Send("Welcome to the channel! We're playing Drunkest Dungeon. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
-					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text);
+				_connection.Send(string.Format("Welcome to the channel! We're playing Drunkest Dungeon. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text));
 				foreach (string user in _viewers.Keys)
 				{
-					_drunkestIntroductions.Add(user, null);
+					if (!_drunkestIntroductions.ContainsKey(user))
+					{
+						_drunkestIntroductions.Add(user, null);
+					}
 				}
 			}
 
@@ -495,6 +498,13 @@ namespace TwitchBot
 			{
 				_connection.Send(string.Format("A game of Drunkest Dungeon has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
 					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text));
+				foreach (string user in _viewers.Keys)
+				{
+					if (!_drunkestIntroductions.ContainsKey(user))
+					{
+						_drunkestIntroductions.Add(user, null);
+					}
+				}
 			}
 			else
 			{
