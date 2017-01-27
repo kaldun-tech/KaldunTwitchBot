@@ -15,20 +15,107 @@ namespace TwitchBot
 			InitializeComponent();
 
 			_connection = null;
+			_drunkestIntroductions = new Dictionary<string, object>();
+			// Use case-insensitive comparisons so viewers can target each other even if they don't
+			// use correct capitalization.
+			_drunkestParticipants = new Dictionary<string, DrunkestViewer>(StringComparer.InvariantCultureIgnoreCase);
 			_generator = new Random();
 			_imageForm = new Images();
 			_imageForm.VisibleChanged += new EventHandler(image_VisibilityChanged);
 			_log = null;
-			_raffleUsers = new Dictionary<string, object>();
+			_raffleViewers = new Dictionary<string, object>();
+			_viewers = new Dictionary<string, object>();
 			_windowColor = textBoxR.BackColor;
 		}
 
 		private Connection _connection;
+		// Contains all the viewers that have for sure seen the drunkest dungeon introduction message.
+		private IDictionary<string, object> _drunkestIntroductions;
+		private IDictionary<string, DrunkestViewer> _drunkestParticipants;
 		private Random _generator;
 		private Images _imageForm;
 		private TextWriter _log;
-		private IDictionary<string, object> _raffleUsers;
+		private IDictionary<string, object> _raffleViewers;
+		// Contains the viewers that are probably in the channel right now. Values are all null.
+		private IDictionary<string, object> _viewers;
 		private Color _windowColor;
+
+		private void RaffleAdd(string viewer)
+		{
+			if (_raffleViewers.ContainsKey(viewer))
+			{
+				return;
+			}
+
+			listBoxRaffle.Items.Add(viewer);
+			_raffleViewers.Add(viewer, null);
+		}
+
+		private void DrunkestAdd(string viewer, string characterName)
+		{
+			int characterNum;
+			if (characterName == textBoxCharacter1.Text)
+			{
+				characterNum = 1;
+			}
+			else if (characterName == textBoxCharacter2.Text)
+			{
+				characterNum = 2;
+			}
+			else if (characterName == textBoxCharacter3.Text)
+			{
+				characterNum = 3;
+			}
+			else if (characterName == textBoxCharacter4.Text)
+			{
+				characterNum = 4;
+			}
+			else
+			{
+				_connection.Send(string.Format("@{0}, choose from {1}, {2}, {3} or {4}.",
+					viewer, textBoxCharacter1.Text, textBoxCharacter2.Text,
+					textBoxCharacter3.Text, textBoxCharacter4.Text));
+				return;
+			}
+
+			DrunkestViewer info;
+			if (!_drunkestParticipants.TryGetValue(viewer, out info))
+			{
+				info = new DrunkestViewer(characterNum);
+				comboBoxViewer.Items.Add(viewer);
+				_drunkestParticipants.Add(viewer, info);
+			}
+			else
+			{
+				info.CharacterNum = characterNum;
+			}
+		}
+
+		private void DrunkestGive(string source, string target)
+		{
+			if (!checkBoxPlay.Checked)
+			{
+				_connection.Send(string.Format("@{0}, we're not currently playing Drunkest Dungeon.", source));
+				return;
+			}
+
+			DrunkestViewer sourceInfo;
+			if (!_drunkestParticipants.TryGetValue(source, out sourceInfo) ||
+				sourceInfo.Tickets < 1)
+			{
+				_connection.Send(string.Format("@{0}, you do not have any drink tickets to give.", source));
+				return;
+			}
+
+			if (!_drunkestParticipants.ContainsKey(target))
+			{
+				_connection.Send(string.Format("@{0}, {1} is not participating.", source, target));
+				return;
+			}
+
+			sourceInfo.Tickets -= 1;
+			_connection.Send(string.Format(Strings.TakeDrink, target));
+		}
 
 		private void StartLog(bool append)
 		{
@@ -98,6 +185,8 @@ namespace TwitchBot
 				_connection.MessageReceived -= ConnectionMessageTransfer;
 				_connection.MessageSent -= ConnectionMessageTransfer;
 				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+				_connection.UserJoined -= ConnectionUserJoined;
+				_connection.UserLeft -= ConnectionUserLeft;
 				_connection.Dispose();
 				_connection = null;
 			}
@@ -136,20 +225,76 @@ namespace TwitchBot
 				return;
 			}
 
+			// We may not have gotten a join notification for this user yet.
+			if (!_viewers.ContainsKey(e.From))
+			{
+				_viewers.Add(e.From, null);
+			}
+
+			if (checkBoxPlay.Checked && !_drunkestIntroductions.ContainsKey(e.From))
+			{
+				_connection.Send("Welcome to the channel! We're playing Drunkest Dungeon. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text);
+				foreach (string user in _viewers.Keys)
+				{
+					_drunkestIntroductions.Add(user, null);
+				}
+			}
+
 			Regex raffle = new Regex("^!raffle$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			Regex join = new Regex("^!join (.*)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			Regex give = new Regex("^!give (.*)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			Regex quit = new Regex("^!quit$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 			Match raffleMatch = raffle.Match(e.Content);
 			if (raffleMatch.Success)
 			{
-				if (_raffleUsers.ContainsKey(e.From))
-				{
-					return;
-				}
-
-				listBoxRaffle.Items.Add(e.From);
-				_raffleUsers.Add(e.From, null);
+				RaffleAdd(e.From);
 				return;
 			}
+
+			Match joinMatch = join.Match(e.Content);
+			if (joinMatch.Success)
+			{
+				DrunkestAdd(e.From, joinMatch.Groups[1].Value);
+				return;
+			}
+
+			Match giveMatch = give.Match(e.Content);
+			if (giveMatch.Success)
+			{
+				DrunkestGive(e.From, giveMatch.Groups[1].Value);
+				return;
+			}
+
+			Match quitMatch = quit.Match(e.Content);
+			if (quitMatch.Success)
+			{
+				_drunkestParticipants.Remove(e.From);
+				return;
+			}
+		}
+
+		private void ConnectionUserJoined(object sender, Connection.UserEventArgs e)
+		{
+			if (!_viewers.ContainsKey(e.User))
+			{
+				_viewers.Add(e.User, null);
+			}
+		}
+
+		private void ConnectionUserLeft(object sender, Connection.UserEventArgs e)
+		{
+			if (InvokeRequired)
+			{
+				BeginInvoke(new Connection.UserEventHandler(ConnectionUserLeft), sender, e);
+				return;
+			}
+
+			_viewers.Remove(e.User);
+
+			comboBoxViewer.Items.Remove(e.User);
+			_drunkestParticipants.Remove(e.User);
 		}
 
 		private void buttonDoWork_Click(object sender, EventArgs e)
@@ -160,6 +305,8 @@ namespace TwitchBot
 				_connection.MessageReceived -= ConnectionMessageTransfer;
 				_connection.MessageSent -= ConnectionMessageTransfer;
 				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+				_connection.UserJoined -= ConnectionUserJoined;
+				_connection.UserLeft -= ConnectionUserLeft;
 				_connection.Dispose();
 			}
 
@@ -170,6 +317,8 @@ namespace TwitchBot
 			_connection.MessageReceived += ConnectionMessageTransfer;
 			_connection.MessageSent += ConnectionMessageTransfer;
 			_connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
+			_connection.UserJoined += ConnectionUserJoined;
+			_connection.UserLeft += ConnectionUserLeft;
 			_connection.Connect(hostname, checkBoxSSL.Checked ? 443 : 6667, checkBoxSSL.Checked, textBoxUser.Text, textBoxPassword.Text);
 
 			HandleConnectionChange(true);
@@ -209,6 +358,8 @@ namespace TwitchBot
 				_connection.MessageReceived -= ConnectionMessageTransfer;
 				_connection.MessageSent -= ConnectionMessageTransfer;
 				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+				_connection.UserJoined -= ConnectionUserJoined;
+				_connection.UserLeft -= ConnectionUserLeft;
 				_connection.Dispose();
 				_connection = null;
 			}
@@ -279,18 +430,18 @@ namespace TwitchBot
 
 		private void buttonClear_Click(object sender, EventArgs e)
 		{
-			_raffleUsers.Clear();
+			_raffleViewers.Clear();
 			listBoxRaffle.Items.Clear();
 		}
 
 		private void buttonDraw_Click(object sender, EventArgs e)
 		{
-			if (_raffleUsers.Count < 1)
+			if (_raffleViewers.Count < 1)
 			{
 				return;
 			}
 
-			listBoxRaffle.SelectedIndex = _generator.Next(_raffleUsers.Count);
+			listBoxRaffle.SelectedIndex = _generator.Next(_raffleViewers.Count);
 		}
 
 		private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -331,9 +482,168 @@ namespace TwitchBot
 			_connection.MessageReceived -= ConnectionMessageTransfer;
 			_connection.MessageSent -= ConnectionMessageTransfer;
 			_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
+			_connection.UserJoined -= ConnectionUserJoined;
+			_connection.UserLeft -= ConnectionUserLeft;
 			_connection.Dispose();
 			_connection = null;
 			HandleConnectionChange(false);
+		}
+
+		private void checkBoxPlay_CheckedChanged(object sender, EventArgs e)
+		{
+			if (checkBoxPlay.Checked)
+			{
+				_connection.Send(string.Format("A game of Drunkest Dungeon has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text));
+			}
+			else
+			{
+				_connection.Send("The game of Drunkest Dungeon has ended.");
+			}
+		}
+
+		private void buttonCharacterDrink_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			int characterNum;
+			if (sender == buttonCharacter1Drink)
+			{
+				characterNum = 1;
+			}
+			else if (sender == buttonCharacter2Drink)
+			{
+				characterNum = 2;
+			}
+			else if (sender == buttonCharacter3Drink)
+			{
+				characterNum = 3;
+			}
+			else if (sender == buttonCharacter4Drink)
+			{
+				characterNum = 4;
+			}
+			else
+			{
+				return;
+			}
+
+			foreach (KeyValuePair<string, DrunkestViewer> viewerAssignment in _drunkestParticipants)
+			{
+				if (viewerAssignment.Value.CharacterNum == characterNum)
+				{
+					_connection.Send(string.Format(Strings.TakeDrink, viewerAssignment.Key));
+				}
+			}
+		}
+
+		private void buttonViewerDrink_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			if (!_drunkestParticipants.ContainsKey(comboBoxViewer.Text))
+			{
+				return;
+			}
+
+			_connection.Send(string.Format(Strings.TakeDrink, comboBoxViewer.Text));
+		}
+
+		private void buttonCharacterGetTicket_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			int characterNum;
+			if (sender == buttonCharacter1GetTicket)
+			{
+				characterNum = 1;
+			}
+			else if (sender == buttonCharacter2GetTicket)
+			{
+				characterNum = 2;
+			}
+			else if (sender == buttonCharacter3GetTicket)
+			{
+				characterNum = 3;
+			}
+			else if (sender == buttonCharacter4GetTicket)
+			{
+				characterNum = 4;
+			}
+			else
+			{
+				return;
+			}
+
+			foreach (KeyValuePair<string, DrunkestViewer> viewerAssignment in _drunkestParticipants)
+			{
+				if (viewerAssignment.Value.CharacterNum == characterNum)
+				{
+					viewerAssignment.Value.Tickets += 1;
+					_connection.Send(string.Format(Strings.GetDrinkTicket, viewerAssignment.Key, viewerAssignment.Value.Tickets));
+				}
+			}
+		}
+
+		private void buttonViewerGetTicket_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			DrunkestViewer info;
+			if (!_drunkestParticipants.TryGetValue(comboBoxViewer.Text, out info))
+			{
+				return;
+			}
+
+			info.Tickets += 1;
+			_connection.Send(string.Format(Strings.GetDrinkTicket, comboBoxViewer.Text, info.Tickets));
+		}
+
+		private void buttonCharacterFinish_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			int characterNum;
+			if (sender == buttonCharacter1Finish)
+			{
+				characterNum = 1;
+			}
+			else if (sender == buttonCharacter2Finish)
+			{
+				characterNum = 2;
+			}
+			else if (sender == buttonCharacter3Finish)
+			{
+				characterNum = 3;
+			}
+			else if (sender == buttonCharacter4Finish)
+			{
+				characterNum = 4;
+			}
+			else
+			{
+				return;
+			}
+
+			foreach (KeyValuePair<string, DrunkestViewer> viewerAssignment in _drunkestParticipants)
+			{
+				if (viewerAssignment.Value.CharacterNum == characterNum)
+				{
+					_connection.Send(string.Format(Strings.FinishDrink, viewerAssignment.Key));
+				}
+			}
+		}
+
+		private void buttonViewerFinish_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			if (!_drunkestParticipants.ContainsKey(comboBoxViewer.Text))
+			{
+				return;
+			}
+
+			_connection.Send(string.Format(Strings.FinishDrink, comboBoxViewer.Text));
 		}
 	}
 }

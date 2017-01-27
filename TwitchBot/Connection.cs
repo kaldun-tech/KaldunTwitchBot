@@ -219,7 +219,7 @@ namespace TwitchBot
 		{
 			if (UserJoined != null)
 			{
-				UserEventArgs e = new UserEventArgs(user, true);
+				UserEventArgs e = new UserEventArgs(user);
 				UserJoined(this, e);
 			}
 		}
@@ -232,7 +232,7 @@ namespace TwitchBot
 		{
 			if (UserLeft != null)
 			{
-				UserEventArgs e = new UserEventArgs(user, false);
+				UserEventArgs e = new UserEventArgs(user);
 				UserLeft(this, e);
 			}
 		}
@@ -348,22 +348,12 @@ namespace TwitchBot
 
 		public class UserEventArgs : EventArgs
 		{
-			public UserEventArgs(string user, bool isJoin)
+			public UserEventArgs(string user)
 			{
-				_isJoin = isJoin;
 				_user = user;
 			}
 
-			private bool _isJoin;
 			private string _user;
-
-			/// <summary>
-			/// Whether the user joined. Otherwise, the user left.
-			/// </summary>
-			public bool IsJoin
-			{
-				get { return _isJoin; }
-			}
 
 			public string User
 			{
