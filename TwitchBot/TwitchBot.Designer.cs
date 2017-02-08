@@ -127,7 +127,7 @@
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxLog.Size = new System.Drawing.Size(560, 79);
+			this.textBoxLog.Size = new System.Drawing.Size(560, 189);
 			this.textBoxLog.TabIndex = 1;
 			// 
 			// textBoxInput
@@ -135,7 +135,7 @@
 			this.textBoxInput.AcceptsTab = true;
 			this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxInput.Location = new System.Drawing.Point(6, 91);
+			this.textBoxInput.Location = new System.Drawing.Point(6, 201);
 			this.textBoxInput.Name = "textBoxInput";
 			this.textBoxInput.Size = new System.Drawing.Size(560, 20);
 			this.textBoxInput.TabIndex = 2;
@@ -143,7 +143,7 @@
 			// buttonSendRaw
 			// 
 			this.buttonSendRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSendRaw.Location = new System.Drawing.Point(499, 117);
+			this.buttonSendRaw.Location = new System.Drawing.Point(499, 227);
 			this.buttonSendRaw.Name = "buttonSendRaw";
 			this.buttonSendRaw.Size = new System.Drawing.Size(65, 23);
 			this.buttonSendRaw.TabIndex = 3;
@@ -418,9 +418,9 @@
 			// 
 			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonSend.Location = new System.Drawing.Point(8, 117);
+			this.buttonSend.Location = new System.Drawing.Point(6, 227);
 			this.buttonSend.Name = "buttonSend";
-			this.buttonSend.Size = new System.Drawing.Size(485, 23);
+			this.buttonSend.Size = new System.Drawing.Size(487, 23);
 			this.buttonSend.TabIndex = 4;
 			this.buttonSend.Text = "Send";
 			this.buttonSend.UseVisualStyleBackColor = true;
@@ -808,6 +808,19 @@
 			this.labelCharacter4.TabIndex = 27;
 			this.labelCharacter4.Text = "Character 4";
 			// 
+			// checkBoxPlay
+			// 
+			this.checkBoxPlay.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.checkBoxPlay.AutoSize = true;
+			this.tableLayoutPanelDrinking.SetColumnSpan(this.checkBoxPlay, 5);
+			this.checkBoxPlay.Location = new System.Drawing.Point(263, 4);
+			this.checkBoxPlay.Name = "checkBoxPlay";
+			this.checkBoxPlay.Size = new System.Drawing.Size(46, 17);
+			this.checkBoxPlay.TabIndex = 28;
+			this.checkBoxPlay.Text = "Play";
+			this.checkBoxPlay.UseVisualStyleBackColor = true;
+			this.checkBoxPlay.CheckedChanged += new System.EventHandler(this.checkBoxPlay_CheckedChanged);
+			// 
 			// tabPageTraffic
 			// 
 			this.tabPageTraffic.Controls.Add(this.buttonSend);
@@ -864,19 +877,6 @@
 			this.checkBoxSSL.TabIndex = 21;
 			this.checkBoxSSL.Text = "Use SSL";
 			this.checkBoxSSL.UseVisualStyleBackColor = true;
-			// 
-			// checkBoxPlay
-			// 
-			this.checkBoxPlay.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.checkBoxPlay.AutoSize = true;
-			this.tableLayoutPanelDrinking.SetColumnSpan(this.checkBoxPlay, 5);
-			this.checkBoxPlay.Location = new System.Drawing.Point(263, 4);
-			this.checkBoxPlay.Name = "checkBoxPlay";
-			this.checkBoxPlay.Size = new System.Drawing.Size(46, 17);
-			this.checkBoxPlay.TabIndex = 28;
-			this.checkBoxPlay.Text = "Play";
-			this.checkBoxPlay.UseVisualStyleBackColor = true;
-			this.checkBoxPlay.CheckedChanged += new System.EventHandler(this.checkBoxPlay_CheckedChanged);
 			// 
 			// TwitchBot
 			// 
