@@ -54,19 +54,19 @@ namespace TwitchBot
 		private void DrunkestAdd(string viewer, string characterName)
 		{
 			int characterNum;
-			if (characterName == textBoxCharacter1.Text)
+			if (characterName.Equals(textBoxCharacter1.Text, StringComparison.InvariantCultureIgnoreCase))
 			{
 				characterNum = 1;
 			}
-			else if (characterName == textBoxCharacter2.Text)
+			else if (characterName.Equals(textBoxCharacter2.Text, StringComparison.InvariantCultureIgnoreCase))
 			{
 				characterNum = 2;
 			}
-			else if (characterName == textBoxCharacter3.Text)
+			else if (characterName.Equals(textBoxCharacter3.Text, StringComparison.InvariantCultureIgnoreCase))
 			{
 				characterNum = 3;
 			}
-			else if (characterName == textBoxCharacter4.Text)
+			else if (characterName.Equals(textBoxCharacter4.Text, StringComparison.InvariantCultureIgnoreCase))
 			{
 				characterNum = 4;
 			}
@@ -171,6 +171,12 @@ namespace TwitchBot
 			scrollToNewMessageToolStripMenuItem.Visible = isTrafficSelected;
 		}
 
+		private bool TryGetMatch(Regex pattern, string line, out Match match)
+		{
+			match = pattern.Match(line);
+			return match.Success;
+		}
+
 		private void ConnectionDisconnected(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
@@ -231,6 +237,42 @@ namespace TwitchBot
 				_viewers.Add(e.From, null);
 			}
 
+			Regex raffle = new Regex("^!raffle$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			Regex join = new Regex("^!join (.*)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			Regex give = new Regex("^!give (.*)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+			Regex quit = new Regex("^!quit$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+			Match match;
+
+			if (TryGetMatch(raffle, e.Content, out match))
+			{
+				RaffleAdd(e.From);
+			}
+			else if (checkBoxPlay.Checked && TryGetMatch(join, e.Content, out match))
+			{
+				DrunkestAdd(e.From, match.Groups[1].Value);
+				if (!_drunkestIntroductions.ContainsKey(e.From))
+				{
+					_drunkestIntroductions.Add(e.From, null);
+				}
+			}
+			else if (checkBoxPlay.Checked && TryGetMatch(give, e.Content, out match))
+			{
+				DrunkestGive(e.From, match.Groups[1].Value);
+				if (!_drunkestIntroductions.ContainsKey(e.From))
+				{
+					_drunkestIntroductions.Add(e.From, null);
+				}
+			}
+			else if (TryGetMatch(quit, e.Content, out match))
+			{
+				_drunkestParticipants.Remove(e.From);
+				if (!_drunkestIntroductions.ContainsKey(e.From))
+				{
+					_drunkestIntroductions.Add(e.From, null);
+				}
+			}
+
 			if (checkBoxPlay.Checked && !_drunkestIntroductions.ContainsKey(e.From))
 			{
 				_connection.Send(string.Format("Welcome to the channel! We're playing Drunkest Dungeon. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
@@ -242,39 +284,6 @@ namespace TwitchBot
 						_drunkestIntroductions.Add(user, null);
 					}
 				}
-			}
-
-			Regex raffle = new Regex("^!raffle$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-			Regex join = new Regex("^!join (.*)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-			Regex give = new Regex("^!give (.*)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-			Regex quit = new Regex("^!quit$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-
-			Match raffleMatch = raffle.Match(e.Content);
-			if (raffleMatch.Success)
-			{
-				RaffleAdd(e.From);
-				return;
-			}
-
-			Match joinMatch = join.Match(e.Content);
-			if (joinMatch.Success)
-			{
-				DrunkestAdd(e.From, joinMatch.Groups[1].Value);
-				return;
-			}
-
-			Match giveMatch = give.Match(e.Content);
-			if (giveMatch.Success)
-			{
-				DrunkestGive(e.From, giveMatch.Groups[1].Value);
-				return;
-			}
-
-			Match quitMatch = quit.Match(e.Content);
-			if (quitMatch.Success)
-			{
-				_drunkestParticipants.Remove(e.From);
-				return;
 			}
 		}
 
