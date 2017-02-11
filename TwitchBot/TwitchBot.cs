@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -26,6 +27,12 @@ namespace TwitchBot
 			_raffleViewers = new Dictionary<string, object>();
 			_viewers = new Dictionary<string, object>();
 			_windowColor = textBoxR.BackColor;
+
+			comboBoxCustomCharacter.Items.Add(1);
+			comboBoxCustomCharacter.Items.Add(2);
+			comboBoxCustomCharacter.Items.Add(3);
+			comboBoxCustomCharacter.Items.Add(4);
+			comboBoxCustomCharacter.SelectedIndex = 0;
 		}
 
 		private Connection _connection;
@@ -82,8 +89,9 @@ namespace TwitchBot
 			if (!_drunkestParticipants.TryGetValue(viewer, out info))
 			{
 				info = new DrunkestViewer(characterNum);
-				comboBoxViewer.Items.Add(viewer);
-				_drunkestParticipants.Add(viewer, info);
+				comboBoxViewer.Items.Add(viewer.ToLowerInvariant());
+				comboBoxCustom.Items.Add(viewer.ToLowerInvariant());
+				_drunkestParticipants.Add(viewer.ToLowerInvariant(), info);
 			}
 			else
 			{
@@ -266,6 +274,8 @@ namespace TwitchBot
 			}
 			else if (TryGetMatch(quit, e.Content, out match))
 			{
+				comboBoxViewer.Items.Remove(e.From.ToLowerInvariant());
+				comboBoxCustom.Items.Remove(e.From.ToLowerInvariant());
 				_drunkestParticipants.Remove(e.From);
 				if (!_drunkestIntroductions.ContainsKey(e.From))
 				{
@@ -305,7 +315,8 @@ namespace TwitchBot
 
 			_viewers.Remove(e.User);
 
-			comboBoxViewer.Items.Remove(e.User);
+			comboBoxViewer.Items.Remove(e.User.ToLowerInvariant());
+			comboBoxCustom.Items.Remove(e.User.ToLowerInvariant());
 			_drunkestParticipants.Remove(e.User);
 		}
 
@@ -663,6 +674,89 @@ namespace TwitchBot
 			}
 
 			_connection.Send(string.Format(Strings.FinishDrink, comboBoxViewer.Text));
+		}
+
+		private void buttonAllDrink_Click(object sender, EventArgs e)
+		{
+			checkBoxPlay.Checked = true;
+
+			StringBuilder summary = new StringBuilder();
+
+			foreach (string viewer in _drunkestParticipants.Keys)
+			{
+				summary.AppendFormat("@{0}, ", viewer);
+			}
+			summary.Append("Everyone drink!");
+
+			_connection.Send(summary.ToString());
+		}
+
+		/// <summary>
+		/// Manually add a Drunkest Dungeon participant as an administrative maintenance function.
+		/// The new participant does not need to be a viewer, so this can be used to let people
+		/// join the game without requiring them to be in the chat.
+		/// </summary>
+		private void buttonAdd_Click(object sender, EventArgs e)
+		{
+			string viewer = comboBoxCustom.Text.ToLowerInvariant();
+			int characterNum = (int)comboBoxCustomCharacter.SelectedItem;
+
+			comboBoxCustom.Text = "";
+
+			DrunkestViewer info;
+			if (_drunkestParticipants.TryGetValue(viewer, out info))
+			{
+				info.CharacterNum = characterNum;
+				return;
+			}
+
+			comboBoxViewer.Items.Add(viewer);
+			comboBoxCustom.Items.Add(viewer);
+			_drunkestParticipants.Add(viewer, new DrunkestViewer(characterNum));
+		}
+
+		/// <summary>
+		/// Manually remove a Drunkest Dungeon participant as an administrative maintenance
+		/// function. It would be pretty rude to remove someone that is actually a viewer since
+		/// they would lose all their drink tickets and they would have to re-join, so
+		/// administrators should probably only remove people that they added themselves.
+		/// </summary>
+		private void buttonRemove_Click(object sender, EventArgs e)
+		{
+			if (!_drunkestParticipants.ContainsKey(comboBoxCustom.Text))
+			{
+				return;
+			}
+
+			comboBoxViewer.Items.Remove(comboBoxCustom.Text.ToLowerInvariant());
+			comboBoxCustom.Items.Remove(comboBoxCustom.Text.ToLowerInvariant());
+			_drunkestParticipants.Remove(comboBoxCustom.Text);
+		}
+
+		/// <summary>
+		/// Update the character number combobox for the manually entered Drunkest Dungeon
+		/// participant. This can be used to check the current character assignment of any
+		/// participant.
+		/// </summary>
+		private void comboBoxCustom_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			string viewer = (string)comboBoxCustom.SelectedItem;
+			DrunkestViewer info = _drunkestParticipants[viewer];
+			comboBoxCustomCharacter.SelectedItem = info.CharacterNum;
+		}
+
+		/// <summary>
+		/// Update the participant's character assignment.
+		/// </summary>
+		private void comboBoxCustomCharacter_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			DrunkestViewer info;
+			if (!_drunkestParticipants.TryGetValue(comboBoxCustom.Text, out info))
+			{
+				return;
+			}
+
+			info.CharacterNum = (int)comboBoxCustomCharacter.SelectedItem;
 		}
 	}
 }
