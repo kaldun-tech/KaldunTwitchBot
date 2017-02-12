@@ -2,9 +2,9 @@
 
 namespace TwitchBot
 {
-	internal class DrunkestViewer
+	internal class DrinkingGameParticipant
 	{
-		public DrunkestViewer(int characterNum)
+		public DrinkingGameParticipant(int characterNum)
 		{
 			_characterNum = characterNum;
 			_tickets = 0;

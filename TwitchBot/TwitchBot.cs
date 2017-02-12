@@ -19,7 +19,7 @@ namespace TwitchBot
 			_drunkestIntroductions = new Dictionary<string, object>();
 			// Use case-insensitive comparisons so viewers can target each other even if they don't
 			// use correct capitalization.
-			_drunkestParticipants = new Dictionary<string, DrunkestViewer>(StringComparer.InvariantCultureIgnoreCase);
+			_drunkestParticipants = new Dictionary<string, DrinkingGameParticipant>(StringComparer.InvariantCultureIgnoreCase);
 			_generator = new Random();
 			_imageForm = new Images();
 			_imageForm.VisibleChanged += new EventHandler(image_VisibilityChanged);
@@ -36,9 +36,12 @@ namespace TwitchBot
 		}
 
 		private Connection _connection;
-		// Contains all the viewers that have for sure seen the drunkest dungeon introduction message.
+		// Contains all the viewers that have for sure seen the drinking game introduction message.
 		private IDictionary<string, object> _drunkestIntroductions;
-		private IDictionary<string, DrunkestViewer> _drunkestParticipants;
+        /// <summary>
+        /// Dictionary mapping usernames to DrinkingGameParticipant objects
+        /// </summary>
+		private IDictionary<string, DrinkingGameParticipant> _drunkestParticipants;
 		private Random _generator;
 		private Images _imageForm;
 		private TextWriter _log;
@@ -85,10 +88,10 @@ namespace TwitchBot
 				return;
 			}
 
-			DrunkestViewer info;
+			DrinkingGameParticipant info;
 			if (!_drunkestParticipants.TryGetValue(viewer, out info))
 			{
-				info = new DrunkestViewer(characterNum);
+				info = new DrinkingGameParticipant(characterNum);
 				comboBoxViewer.Items.Add(viewer.ToLowerInvariant());
 				comboBoxCustom.Items.Add(viewer.ToLowerInvariant());
 				_drunkestParticipants.Add(viewer.ToLowerInvariant(), info);
@@ -103,11 +106,11 @@ namespace TwitchBot
 		{
 			if (!checkBoxPlay.Checked)
 			{
-				_connection.Send(string.Format("@{0}, we're not currently playing Drunkest Dungeon.", source));
+				_connection.Send(string.Format("@{0}, we're not currently playing a drinking game.", source));
 				return;
 			}
 
-			DrunkestViewer sourceInfo;
+			DrinkingGameParticipant sourceInfo;
 			if (!_drunkestParticipants.TryGetValue(source, out sourceInfo) ||
 				sourceInfo.Tickets < 1)
 			{
@@ -558,13 +561,23 @@ namespace TwitchBot
 				return;
 			}
 
-			foreach (KeyValuePair<string, DrunkestViewer> viewerAssignment in _drunkestParticipants)
+            StringBuilder messageTargets = new StringBuilder();
+			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drunkestParticipants)
 			{
 				if (viewerAssignment.Value.CharacterNum == characterNum)
 				{
-					_connection.Send(string.Format(Strings.TakeDrink, viewerAssignment.Key));
+                    if (messageTargets.Length > 0)
+                    {
+                        messageTargets.Append(", @");
+                    }
+                    messageTargets.Append(viewerAssignment.Key);
 				}
 			}
+
+            if (messageTargets.Length > 0)
+            {
+                _connection.Send(string.Format(Strings.TakeDrink, messageTargets));
+            }
 		}
 
 		private void buttonViewerDrink_Click(object sender, EventArgs e)
@@ -605,7 +618,7 @@ namespace TwitchBot
 				return;
 			}
 
-			foreach (KeyValuePair<string, DrunkestViewer> viewerAssignment in _drunkestParticipants)
+			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drunkestParticipants)
 			{
 				if (viewerAssignment.Value.CharacterNum == characterNum)
 				{
@@ -619,7 +632,7 @@ namespace TwitchBot
 		{
 			checkBoxPlay.Checked = true;
 
-			DrunkestViewer info;
+			DrinkingGameParticipant info;
 			if (!_drunkestParticipants.TryGetValue(comboBoxViewer.Text, out info))
 			{
 				return;
@@ -655,13 +668,23 @@ namespace TwitchBot
 				return;
 			}
 
-			foreach (KeyValuePair<string, DrunkestViewer> viewerAssignment in _drunkestParticipants)
+            StringBuilder messageTargets = new StringBuilder();
+			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drunkestParticipants)
 			{
 				if (viewerAssignment.Value.CharacterNum == characterNum)
 				{
-					_connection.Send(string.Format(Strings.FinishDrink, viewerAssignment.Key));
+                    if (messageTargets.Length > 0)
+                    {
+                        messageTargets.Append(", @");
+                    }
+                    messageTargets.Append(viewerAssignment.Key);
 				}
 			}
+
+            if (messageTargets.Length > 0)
+            {
+                _connection.Send(string.Format(Strings.FinishDrink, messageTargets));
+            }
 		}
 
 		private void buttonViewerFinish_Click(object sender, EventArgs e)
@@ -692,7 +715,7 @@ namespace TwitchBot
 		}
 
 		/// <summary>
-		/// Manually add a Drunkest Dungeon participant as an administrative maintenance function.
+		/// Manually add a drinking game participant as an administrative maintenance function.
 		/// The new participant does not need to be a viewer, so this can be used to let people
 		/// join the game without requiring them to be in the chat.
 		/// </summary>
@@ -703,7 +726,7 @@ namespace TwitchBot
 
 			comboBoxCustom.Text = "";
 
-			DrunkestViewer info;
+			DrinkingGameParticipant info;
 			if (_drunkestParticipants.TryGetValue(viewer, out info))
 			{
 				info.CharacterNum = characterNum;
@@ -712,11 +735,11 @@ namespace TwitchBot
 
 			comboBoxViewer.Items.Add(viewer);
 			comboBoxCustom.Items.Add(viewer);
-			_drunkestParticipants.Add(viewer, new DrunkestViewer(characterNum));
+			_drunkestParticipants.Add(viewer, new DrinkingGameParticipant(characterNum));
 		}
 
 		/// <summary>
-		/// Manually remove a Drunkest Dungeon participant as an administrative maintenance
+		/// Manually remove a drinking game participant as an administrative maintenance
 		/// function. It would be pretty rude to remove someone that is actually a viewer since
 		/// they would lose all their drink tickets and they would have to re-join, so
 		/// administrators should probably only remove people that they added themselves.
@@ -734,14 +757,14 @@ namespace TwitchBot
 		}
 
 		/// <summary>
-		/// Update the character number combobox for the manually entered Drunkest Dungeon
+		/// Update the character number combobox for the manually entered drinking game
 		/// participant. This can be used to check the current character assignment of any
 		/// participant.
 		/// </summary>
 		private void comboBoxCustom_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			string viewer = (string)comboBoxCustom.SelectedItem;
-			DrunkestViewer info = _drunkestParticipants[viewer];
+			DrinkingGameParticipant info = _drunkestParticipants[viewer];
 			comboBoxCustomCharacter.SelectedItem = info.CharacterNum;
 		}
 
@@ -750,7 +773,7 @@ namespace TwitchBot
 		/// </summary>
 		private void comboBoxCustomCharacter_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			DrunkestViewer info;
+			DrinkingGameParticipant info;
 			if (!_drunkestParticipants.TryGetValue(comboBoxCustom.Text, out info))
 			{
 				return;

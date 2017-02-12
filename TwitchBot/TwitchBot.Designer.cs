@@ -470,7 +470,7 @@
 			this.tabPageDrinking.Name = "tabPageDrinking";
 			this.tabPageDrinking.Size = new System.Drawing.Size(572, 258);
 			this.tabPageDrinking.TabIndex = 3;
-			this.tabPageDrinking.Text = "Drunkest Dungeon";
+			this.tabPageDrinking.Text = "Drinking Game";
 			this.tabPageDrinking.UseVisualStyleBackColor = true;
 			// 
 			// tableLayoutPanelDrinking

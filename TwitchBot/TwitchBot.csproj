@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connection.cs" />
-    <Compile Include="DrunkestDungeon.cs" />
+    <Compile Include="DrinkingGame.cs" />
     <Compile Include="Images.cs">
       <SubType>Form</SubType>
     </Compile>
