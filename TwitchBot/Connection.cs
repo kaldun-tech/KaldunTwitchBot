@@ -90,19 +90,19 @@ namespace TwitchBot
 					Encoding utf8 = new UTF8Encoding(false, true);
 					TextWriter writer = new StreamWriter(stream, utf8);
 					TextReader reader = new StreamReader(stream, utf8);
-					writer.WriteLine("PASS " + oAuth);
-					writer.WriteLine("NICK " + user);
-					writer.Flush();
 					_sender = new ThrottledSender(20, new TimeSpan(0, 0, 30), writer);
 					_sender.MessageSent += OnMessageSent;
+
+					_sender.Send("PASS " + oAuth, 3, false);
+					_sender.Send("NICK " + user, 3, false);
 
 					_connectSuccess = true;
 					_connecting.Set();
 
 					// Register for IRCv3 membership capability so we get notifications for people joining
 					// and leaving.
-					_sender.Send("CAP REQ :twitch.tv/membership", false);
-					_sender.Send("JOIN #" + _channel, false);
+					_sender.Send("CAP REQ :twitch.tv/membership", 0, true);
+					_sender.Send("JOIN #" + _channel, 0, true);
 
 					Listen(reader);
 				});
@@ -120,7 +120,7 @@ namespace TwitchBot
 			{
 				return;
 			}
-			_sender.Send("PRIVMSG #" + _channel + " :" + text, true);
+			_sender.Send("PRIVMSG #" + _channel + " :" + text, 1, true);
 		}
 
 		/// <summary>
@@ -133,7 +133,7 @@ namespace TwitchBot
 			{
 				return;
 			}
-			_sender.Send(text, true);
+			_sender.Send(text, 1, true);
 		}
 
 		public void Dispose()
@@ -152,7 +152,7 @@ namespace TwitchBot
 				return;
 			}
 
-			_sender.Send("QUIT", true);
+			_sender.Send("QUIT", 0, true);
 			_sender.RequestExit();
 			_listener.Join();
 			_sender.MessageSent -= OnMessageSent;
@@ -251,7 +251,7 @@ namespace TwitchBot
 				Match pingMatch = ping.Match(line);
 				if (pingMatch.Success)
 				{
-					_sender.Send("PONG :" + pingMatch.Groups[1].Value, true);
+					_sender.Send("PONG :" + pingMatch.Groups[1].Value, 2, true);
 					continue;
 				}
 

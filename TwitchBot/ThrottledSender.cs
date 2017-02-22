@@ -13,7 +13,7 @@ namespace TwitchBot
 			_history = new List<DateTime>();
 			_limit = messageLimit;
 			_period = period;
-			_queue = new List<string>();
+			_queue = new PriorityQueue<Message>();
 			_sender = new Thread(DoSend);
 			_sender.Name = "Throttled Sender";
 			_signal = new AutoResetEvent(false);
@@ -22,7 +22,7 @@ namespace TwitchBot
 		}
 
 		/// <summary>
-		/// Occurs when any traffic is sent actually sent to the server, not when it is added to
+		/// Occurs when any traffic is actually sent to the server, not when it is added to
 		/// queue to be sent.
 		/// </summary>
 		public event Connection.MessageEventHandler MessageSent;
@@ -31,7 +31,7 @@ namespace TwitchBot
 		private IList<DateTime> _history;
 		private int _limit;
 		private TimeSpan _period;
-		private IList<string> _queue;
+		private PriorityQueue<Message> _queue;
 		private Thread _sender;
 		private AutoResetEvent _signal;
 		private TextWriter _writer;
@@ -44,13 +44,12 @@ namespace TwitchBot
 			_exit = true;
 			_signal.Set();
 		}
-
-		public void Send(string text, bool isHighPriority)
+		
+		public void Send(string text, int priority, bool display)
 		{
 			lock (_queue)
 			{
-				// TODO: Use a priority queue to respect high priority items.
-				_queue.Add(text);
+				_queue.Add(new Message(text, priority, display));
 				_signal.Set();
 			}
 		}
@@ -75,7 +74,7 @@ namespace TwitchBot
 			while (!_exit)
 			{
 				_signal.WaitOne();
-				while (SendItems())
+				while (!_exit && SendItems())
 				{
 					Thread.Sleep(_history[0].Add(_period).Subtract(DateTime.UtcNow));
 				}
@@ -97,11 +96,21 @@ namespace TwitchBot
 				}
 				while (_history.Count < _limit && _queue.Count > 0)
 				{
-					string text = _queue[0];
-					_queue.RemoveAt(0);
-					_writer.WriteLine(text);
-					_writer.Flush();
-					OnMessageSent(text);
+					Message msg = _queue.Remove();
+					_writer.WriteLine(msg.Content);
+					try
+					{
+						_writer.Flush();
+					}
+					catch (IOException)
+					{
+						_exit = true;
+						return true;
+					}
+					if (msg.Display)
+					{
+						OnMessageSent(msg.Content);
+					}
 					_history.Add(DateTime.UtcNow);
 				}
 				if (_queue.Count == 0)
@@ -109,7 +118,36 @@ namespace TwitchBot
 					itemsRemain = false;
 				}
 			}
-			return !_exit && itemsRemain;
+			return itemsRemain;
+		}
+
+		private class Message : IComparable<Message>
+		{
+			public Message(string content, int priority, bool display)
+			{
+				_content = content;
+				_display = display;
+				_priority = priority;
+			}
+
+			private string _content;
+			private bool _display;
+			private int _priority;
+
+			public string Content
+			{
+				get { return _content; }
+			}
+
+			public bool Display
+			{
+				get { return _display; }
+			}
+
+			public int CompareTo(Message other)
+			{
+				return _priority - other._priority;
+			}
 		}
 	}
 }

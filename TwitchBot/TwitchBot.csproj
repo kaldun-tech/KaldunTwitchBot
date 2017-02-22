@@ -44,6 +44,7 @@
     <Compile Include="Images.Designer.cs">
       <DependentUpon>Images.cs</DependentUpon>
     </Compile>
+    <Compile Include="PriorityQueue.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
