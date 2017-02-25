@@ -9,17 +9,17 @@ using System.Windows.Forms;
 
 namespace TwitchBot
 {
-	public partial class TwitchBot : Form
+	internal partial class TwitchBot : Form
 	{
 		public TwitchBot()
 		{
 			InitializeComponent();
 
 			_connection = null;
-			_drunkestIntroductions = new Dictionary<string, object>();
+			_drinkingIntroductions = new Dictionary<string, object>();
 			// Use case-insensitive comparisons so viewers can target each other even if they don't
-			// use correct capitalization.
-			_drunkestParticipants = new Dictionary<string, DrinkingGameParticipant>(StringComparer.InvariantCultureIgnoreCase);
+			// use the capitalization we expect.
+			_drinkingParticipants = new Dictionary<string, DrinkingGameParticipant>(StringComparer.InvariantCultureIgnoreCase);
 			_generator = new Random();
 			_imageForm = new Images();
 			_imageForm.VisibleChanged += new EventHandler(image_VisibilityChanged);
@@ -37,11 +37,11 @@ namespace TwitchBot
 
 		private Connection _connection;
 		// Contains all the viewers that have for sure seen the drinking game introduction message.
-		private IDictionary<string, object> _drunkestIntroductions;
-        /// <summary>
-        /// Dictionary mapping usernames to DrinkingGameParticipant objects
-        /// </summary>
-		private IDictionary<string, DrinkingGameParticipant> _drunkestParticipants;
+		private IDictionary<string, object> _drinkingIntroductions;
+		/// <summary>
+		/// Dictionary mapping usernames to DrinkingGameParticipant objects
+		/// </summary>
+		private IDictionary<string, DrinkingGameParticipant> _drinkingParticipants;
 		private Random _generator;
 		private Images _imageForm;
 		private TextWriter _log;
@@ -61,7 +61,7 @@ namespace TwitchBot
 			_raffleViewers.Add(viewer, null);
 		}
 
-		private void DrunkestAdd(string viewer, string characterName)
+		private void DrinkingAdd(string viewer, string characterName)
 		{
 			int characterNum;
 			if (characterName.Equals(textBoxCharacter1.Text, StringComparison.InvariantCultureIgnoreCase))
@@ -89,12 +89,12 @@ namespace TwitchBot
 			}
 
 			DrinkingGameParticipant info;
-			if (!_drunkestParticipants.TryGetValue(viewer, out info))
+			if (!_drinkingParticipants.TryGetValue(viewer, out info))
 			{
 				info = new DrinkingGameParticipant(characterNum);
 				comboBoxViewer.Items.Add(viewer.ToLowerInvariant());
 				comboBoxCustom.Items.Add(viewer.ToLowerInvariant());
-				_drunkestParticipants.Add(viewer.ToLowerInvariant(), info);
+				_drinkingParticipants.Add(viewer.ToLowerInvariant(), info);
 			}
 			else
 			{
@@ -102,7 +102,7 @@ namespace TwitchBot
 			}
 		}
 
-		private void DrunkestGive(string source, string target)
+		private void DrinkingGive(string source, string target)
 		{
 			if (!checkBoxPlay.Checked)
 			{
@@ -111,14 +111,14 @@ namespace TwitchBot
 			}
 
 			DrinkingGameParticipant sourceInfo;
-			if (!_drunkestParticipants.TryGetValue(source, out sourceInfo) ||
+			if (!_drinkingParticipants.TryGetValue(source, out sourceInfo) ||
 				sourceInfo.Tickets < 1)
 			{
 				_connection.Send(string.Format("@{0}, you do not have any drink tickets to give.", source));
 				return;
 			}
 
-			if (!_drunkestParticipants.ContainsKey(target))
+			if (!_drinkingParticipants.ContainsKey(target))
 			{
 				_connection.Send(string.Format("@{0}, {1} is not participating.", source, target));
 				return;
@@ -261,40 +261,40 @@ namespace TwitchBot
 			}
 			else if (checkBoxPlay.Checked && TryGetMatch(join, e.Content, out match))
 			{
-				DrunkestAdd(e.From, match.Groups[1].Value);
-				if (!_drunkestIntroductions.ContainsKey(e.From))
+				DrinkingAdd(e.From, match.Groups[1].Value);
+				if (!_drinkingIntroductions.ContainsKey(e.From))
 				{
-					_drunkestIntroductions.Add(e.From, null);
+					_drinkingIntroductions.Add(e.From, null);
 				}
 			}
 			else if (checkBoxPlay.Checked && TryGetMatch(give, e.Content, out match))
 			{
-				DrunkestGive(e.From, match.Groups[1].Value);
-				if (!_drunkestIntroductions.ContainsKey(e.From))
+				DrinkingGive(e.From, match.Groups[1].Value);
+				if (!_drinkingIntroductions.ContainsKey(e.From))
 				{
-					_drunkestIntroductions.Add(e.From, null);
+					_drinkingIntroductions.Add(e.From, null);
 				}
 			}
 			else if (TryGetMatch(quit, e.Content, out match))
 			{
 				comboBoxViewer.Items.Remove(e.From.ToLowerInvariant());
 				comboBoxCustom.Items.Remove(e.From.ToLowerInvariant());
-				_drunkestParticipants.Remove(e.From);
-				if (!_drunkestIntroductions.ContainsKey(e.From))
+				_drinkingParticipants.Remove(e.From);
+				if (!_drinkingIntroductions.ContainsKey(e.From))
 				{
-					_drunkestIntroductions.Add(e.From, null);
+					_drinkingIntroductions.Add(e.From, null);
 				}
 			}
 
-			if (checkBoxPlay.Checked && !_drunkestIntroductions.ContainsKey(e.From))
+			if (checkBoxPlay.Checked && !_drinkingIntroductions.ContainsKey(e.From))
 			{
-				_connection.Send(string.Format("Welcome to the channel! We're playing Drunkest Dungeon. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+				_connection.Send(string.Format("Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
 					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text));
 				foreach (string user in _viewers.Keys)
 				{
-					if (!_drunkestIntroductions.ContainsKey(user))
+					if (!_drinkingIntroductions.ContainsKey(user))
 					{
-						_drunkestIntroductions.Add(user, null);
+						_drinkingIntroductions.Add(user, null);
 					}
 				}
 			}
@@ -320,7 +320,7 @@ namespace TwitchBot
 
 			comboBoxViewer.Items.Remove(e.User.ToLowerInvariant());
 			comboBoxCustom.Items.Remove(e.User.ToLowerInvariant());
-			_drunkestParticipants.Remove(e.User);
+			_drinkingParticipants.Remove(e.User);
 		}
 
 		private void buttonDoWork_Click(object sender, EventArgs e)
@@ -519,19 +519,19 @@ namespace TwitchBot
 		{
 			if (checkBoxPlay.Checked)
 			{
-				_connection.Send(string.Format("A game of Drunkest Dungeon has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+				_connection.Send(string.Format("A drinking game has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
 					textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text));
 				foreach (string user in _viewers.Keys)
 				{
-					if (!_drunkestIntroductions.ContainsKey(user))
+					if (!_drinkingIntroductions.ContainsKey(user))
 					{
-						_drunkestIntroductions.Add(user, null);
+						_drinkingIntroductions.Add(user, null);
 					}
 				}
 			}
 			else
 			{
-				_connection.Send("The game of Drunkest Dungeon has ended.");
+				_connection.Send("The drinking game has ended.");
 			}
 		}
 
@@ -561,30 +561,30 @@ namespace TwitchBot
 				return;
 			}
 
-            StringBuilder messageTargets = new StringBuilder();
-			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drunkestParticipants)
+			StringBuilder messageTargets = new StringBuilder();
+			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drinkingParticipants)
 			{
 				if (viewerAssignment.Value.CharacterNum == characterNum)
 				{
-                    if (messageTargets.Length > 0)
-                    {
-                        messageTargets.Append(", @");
-                    }
-                    messageTargets.Append(viewerAssignment.Key);
+					if (messageTargets.Length > 0)
+					{
+						messageTargets.Append(", @");
+					}
+					messageTargets.Append(viewerAssignment.Key);
 				}
 			}
 
-            if (messageTargets.Length > 0)
-            {
-                _connection.Send(string.Format(Strings.TakeDrink, messageTargets));
-            }
+			if (messageTargets.Length > 0)
+			{
+				_connection.Send(string.Format(Strings.TakeDrink, messageTargets));
+			}
 		}
 
 		private void buttonViewerDrink_Click(object sender, EventArgs e)
 		{
 			checkBoxPlay.Checked = true;
 
-			if (!_drunkestParticipants.ContainsKey(comboBoxViewer.Text))
+			if (!_drinkingParticipants.ContainsKey(comboBoxViewer.Text))
 			{
 				return;
 			}
@@ -618,7 +618,7 @@ namespace TwitchBot
 				return;
 			}
 
-			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drunkestParticipants)
+			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drinkingParticipants)
 			{
 				if (viewerAssignment.Value.CharacterNum == characterNum)
 				{
@@ -633,7 +633,7 @@ namespace TwitchBot
 			checkBoxPlay.Checked = true;
 
 			DrinkingGameParticipant info;
-			if (!_drunkestParticipants.TryGetValue(comboBoxViewer.Text, out info))
+			if (!_drinkingParticipants.TryGetValue(comboBoxViewer.Text, out info))
 			{
 				return;
 			}
@@ -668,30 +668,30 @@ namespace TwitchBot
 				return;
 			}
 
-            StringBuilder messageTargets = new StringBuilder();
-			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drunkestParticipants)
+			StringBuilder messageTargets = new StringBuilder();
+			foreach (KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drinkingParticipants)
 			{
 				if (viewerAssignment.Value.CharacterNum == characterNum)
 				{
-                    if (messageTargets.Length > 0)
-                    {
-                        messageTargets.Append(", @");
-                    }
-                    messageTargets.Append(viewerAssignment.Key);
+					if (messageTargets.Length > 0)
+					{
+						messageTargets.Append(", @");
+					}
+					messageTargets.Append(viewerAssignment.Key);
 				}
 			}
 
-            if (messageTargets.Length > 0)
-            {
-                _connection.Send(string.Format(Strings.FinishDrink, messageTargets));
-            }
+			if (messageTargets.Length > 0)
+			{
+				_connection.Send(string.Format(Strings.FinishDrink, messageTargets));
+			}
 		}
 
 		private void buttonViewerFinish_Click(object sender, EventArgs e)
 		{
 			checkBoxPlay.Checked = true;
 
-			if (!_drunkestParticipants.ContainsKey(comboBoxViewer.Text))
+			if (!_drinkingParticipants.ContainsKey(comboBoxViewer.Text))
 			{
 				return;
 			}
@@ -705,7 +705,7 @@ namespace TwitchBot
 
 			StringBuilder summary = new StringBuilder();
 
-			foreach (string viewer in _drunkestParticipants.Keys)
+			foreach (string viewer in _drinkingParticipants.Keys)
 			{
 				summary.AppendFormat("@{0}, ", viewer);
 			}
@@ -727,7 +727,7 @@ namespace TwitchBot
 			comboBoxCustom.Text = "";
 
 			DrinkingGameParticipant info;
-			if (_drunkestParticipants.TryGetValue(viewer, out info))
+			if (_drinkingParticipants.TryGetValue(viewer, out info))
 			{
 				info.CharacterNum = characterNum;
 				return;
@@ -735,7 +735,7 @@ namespace TwitchBot
 
 			comboBoxViewer.Items.Add(viewer);
 			comboBoxCustom.Items.Add(viewer);
-			_drunkestParticipants.Add(viewer, new DrinkingGameParticipant(characterNum));
+			_drinkingParticipants.Add(viewer, new DrinkingGameParticipant(characterNum));
 		}
 
 		/// <summary>
@@ -746,14 +746,14 @@ namespace TwitchBot
 		/// </summary>
 		private void buttonRemove_Click(object sender, EventArgs e)
 		{
-			if (!_drunkestParticipants.ContainsKey(comboBoxCustom.Text))
+			if (!_drinkingParticipants.ContainsKey(comboBoxCustom.Text))
 			{
 				return;
 			}
 
 			comboBoxViewer.Items.Remove(comboBoxCustom.Text.ToLowerInvariant());
 			comboBoxCustom.Items.Remove(comboBoxCustom.Text.ToLowerInvariant());
-			_drunkestParticipants.Remove(comboBoxCustom.Text);
+			_drinkingParticipants.Remove(comboBoxCustom.Text);
 		}
 
 		/// <summary>
@@ -764,7 +764,7 @@ namespace TwitchBot
 		private void comboBoxCustom_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			string viewer = (string)comboBoxCustom.SelectedItem;
-			DrinkingGameParticipant info = _drunkestParticipants[viewer];
+			DrinkingGameParticipant info = _drinkingParticipants[viewer];
 			comboBoxCustomCharacter.SelectedItem = info.CharacterNum;
 		}
 
@@ -774,7 +774,7 @@ namespace TwitchBot
 		private void comboBoxCustomCharacter_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			DrinkingGameParticipant info;
-			if (!_drunkestParticipants.TryGetValue(comboBoxCustom.Text, out info))
+			if (!_drinkingParticipants.TryGetValue(comboBoxCustom.Text, out info))
 			{
 				return;
 			}

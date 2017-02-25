@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace TwitchBot
 {
-	public class ThrottledSender : IDisposable
+	internal class ThrottledSender : IDisposable
 	{
 		public ThrottledSender(int messageLimit, TimeSpan period, TextWriter writer)
 		{
@@ -15,7 +15,7 @@ namespace TwitchBot
 			_period = period;
 			_queue = new PriorityQueue<Message>();
 			_sender = new Thread(DoSend);
-			_sender.Name = "Throttled Sender";
+			_sender.Name = "Sender";
 			_signal = new AutoResetEvent(false);
 			_writer = writer;
 			_sender.Start();

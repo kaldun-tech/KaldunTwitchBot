@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TwitchBot
 {
-	public class PriorityQueue<T> where T : IComparable<T>
+	internal class PriorityQueue<T> where T : IComparable<T>
 	{
 		public PriorityQueue()
 		{

@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace TwitchBot
 {
-	public class Connection : IDisposable
+	internal class Connection : IDisposable
 	{
 		public Connection(string chat)
 		{
