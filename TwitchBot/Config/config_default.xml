@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Save a copy of this file called config.xml -->
+<config>
+  <!-- configure a time in seconds to wait between sending messages. The minimum wait time is 30 seconds. -->
+  <interval wait-time="120" />
+  <messages>
+    <!-- use <message>"Your message here"</message> tags to configure messages to be sent to chat -->
+  </messages>
+</config>
