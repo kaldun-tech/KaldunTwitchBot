@@ -16,6 +16,9 @@ namespace TwitchBot
 			InitializeComponent();
 
 			_connection = null;
+			_fileDialog = new OpenFileDialog();
+			_configReader = null;
+			_automaticMessageSender = null;
 			_drinkingIntroductions = new Dictionary<string, object>();
 			// Use case-insensitive comparisons so viewers can target each other even if they don't
 			// use the capitalization we expect.
@@ -36,6 +39,10 @@ namespace TwitchBot
 		}
 
 		private Connection _connection;
+		// Configuration
+		OpenFileDialog _fileDialog;
+		ConfigurationReader _configReader;
+		ConfigurableMessageSender _automaticMessageSender;
 		// Contains all the viewers that have for sure seen the drinking game introduction message.
 		private IDictionary<string, object> _drinkingIntroductions;
 		/// <summary>
@@ -206,6 +213,10 @@ namespace TwitchBot
 				_connection.UserLeft -= ConnectionUserLeft;
 				_connection.Dispose();
 				_connection = null;
+				if (_automaticMessageSender != null)
+				{
+					_automaticMessageSender.Disconnect();
+				}
 			}
 
 			HandleConnectionChange(false);
@@ -346,6 +357,13 @@ namespace TwitchBot
 			_connection.UserJoined += ConnectionUserJoined;
 			_connection.UserLeft += ConnectionUserLeft;
 			_connection.Connect(hostname, checkBoxSSL.Checked ? 443 : 6667, checkBoxSSL.Checked, textBoxUser.Text, textBoxPassword.Text);
+
+			// Configure the automatic message sender thread
+			if (_configReader != null)
+			{
+				_automaticMessageSender = new ConfigurableMessageSender(_connection, _configReader.GetConfiguredMessageIntervalInSeconds(), _configReader.GetConfiguredMessages());
+				_automaticMessageSender.Start();
+			}
 
 			HandleConnectionChange(true);
 		}
@@ -780,6 +798,20 @@ namespace TwitchBot
 			}
 
 			info.CharacterNum = (int)comboBoxCustomCharacter.SelectedItem;
+		}
+
+		private void ConfigFileButton_Click( object sender, EventArgs e )
+		{
+			_fileDialog.ShowDialog();
+			Stream configStream = null;
+			if ( !string.IsNullOrEmpty( _fileDialog.FileName ) )
+			{
+				configStream = _fileDialog.OpenFile();
+			}
+			if (configStream != null)
+			{
+				_configReader = new ConfigurationReader( configStream );
+			}
 		}
 	}
 }
