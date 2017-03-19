@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -7,45 +6,39 @@ namespace TwitchBot
 {
     internal class ConfigurationReader
     {
-		public ConfigurationReader(Stream stream)
+		public ConfigurationReader(string configFileName)
 		{
-			_configStream = stream;
+            _configFileName = configFileName;
+            ReadConfig();
 		}
 
         private const int DEFAULT_MESSAGE_INTERVAL = 120;
         private const int MINIMUM_MESSAGE_INTERVAL = 30;
 
-        private Stream _configStream = null;
+        private string _configFileName;
         private List<string> _configuredMessages = null;
         private int? _configuredMessageInterval = null;
 
         public List<string> GetConfiguredMessages()
         {
-            if (_configuredMessages == null)
-            {
-                ReadConfig();
-            }
             return _configuredMessages;
         }
 
         public int GetConfiguredMessageIntervalInSeconds()
         {
-            if(_configuredMessageInterval == null)
-            {
-                ReadConfig();
-            }
             return _configuredMessageInterval ?? DEFAULT_MESSAGE_INTERVAL;
         }
 
         private void ReadConfig()
         {
-            if (_configStream == null)
+            if (string.IsNullOrEmpty(_configFileName))
             {
                 return;
             }
 
+            Stream configStream = new FileStream(_configFileName, FileMode.Open, FileAccess.Read);
             XmlDocument document = new XmlDocument();
-            document.Load(_configStream);
+            document.Load(configStream);
 
             XmlNode intervalNode = document.DocumentElement.SelectSingleNode("/config/interval");
             XmlAttributeCollection attributes;
@@ -67,15 +60,16 @@ namespace TwitchBot
             XmlNodeList messagesList = document.DocumentElement.SelectNodes("/config/messages/message");
             if (messagesList != null)
             {
-                _configuredMessages = new List<string>(messagesList.Count);
+                _configuredMessages = new List<string>();
                 foreach( XmlNode messageNode in messagesList)
                 {
-                    if (messageNode != null && !string.IsNullOrEmpty(messageNode.Value))
+                    if (messageNode != null && !string.IsNullOrEmpty(messageNode.InnerText))
                     {
-                        _configuredMessages.Add(messageNode.Value);
+                        _configuredMessages.Add(messageNode.InnerText);
                     }
                 }
             }
+            configStream.Close();
         }
     }
 }

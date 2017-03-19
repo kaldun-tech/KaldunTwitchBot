@@ -10,14 +10,17 @@ namespace TwitchBot
             _connection = connection;
             _messageIntervalInSeconds = messageIntervalInSeconds;
             _configuredMessages = configuredMessages;
+            _senderThread = new Thread(new ThreadStart(SendMessageLoop));
         }
 
         private Connection _connection;
         private int _messageIntervalInSeconds;
         private List<string> _configuredMessages;
+        private Thread _senderThread;
 
-        public void Start()
+        private void SendMessageLoop()
         {
+            // Loop and send messages until disconnected
             if (_messageIntervalInSeconds < 0 || _configuredMessages == null || _configuredMessages.Count <= 0)
             {
                 return;
@@ -39,12 +42,20 @@ namespace TwitchBot
                 // Send with lowest priority, no big deal if we're late
                 lock (this)
                 {
-                    if ( _connection != null)
+                    if (_connection != null)
                     {
                         _connection.Send(nextMessage);
                     }
                 }
                 Thread.Sleep(messageIntervalInMillis);
+            }
+        }
+
+        public void Start()
+        {
+            if (!_senderThread.IsAlive)
+            {
+                _senderThread.Start();
             }
         }
 

@@ -407,6 +407,10 @@ namespace TwitchBot
 				_connection.Dispose();
 				_connection = null;
 			}
+            if (_automaticMessageSender != null)
+            {
+                _automaticMessageSender.Disconnect();
+            }
 			if (_log != null)
 			{
 				_log.Dispose();
@@ -803,15 +807,10 @@ namespace TwitchBot
 		private void ConfigFileButton_Click( object sender, EventArgs e )
 		{
 			_fileDialog.ShowDialog();
-			Stream configStream = null;
 			if ( !string.IsNullOrEmpty( _fileDialog.FileName ) )
 			{
-				configStream = _fileDialog.OpenFile();
-			}
-			if (configStream != null)
-			{
-				_configReader = new ConfigurationReader( configStream );
-			}
+                _configReader = new ConfigurationReader(_fileDialog.FileName);
+            }
 		}
 	}
 }
