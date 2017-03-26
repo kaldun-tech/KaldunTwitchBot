@@ -154,11 +154,11 @@ namespace TwitchBot
 
 			_sender.Send("QUIT", 0, true);
 			_sender.RequestExit();
-			_listener.Join();
 			_sender.MessageSent -= OnMessageSent;
 			_sender.Dispose();
 			_client.Close();
-		}
+            _listener.Join();
+        }
 
 		/// <summary>
 		/// Raise the Disconnected event.

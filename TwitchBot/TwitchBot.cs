@@ -204,8 +204,12 @@ namespace TwitchBot
 			}
 
 			if (_connection != null)
-			{
-				_connection.Disconnected -= ConnectionDisconnected;
+            {
+                if (_automaticMessageSender != null)
+                {
+                    _automaticMessageSender.Disconnect();
+                }
+                _connection.Disconnected -= ConnectionDisconnected;
 				_connection.MessageReceived -= ConnectionMessageTransfer;
 				_connection.MessageSent -= ConnectionMessageTransfer;
 				_connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
@@ -213,10 +217,6 @@ namespace TwitchBot
 				_connection.UserLeft -= ConnectionUserLeft;
 				_connection.Dispose();
 				_connection = null;
-				if (_automaticMessageSender != null)
-				{
-					_automaticMessageSender.Disconnect();
-				}
 			}
 
 			HandleConnectionChange(false);
@@ -395,8 +395,12 @@ namespace TwitchBot
 
 		// Clean up here since the Dispose method is implemented in the designer code.
 		private void TwitchBot_FormClosed(object sender, FormClosedEventArgs e)
-		{
-			if (_connection != null)
+        {
+            if (_automaticMessageSender != null)
+            {
+                _automaticMessageSender.Disconnect();
+            }
+            if (_connection != null)
 			{
 				_connection.Disconnected -= ConnectionDisconnected;
 				_connection.MessageReceived -= ConnectionMessageTransfer;
@@ -407,10 +411,6 @@ namespace TwitchBot
 				_connection.Dispose();
 				_connection = null;
 			}
-            if (_automaticMessageSender != null)
-            {
-                _automaticMessageSender.Disconnect();
-            }
 			if (_log != null)
 			{
 				_log.Dispose();

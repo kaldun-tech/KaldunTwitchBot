@@ -11,8 +11,10 @@ namespace TwitchBot
             _messageIntervalInSeconds = messageIntervalInSeconds;
             _configuredMessages = configuredMessages;
             _senderThread = new Thread(new ThreadStart(SendMessageLoop));
+            _lock = new object();
         }
 
+        private object _lock;
         private Connection _connection;
         private int _messageIntervalInSeconds;
         private List<string> _configuredMessages;
@@ -20,35 +22,33 @@ namespace TwitchBot
 
         private void SendMessageLoop()
         {
-            // Loop and send messages until disconnected
-            if (_messageIntervalInSeconds < 0 || _configuredMessages == null || _configuredMessages.Count <= 0)
+            try
             {
-                return;
-            }
-
-            int messageIntervalInMillis = _messageIntervalInSeconds * 1000;
-            int currentIndex = 0;
-            while (_connection != null)
-            {
-                string nextMessage = _configuredMessages[currentIndex];
-                ++currentIndex;
-                currentIndex %= _configuredMessages.Count;
-
-                if (string.IsNullOrEmpty(nextMessage))
+                // Loop and send messages until disconnected
+                if (_messageIntervalInSeconds < 0 || _configuredMessages == null || _configuredMessages.Count <= 0)
                 {
-                    continue;
+                    return;
                 }
 
-                // Send with lowest priority, no big deal if we're late
-                lock (this)
+                int messageIntervalInMillis = _messageIntervalInSeconds * 1000;
+                int currentIndex = 0;
+                while (true)
                 {
-                    if (_connection != null)
+                    string nextMessage = _configuredMessages[currentIndex];
+                    ++currentIndex;
+                    currentIndex %= _configuredMessages.Count;
+
+                    if (string.IsNullOrEmpty(nextMessage))
                     {
-                        _connection.Send(nextMessage);
+                        continue;
                     }
+
+                    _connection.Send(nextMessage);
+                    Thread.Sleep(messageIntervalInMillis);
                 }
-                Thread.Sleep(messageIntervalInMillis);
             }
+            catch ( ThreadInterruptedException e)
+            {}
         }
 
         public void Start()
@@ -61,10 +61,7 @@ namespace TwitchBot
 
         public void Disconnect()
         {
-            lock (this)
-            {
-                _connection = null;
-            }
+            _senderThread.Abort();
         }
     }
 }
