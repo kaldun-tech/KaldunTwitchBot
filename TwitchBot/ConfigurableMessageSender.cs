@@ -47,7 +47,7 @@ namespace TwitchBot
                     Thread.Sleep(messageIntervalInMillis);
                 }
             }
-            catch ( ThreadInterruptedException e)
+            catch ( ThreadInterruptedException)
             {}
         }
 
