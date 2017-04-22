@@ -37,6 +37,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Casino.cs" />
     <Compile Include="ConfigurableMessageSender.cs" />
     <Compile Include="ConfigurationReader.cs" />
     <Compile Include="Connection.cs" />
@@ -96,7 +97,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Config\config_default.xml" />
+    <Content Include="Config\config_default.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -43,6 +43,7 @@ namespace TwitchBot
 		OpenFileDialog _fileDialog;
 		ConfigurationReader _configReader;
 		ConfigurableMessageSender _automaticMessageSender;
+        Casino _casino;
 		// Contains all the viewers that have for sure seen the drinking game introduction message.
 		private IDictionary<string, object> _drinkingIntroductions;
 		/// <summary>
@@ -209,6 +210,10 @@ namespace TwitchBot
                 {
                     _automaticMessageSender.Disconnect();
                 }
+                if (_casino != null)
+                {
+                    _casino.Stop();
+                }
                 _connection.Disconnected -= ConnectionDisconnected;
 				_connection.MessageReceived -= ConnectionMessageTransfer;
 				_connection.MessageSent -= ConnectionMessageTransfer;
@@ -317,6 +322,10 @@ namespace TwitchBot
 			{
 				_viewers.Add(e.User, null);
 			}
+            if (_casino != null)
+            {
+                _casino.LoginUser(e.User);
+            }
 		}
 
 		private void ConnectionUserLeft(object sender, Connection.UserEventArgs e)
@@ -328,6 +337,10 @@ namespace TwitchBot
 			}
 
 			_viewers.Remove(e.User);
+            if (_casino != null)
+            {
+                _casino.LogoutUser(e.User);
+            }
 
 			comboBoxViewer.Items.Remove(e.User.ToLowerInvariant());
 			comboBoxCustom.Items.Remove(e.User.ToLowerInvariant());
@@ -361,8 +374,14 @@ namespace TwitchBot
 			// Configure the automatic message sender thread
 			if (_configReader != null)
 			{
-				_automaticMessageSender = new ConfigurableMessageSender(_connection, _configReader.GetConfiguredMessageIntervalInSeconds(), _configReader.GetConfiguredMessages());
+				_automaticMessageSender = new ConfigurableMessageSender(_connection, _configReader.GetConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages);
 				_automaticMessageSender.Start();
+                if (_configReader.IsGamblingEnabled)
+                {
+                    List<string> usernames = new List<string>(_viewers.Keys);
+                    _casino = new Casino(usernames, _configReader.CurrencyEarnedPerMinute, _configReader.ChanceToWin);
+                    _casino.Start();
+                }
 			}
 
 			HandleConnectionChange(true);
@@ -399,6 +418,10 @@ namespace TwitchBot
             if (_automaticMessageSender != null)
             {
                 _automaticMessageSender.Disconnect();
+            }
+            if (_casino != null)
+            {
+                _casino.Stop();
             }
             if (_connection != null)
 			{
