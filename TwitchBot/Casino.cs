@@ -114,7 +114,7 @@ namespace TwitchBot
 
         public void Start()
         {
-            if ( !_earningsThread.IsAlive && _earnedCurrencyPerMinute <= 0 )
+            if ( !_earningsThread.IsAlive && _earnedCurrencyPerMinute > 0 )
             {
                 _earningsThread.Start();
             }
