@@ -1,6 +1,6 @@
 ﻿namespace TwitchBot.Interfaces
 {
-    interface ICommand
+    public interface ICommand
     {
         void ExecuteCommand();
     }

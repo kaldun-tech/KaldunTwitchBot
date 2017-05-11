@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using TwitchBot.CommandParsing;
+using TwitchBot.Interfaces;
 using TwitchBot.Commands;
 
 namespace TwitchBot
@@ -364,7 +364,7 @@ namespace TwitchBot
                 _viewers.Add( e.From, null );
             }
 
-            ACommand command = _commandFactory.CreateCommand( e.Content, e.From );
+            ICommand command = _commandFactory.CreateCommand( e.Content, e.From );
             if ( command != null )
             {
                 command.ExecuteCommand();

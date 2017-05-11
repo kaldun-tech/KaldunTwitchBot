@@ -1,6 +1,6 @@
 ﻿using TwitchBot.Interfaces;
 
-namespace TwitchBot.CommandParsing
+namespace TwitchBot.CommandParsing.Templates
 {
     public abstract class ACommand : ICommand
     {

@@ -48,6 +48,7 @@
     <Compile Include="Commands\SplashCurrencyCommand.cs" />
     <Compile Include="Commands\Templates\ACommand.cs" />
     <Compile Include="Commands\Factory\CommandFactory.cs" />
+    <Compile Include="Commands\Templates\AModeratorOnlyCommand.cs" />
     <Compile Include="ConfigurableMessageSender.cs" />
     <Compile Include="ConfigurationReader.cs" />
     <Compile Include="Connection.cs" />

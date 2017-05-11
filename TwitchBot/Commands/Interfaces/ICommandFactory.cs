@@ -1,9 +1,9 @@
-﻿using TwitchBot.CommandParsing;
+﻿using TwitchBot.Interfaces;
 
 namespace TwitchBot.Commands.Interfaces
 {
-    interface ICommandFactory
+    public interface ICommandFactory
     {
-        ACommand CreateCommand( string content, string from );
+        ICommand CreateCommand( string content, string from );
     }
 }

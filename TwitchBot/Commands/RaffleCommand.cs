@@ -1,4 +1,4 @@
-﻿using TwitchBot.CommandParsing;
+﻿using TwitchBot.CommandParsing.Templates;
 
 namespace TwitchBot.Commands
 {

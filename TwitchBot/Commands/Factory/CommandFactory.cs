@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using TwitchBot.CommandParsing;
 using TwitchBot.Commands.Interfaces;
-using static TwitchBot.CommandParsing.ACommand;
+using TwitchBot.Interfaces;
+using static TwitchBot.CommandParsing.Templates.ACommand;
 
 namespace TwitchBot.Commands
 {
@@ -37,10 +37,10 @@ namespace TwitchBot.Commands
         private Regex _raffleEx = new Regex( "^!raffle$", REGEX_OPTIONS );
         private Regex _splashEx = new Regex( "^!splash (.*)$", REGEX_OPTIONS );
 
-        public ACommand CreateCommand( string content, string from )
+        public ICommand CreateCommand( string content, string from )
         {
             Match match;
-            ACommand result = null;
+            ICommand result = null;
 
             if ( TryGetMatch( _balanceEx, content, out match ) )
             {
