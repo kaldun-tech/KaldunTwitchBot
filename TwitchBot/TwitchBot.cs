@@ -65,10 +65,29 @@ namespace TwitchBot
         // Contains the viewers that are probably in the channel right now. Values are all null.
         private IDictionary<string, object> _viewers;
         private Color _windowColor;
+		
+		//class User
+		//{
+		//	string Name;
+		//	bool IsModerator;
+		//	public override bool Equals( object obj )
+		//	{
+		//		if ( !( obj is User ) )
+		//			return false;
+		//		User other = (User) obj;
+		//		return Name.Equals( other.Name );
+		//	}
+
+		//	public override int GetHashCode()
+		//	{
+		//		return Name.GetHashCode();
+		//	}
+
+		//}
 
         private void RaffleAdd( string viewer )
         {
-            if ( _raffleViewers.ContainsKey( viewer ) )
+			if ( _raffleViewers.ContainsKey( viewer ) )
             {
                 return;
             }
@@ -261,7 +280,7 @@ namespace TwitchBot
             }
             else
             {
-                int balance = _casino.GetBalance( from );
+                uint balance = _casino.GetBalance( from );
                 message = string.Format( "{0}, your balance is {1} {2}", from, balance, _casino.CurrencyName );
             }
             _connection.Send( message );
@@ -278,11 +297,11 @@ namespace TwitchBot
             {
                 // Target is the gamble amount
                 int betAmount = 0;
-                if ( int.TryParse(target, out betAmount ) )
+                if ( int.TryParse(target, out betAmount ) && betAmount > 0 )
                 {
-                    if ( _casino.CanUserGamble( from, betAmount))
+                    if ( _casino.CanUserGamble( from, (uint) betAmount ) )
                     {
-                        int winnings = _casino.Gamble( from, betAmount );
+                        long winnings = _casino.Gamble( from, (uint) betAmount );
                         string winLoseString = winnings > 0 ? "won" : "lost";
                         message = string.Format( "{0}, you {1} {2} {3}!", from, winLoseString, Math.Abs( winnings ), _casino.CurrencyName );
                     }
@@ -341,7 +360,7 @@ namespace TwitchBot
             int splashAmount = 0;
             if ( _casino != null && int.TryParse(target, out splashAmount) )
             {
-                _casino.SplashUsers( splashAmount );
+                _casino.SplashUsers( (uint) splashAmount );
             }
             else
             {
@@ -446,8 +465,9 @@ namespace TwitchBot
                 _automaticMessageSender.Start();
                 if ( _configReader.IsGamblingEnabled )
                 {
+					string dataFilePath = Path.Combine( Environment.CurrentDirectory, "casino_balances.csv" );
                     List<string> usernames = new List<string>( _viewers.Keys );
-                    _casino = new Casino( _configReader.CurrencyName, usernames, _configReader.CurrencyEarnedPerMinute, _configReader.ChanceToWin );
+                    _casino = new Casino( dataFilePath, _configReader.CurrencyName, usernames, _configReader.CurrencyEarnedPerMinute, _configReader.ChanceToWin );
                     _casino.Start();
                 }
             }

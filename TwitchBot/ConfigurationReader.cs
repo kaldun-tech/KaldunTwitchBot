@@ -19,7 +19,7 @@ namespace TwitchBot
         // Default currency name
         private const string DEFAULT_CURRENCY_NAME = "cheddar";
         // Default amount of currency earned per minute
-        private const int DEFAULT_CURRENCY_EARN_RATE = 100;
+        private const uint DEFAULT_CURRENCY_EARN_RATE = 100;
         // Default minimum amount to gamble
         private const int DEFAULT_MINIMUM_GAMBLE_AMOUNT = 50;
         // Default minimum amount of seconds between allowed gamble attempts
@@ -32,7 +32,7 @@ namespace TwitchBot
         private int? _configuredMessageInterval = null;
         private bool _currencyEnabled = false;
         private string _currencyName = DEFAULT_CURRENCY_NAME;
-        private int _currencyEarnRate = DEFAULT_CURRENCY_EARN_RATE;
+        private uint _currencyEarnRate = DEFAULT_CURRENCY_EARN_RATE;
         private bool _gamblingEnabled = false;
         private int _minimumGambleAmount = DEFAULT_MINIMUM_GAMBLE_AMOUNT;
         private int _minimumSecondsBetweenGambles = DEFAULT_MINIMUM_GAMBLE_INTERVAL;
@@ -58,9 +58,9 @@ namespace TwitchBot
             get { return _currencyName ?? DEFAULT_CURRENCY_NAME; }
         }
 
-        public int CurrencyEarnedPerMinute
+        public uint CurrencyEarnedPerMinute
         {
-            get { return ( !IsCurrencyEnabled || _currencyEarnRate < 0 ) ? 0 : _currencyEarnRate; }
+            get { return ( !IsCurrencyEnabled) ? 0 : _currencyEarnRate; }
         }
 
         public bool IsGamblingEnabled
@@ -145,7 +145,7 @@ namespace TwitchBot
                         bool parsed = int.TryParse( value, out earnRate );
                         if ( parsed && earnRate > 0 )
                         {
-                            _currencyEarnRate = earnRate;
+                            _currencyEarnRate = (uint)earnRate;
                         }
                     }
                 }

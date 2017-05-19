@@ -19,7 +19,15 @@ namespace TwitchBot.Commands
             _splashCB = splashCB;
         }
 
-        private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
+        private static RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
+
+        private static Regex _balanceEx = new Regex( "^!balance$", REGEX_OPTIONS );
+        private static Regex _gambleEx = new Regex( "^!gamble (.*)$", REGEX_OPTIONS );
+        private static Regex _giveEx = new Regex( "^!give (.*)$", REGEX_OPTIONS );
+        private static Regex _joinEx = new Regex( "^!join (.*)$", REGEX_OPTIONS );
+        private static Regex _quitEx = new Regex( "^!quit$", REGEX_OPTIONS );
+        private static Regex _raffleEx = new Regex( "^!raffle$", REGEX_OPTIONS );
+        private static Regex _splashEx = new Regex( "^!splash (.*)$", REGEX_OPTIONS );
 
         private CommandCallback _checkBalanceCB;
         private CommandCallback _gambleCB;
@@ -28,14 +36,6 @@ namespace TwitchBot.Commands
         private CommandCallback _quitGameCB;
         private CommandCallback _raffleCB;
         private CommandCallback _splashCB;
-
-        private Regex _balanceEx = new Regex( "^!balance$", REGEX_OPTIONS );
-        private Regex _gambleEx = new Regex( "^!gamble (.*)$", REGEX_OPTIONS );
-        private Regex _giveEx = new Regex( "^!give (.*)$", REGEX_OPTIONS );
-        private Regex _joinEx = new Regex( "^!join (.*)$", REGEX_OPTIONS );
-        private Regex _quitEx = new Regex( "^!quit$", REGEX_OPTIONS );
-        private Regex _raffleEx = new Regex( "^!raffle$", REGEX_OPTIONS );
-        private Regex _splashEx = new Regex( "^!splash (.*)$", REGEX_OPTIONS );
 
         public ICommand CreateCommand( string content, string from )
         {
