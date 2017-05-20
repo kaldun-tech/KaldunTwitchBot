@@ -637,14 +637,7 @@ namespace TwitchBot
                 return;
             }
 
-            _connection.Disconnected -= ConnectionDisconnected;
-            _connection.MessageReceived -= ConnectionMessageTransfer;
-            _connection.MessageSent -= ConnectionMessageTransfer;
-            _connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
-            _connection.UserJoined -= ConnectionUserJoined;
-            _connection.UserLeft -= ConnectionUserLeft;
-            _connection.Dispose();
-            _connection = null;
+			ConnectionDisconnected( sender, e );
             HandleConnectionChange( false );
         }
 
