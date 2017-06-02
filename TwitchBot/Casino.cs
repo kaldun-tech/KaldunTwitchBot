@@ -19,11 +19,23 @@ namespace TwitchBot
         private object _lock;
         private Thread _earningsThread;
 
+		/// <summary>
+		/// Represents players for the casino. These are users in chat who may or may not be currently active
+		/// </summary>
 		internal class CasinoUser
 		{
+			/// <summary>
+			/// Default constructor. Creates an empty CasinoUser
+			/// </summary>
 			public CasinoUser()
 			{ }
 
+			/// <summary>
+			/// Create a casino user given a name, balance, and whether the user is currently active
+			/// </summary>
+			/// <param name="username"></param>
+			/// <param name="balance"></param>
+			/// <param name="isActive"></param>
 			public CasinoUser( string username, uint balance, bool isActive )
 			{
 				UserName = username;
@@ -52,9 +64,24 @@ namespace TwitchBot
 			}
 		}
 
+		/// <summary>
+		/// Create a basic casino
+		/// </summary>
+		/// <param name="currencyName">Name of the currency. Must not be null or empty.</param>
+		/// <param name="currentUsers">List of usernames on casino startup.</param>
+		/// <param name="earnRate">Amount of currency earned per minute. Must be positive.</param>
+		/// <param name="winChance">Chance to win when gambling. Must be greater than zero and less than or equal to one.</param>
         public Casino( string currencyName, List<string> currentUsers, uint earnRate, double winChance ) : this( null, currencyName, currentUsers, earnRate, winChance)
         { }
 
+		/// <summary>
+		/// Create a casino that will read and write to a csv file
+		/// </summary>
+		/// <param name="csvFilePath">File path to the csv file that contains user data.</param>
+		/// <param name="currencyName">Name of the currency. Must not be null or empty.</param>
+		/// <param name="currentUsers">List of usernames on casino startup.</param>
+		/// <param name="earnRate">Amount of currency earned per minute. Must be positive.</param>
+		/// <param name="winChance">Chance to win when gambling. Must be greater than zero and less than or equal to one.</param>
 		public Casino( string csvFilePath, string currencyName, List<string> currentUsers, uint earnRate, double winChance )
 		{
 			_csvFilePath = csvFilePath;
@@ -75,11 +102,18 @@ namespace TwitchBot
 			}
 		}
 
+		/// <summary>
+		/// Name of the currency
+		/// </summary>
 		public string CurrencyName
         {
             get { return _currencyName; }
         }
 
+		/// <summary>
+		/// Logs a user into the casino
+		/// </summary>
+		/// <param name="userName">Name of user. Should not be null or empty.</param>
         public void LoginUser( string userName )
         {
             lock ( _lock )
@@ -98,7 +132,11 @@ namespace TwitchBot
 			}
         }
 
-        public void LogoutUser( string userName )
+		/// <summary>
+		/// Logs a user out of the casino
+		/// </summary>
+		/// <param name="userName">Name of user. Should not be null or empty.</param>
+		public void LogoutUser( string userName )
         {
             lock ( _lock )
             {
@@ -110,6 +148,10 @@ namespace TwitchBot
             }
         }
 
+		/// <summary>
+		/// Splash all active users with an amount of currency
+		/// </summary>
+		/// <param name="splashAmount">Amount of currency to splash with</param>
         public void SplashUsers( uint splashAmount )
         {
             lock ( _lock )
@@ -124,6 +166,12 @@ namespace TwitchBot
             }
         }
 
+		/// <summary>
+		/// Gamble currency for a user. The user may lose or gain currency.
+		/// </summary>
+		/// <param name="username">Name of user. Must not be null or empty.</param>
+		/// <param name="betAmount">Amount to bet on the gamble. Must be positive and less than or equal to the user's balance.</param>
+		/// <returns>The amount of winnings. This will be negative on a loss and zero on error.</returns>
         public long Gamble( string username, uint betAmount )
         {
 			CasinoUser found = FindUser( username );
@@ -145,6 +193,12 @@ namespace TwitchBot
 			return 0;
         }
 
+		/// <summary>
+		/// Can the user gamble the given amount
+		/// </summary>
+		/// <param name="username">Name of user. Must not be null or empty</param>
+		/// <param name="betAmount">Amount to attempt to gamble</param>
+		/// <returns>Whether the input user can gamble the input amount</returns>
         public bool CanUserGamble( string username, uint betAmount )
         {
 			CasinoUser found = FindUser( username );
@@ -152,11 +206,22 @@ namespace TwitchBot
 
 		}
 
+		/// <summary>
+		/// Can the user gamble the given amount
+		/// </summary>
+		/// <param name="user">User object to try to gamble with. Must not be null</param>
+		/// <param name="betAmount">Amount to attempt to gamble</param>
+		/// <returns>Whether the input user can gamble the input amount</returns>
 		public bool CanUserGamble( CasinoUser user, uint betAmount )
 		{
 			return user != null && user.Balance >= betAmount;
 		}
 
+		/// <summary>
+		/// Get the casino balance for the user
+		/// </summary>
+		/// <param name="username">Name of user. Must not be null or empty.</param>
+		/// <returns>The balance for the user. Zero if not found</returns>
 		public uint GetBalance( string username )
         {
             lock ( _lock )
@@ -166,6 +231,9 @@ namespace TwitchBot
             }
         }
 
+		/// <summary>
+		/// Start the earnings thread
+		/// </summary>
         public void Start()
 		{
 			ReadFromCsv();
@@ -175,17 +243,28 @@ namespace TwitchBot
             }
         }
 
+		/// <summary>
+		/// Stop the earnings thread
+		/// </summary>
         public void Stop()
         {
             _earningsThread.Abort();
 			WriteToCsv();
 		}
 
+		/// <summary>
+		/// Find a user for a username
+		/// </summary>
+		/// <param name="userName"></param>
+		/// <returns></returns>
 		private CasinoUser FindUser( string userName )
 		{
 			return _users.Find( x => x.UserName == userName );
 		}
 
+		/// <summary>
+		/// Read users from the csv file if _csvFilePath is set
+		/// </summary>
 		private void ReadFromCsv()
 		{
 			if ( string.IsNullOrEmpty( _csvFilePath ) )
@@ -234,6 +313,9 @@ namespace TwitchBot
 			}
 		}
 
+		/// <summary>
+		/// Write users to the csv file if _csvFilePath is set
+		/// </summary>
 		private void WriteToCsv()
 		{
 			if ( string.IsNullOrEmpty( _csvFilePath ) )
@@ -267,6 +349,9 @@ namespace TwitchBot
 			}
 		}
 
+		/// <summary>
+		/// Earnings thread accrues currency for all active users
+		/// </summary>
 		private void AccrueEarnings()
         {
             try
