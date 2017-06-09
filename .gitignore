@@ -1,0 +1,9 @@
+# Ignored files #
+.vs/
+Backup/
+Backup1/
+TwitchBot/app.config
+TwitchBot/bin/
+TwitchBot/obj/
+UpgradeLog.htm
+UpgradeLog2.htm
