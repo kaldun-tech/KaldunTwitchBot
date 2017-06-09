@@ -8,17 +8,6 @@ namespace TwitchBot
 {
     class Casino
     {
-        // The sleeptime is one minute
-        private const int SLEEPTIME_MILLIS = 60 * 1000;
-
-		private readonly string _csvFilePath;
-		private readonly string _currencyName;
-		private List<CasinoUser> _users;
-        private uint _earnedCurrencyPerMinute;
-        private double _winChance;
-        private object _lock;
-        private Thread _earningsThread;
-
 		/// <summary>
 		/// Represents players for the casino. These are users in chat who may or may not be currently active
 		/// </summary>
@@ -64,6 +53,17 @@ namespace TwitchBot
 			}
 		}
 
+		// The sleeptime is one minute
+		private const int SLEEPTIME_MILLIS = 60 * 1000;
+
+		private readonly string _csvFilePath;
+		private readonly string _currencyName;
+		private List<CasinoUser> _users;
+		private uint _earnedCurrencyPerMinute;
+		private double _winChance;
+		private object _lock;
+		private Thread _earningsThread;
+
 		/// <summary>
 		/// Create a basic casino
 		/// </summary>
@@ -71,7 +71,7 @@ namespace TwitchBot
 		/// <param name="currentUsers">List of usernames on casino startup.</param>
 		/// <param name="earnRate">Amount of currency earned per minute. Must be positive.</param>
 		/// <param name="winChance">Chance to win when gambling. Must be greater than zero and less than or equal to one.</param>
-        public Casino( string currencyName, List<string> currentUsers, uint earnRate, double winChance ) : this( null, currencyName, currentUsers, earnRate, winChance)
+		public Casino( string currencyName, List<string> currentUsers, uint earnRate, double winChance ) : this( null, currencyName, currentUsers, earnRate, winChance)
         { }
 
 		/// <summary>

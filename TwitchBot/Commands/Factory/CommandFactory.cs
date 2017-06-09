@@ -29,7 +29,7 @@ namespace TwitchBot.Commands
             _splashCB = splashCB;
         }
 
-        private static RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
+        private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
 
         private static Regex _balanceEx = new Regex( "^!balance$", REGEX_OPTIONS );
         private static Regex _gambleEx = new Regex( "^!gamble (.*)$", REGEX_OPTIONS );
@@ -47,7 +47,13 @@ namespace TwitchBot.Commands
         private CommandCallback _raffleCB;
         private CommandCallback _splashCB;
 
-        public ICommand CreateCommand( string content, string from )
+		/// <summary>
+		/// Tries to create a command from a given content and from line. Returns null on failure.
+		/// </summary>
+		/// <param name="content">The string to create the command from. Should not be null or empty.</param>
+		/// <param name="from">The string denoting the sender of the command. May be null or empty.</param>
+		/// <returns>Executable ICommand object or nullon failure</returns>
+		public ICommand CreateCommand( string content, string from )
         {
             Match match;
             ICommand result = null;

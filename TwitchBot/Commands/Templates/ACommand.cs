@@ -26,27 +26,42 @@ namespace TwitchBot.CommandParsing.Templates
             CB = cb;
         }
 
+		/// <summary>
+		/// Input string content
+		/// </summary>
         internal string Content
         {
             get; set;
         }
 
+		/// <summary>
+		/// Name of the user who originated this command
+		/// </summary>
         internal string From
         {
             get; set;
         }
 
+		/// <summary>
+		/// Target of the command
+		/// </summary>
         internal string Target
         {
             get; set;
         }
 
+		/// <summary>
+		/// Callback to call
+		/// </summary>
         internal CommandCallback CB
         {
             get; set;
         }
 
-        public virtual void ExecuteCommand()
+		/// <summary>
+		/// Execute a command
+		/// </summary>
+		public virtual void ExecuteCommand()
         {
             CB( From, Target );
         }

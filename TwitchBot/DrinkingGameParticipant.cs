@@ -2,6 +2,10 @@
 {
     internal class DrinkingGameParticipant
     {
+		/// <summary>
+		/// Create a participant in the drinking game
+		/// </summary>
+		/// <param name="characterNum">Which character the participant represents</param>
         public DrinkingGameParticipant( int characterNum )
         {
             _characterNum = characterNum;

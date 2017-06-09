@@ -117,13 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChooseCharacter" xml:space="preserve">
+    <value>@{0}, choose from {1}, {2}, {3} or {4}.</value>
+    <comment>Tell a player which characters to choose from</comment>
+  </data>
   <data name="FinishDrink" xml:space="preserve">
     <value>@{0}, FINISH your drink!</value>
+    <comment>Tell a player to finish their drink</comment>
   </data>
   <data name="GetDrinkTicket" xml:space="preserve">
     <value>@{0}, you got a drink ticket for a total of {1}. Use "!give &lt;player&gt;" to give it to someone and make them drink.</value>
+    <comment>Give a player a drink ticket</comment>
+  </data>
+  <data name="NoDrinkingGame" xml:space="preserve">
+    <value>@{0}, we're not currently playing a drinking game.</value>
+    <comment>Inform a user we are not currently drinking</comment>
+  </data>
+  <data name="NoDrinkTickets" xml:space="preserve">
+    <value>@{0}, you do not have any drink tickets to give.</value>
+    <comment>Inform a user they do not have any drink tickets</comment>
+  </data>
+  <data name="NotParticipating" xml:space="preserve">
+    <value>@{0}, {1} is not participating.</value>
+    <comment>Inform a user the target is not participating</comment>
   </data>
   <data name="TakeDrink" xml:space="preserve">
     <value>@{0}, take a drink.</value>
+    <comment>Tell a player to take a drink</comment>
   </data>
 </root>

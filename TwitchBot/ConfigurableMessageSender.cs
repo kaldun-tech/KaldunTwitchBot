@@ -5,6 +5,12 @@ namespace TwitchBot
 {
     internal class ConfigurableMessageSender
     {
+		/// <summary>
+		/// Create a new configurable message sender
+		/// </summary>
+		/// <param name="connection">Connection to use. Must not be null.</param>
+		/// <param name="messageIntervalInSeconds">Interval between messages. Must be greater than or equal to zero.</param>
+		/// <param name="configuredMessages">List of messages to send. Should be non-null of length greater than or equal to zero.</param>
         public ConfigurableMessageSender( Connection connection, int messageIntervalInSeconds, List<string> configuredMessages )
         {
             _connection = connection;
@@ -20,6 +26,7 @@ namespace TwitchBot
         private List<string> _configuredMessages;
         private Thread _senderThread;
 
+		// Send the messages in a loop
         private void SendMessageLoop()
         {
             try
@@ -51,6 +58,9 @@ namespace TwitchBot
             { }
         }
 
+		/// <summary>
+		/// Start the send thread
+		/// </summary>
         public void Start()
         {
             if ( !_senderThread.IsAlive )
@@ -59,7 +69,10 @@ namespace TwitchBot
             }
         }
 
-        public void Disconnect()
+		/// <summary>
+		/// Stop the send thread
+		/// </summary>
+        public void Stop()
         {
             _senderThread.Abort();
         }

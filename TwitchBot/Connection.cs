@@ -10,6 +10,10 @@ namespace TwitchBot
 {
     internal class Connection : IDisposable
     {
+		/// <summary>
+		/// Create a new connection
+		/// </summary>
+		/// <param name="chat">Target IRC chat</param>
         public Connection( string chat )
         {
             _channel = chat;
@@ -20,6 +24,9 @@ namespace TwitchBot
             _sender = null;
         }
 
+		/// <summary>
+		/// Occurs when the bot is disconnected
+		/// </summary>
         public event EventHandler Disconnected;
 
         /// <summary>
@@ -136,6 +143,9 @@ namespace TwitchBot
             _sender.Send( text, 1, true );
         }
 
+		/// <summary>
+		/// Dispose of the connection
+		/// </summary>
         public void Dispose()
         {
             if ( _listener == null )
@@ -237,6 +247,10 @@ namespace TwitchBot
             }
         }
 
+		/// <summary>
+		/// Listen for messages from chat
+		/// </summary>
+		/// <param name="reader"></param>
         private void Listen( TextReader reader )
         {
             Regex ping = new Regex( "^PING :(.+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant );
@@ -280,7 +294,8 @@ namespace TwitchBot
             OnDisconnected();
         }
 
-        private bool TryReadLine( TextReader reader, out string result )
+		// Try to read a line
+		private bool TryReadLine( TextReader reader, out string result )
         {
             try
             {
@@ -299,6 +314,9 @@ namespace TwitchBot
         public delegate void PrivateMessageReceivedEventHandler( object sender, PrivateMessageReceivedEventArgs e );
         public delegate void UserEventHandler( object sender, UserEventArgs e );
 
+		/// <summary>
+		/// Event arguments tused for callbacks
+		/// </summary>
         public class MessageEventArgs : EventArgs
         {
             public MessageEventArgs( string text, bool isReceived )
@@ -318,12 +336,18 @@ namespace TwitchBot
                 get { return _isReceived; }
             }
 
+			/// <summary>
+			/// Text of the message
+			/// </summary>
             public string Text
             {
                 get { return _text; }
             }
         }
 
+		/// <summary>
+		/// Event arguments to use for private messages
+		/// </summary>
         public class PrivateMessageReceivedEventArgs : EventArgs
         {
             public PrivateMessageReceivedEventArgs( string from, string content )
@@ -335,17 +359,26 @@ namespace TwitchBot
             private string _content;
             private string _from;
 
-            public string Content
+			/// <summary>
+			/// Whether the message was received. Otherwise, it was sent.
+			/// </summary>
+			public string Content
             {
                 get { return _content; }
             }
 
-            public string From
+			/// <summary>
+			/// Text of the message
+			/// </summary>
+			public string From
             {
                 get { return _from; }
             }
         }
 
+		/// <summary>
+		/// Event arguments for user events
+		/// </summary>
         public class UserEventArgs : EventArgs
         {
             public UserEventArgs( string user )
@@ -355,6 +388,9 @@ namespace TwitchBot
 
             private string _user;
 
+			/// <summary>
+			/// User name
+			/// </summary>
             public string User
             {
                 get { return _user; }

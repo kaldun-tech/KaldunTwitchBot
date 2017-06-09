@@ -61,6 +61,15 @@ namespace TwitchBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to @{0}, choose from {1}, {2}, {3} or {4}..
+        /// </summary>
+        internal static string ChooseCharacter {
+            get {
+                return ResourceManager.GetString("ChooseCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @{0}, FINISH your drink!.
         /// </summary>
         internal static string FinishDrink {
@@ -75,6 +84,33 @@ namespace TwitchBot {
         internal static string GetDrinkTicket {
             get {
                 return ResourceManager.GetString("GetDrinkTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0}, we&apos;re not currently playing a drinking game..
+        /// </summary>
+        internal static string NoDrinkingGame {
+            get {
+                return ResourceManager.GetString("NoDrinkingGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0}, you do not have any drink tickets to give..
+        /// </summary>
+        internal static string NoDrinkTickets {
+            get {
+                return ResourceManager.GetString("NoDrinkTickets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0}, {1} is not participating..
+        /// </summary>
+        internal static string NotParticipating {
+            get {
+                return ResourceManager.GetString("NotParticipating", resourceCulture);
             }
         }
         

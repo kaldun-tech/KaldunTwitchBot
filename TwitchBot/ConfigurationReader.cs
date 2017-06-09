@@ -38,51 +38,81 @@ namespace TwitchBot
         private int _minimumSecondsBetweenGambles = DEFAULT_MINIMUM_GAMBLE_INTERVAL;
         private double _winChance = DEFAULT_WIN_CHANCE;
 
+		/// <summary>
+		/// Get a list of configured messages to send
+		/// </summary>
         public List<string> GetConfiguredMessages
         {
             get { return _configuredMessages; }
         }
 
+		/// <summary>
+		/// Get the configured interval in seconds between sending messages
+		/// </summary>
         public int GetConfiguredMessageIntervalInSeconds
         {
             get { return _configuredMessageInterval ?? DEFAULT_MESSAGE_INTERVAL; }
         }
 
+		/// <summary>
+		/// Whether accrual of currency is enabled. This must be enabled gambling to function.
+		/// </summary>
         public bool IsCurrencyEnabled
         {
             get { return _currencyEnabled; }
         }
 
+		/// <summary>
+		/// Name of the currency
+		/// </summary>
         public string CurrencyName
         {
             get { return _currencyName ?? DEFAULT_CURRENCY_NAME; }
         }
 
+		/// <summary>
+		/// Amount of currency users earn per minute while in the channel with the bot running
+		/// </summary>
         public uint CurrencyEarnedPerMinute
         {
-            get { return ( !IsCurrencyEnabled) ? 0 : _currencyEarnRate; }
+            get { return IsCurrencyEnabled ? _currencyEarnRate : 0; }
         }
 
+		/// <summary>
+		/// Whether gambling is enabled
+		/// </summary>
         public bool IsGamblingEnabled
         {
             get { return IsCurrencyEnabled && _gamblingEnabled; }
         }
 
+		/// <summary>
+		/// The minimum amount that users can gamble
+		/// </summary>
         public int MinimumGambleAmount
         {
             get { return IsGamblingEnabled ? _minimumGambleAmount : 0; }
         }
 
+		/// <summary>
+		/// Minimum amount of time between gamble commands in seconds
+		/// </summary>
         public int MinimumSecondsBetweenGambles
         {
             get { return IsGamblingEnabled ? _minimumSecondsBetweenGambles : 0; }
         }
 
+		/// <summary>
+		/// Chance to win. Must be between zero and one inclusive.
+		/// </summary>
         public double ChanceToWin
         {
             get { return IsCurrencyEnabled ? _winChance : 0; }
         }
 
+		/// <summary>
+		/// Read the config file to parse values
+		/// </summary>
         private void ReadConfig()
         {
             if ( string.IsNullOrEmpty( _configFileName ) )

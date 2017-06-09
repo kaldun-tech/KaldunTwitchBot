@@ -117,7 +117,7 @@ namespace TwitchBot
             }
             else
             {
-                _connection.Send( string.Format( "@{0}, choose from {1}, {2}, {3} or {4}.",
+                _connection.Send( string.Format( Strings.ChooseCharacter,
                     viewer, textBoxCharacter1.Text, textBoxCharacter2.Text,
                     textBoxCharacter3.Text, textBoxCharacter4.Text ) );
                 return;
@@ -141,21 +141,20 @@ namespace TwitchBot
         {
             if ( !checkBoxPlay.Checked )
             {
-                _connection.Send( string.Format( "@{0}, we're not currently playing a drinking game.", source ) );
+                _connection.Send( string.Format( Strings.NoDrinkingGame, source ) );
                 return;
             }
 
             DrinkingGameParticipant sourceInfo;
-            if ( !_drinkingParticipants.TryGetValue( source, out sourceInfo ) ||
-                sourceInfo.NumberOfDrinkTickets < 1 )
+            if ( !_drinkingParticipants.TryGetValue( source, out sourceInfo ) || sourceInfo.NumberOfDrinkTickets <= 0 )
             {
-                _connection.Send( string.Format( "@{0}, you do not have any drink tickets to give.", source ) );
+                _connection.Send( string.Format( Strings.NoDrinkingGame, source ) );
                 return;
             }
 
             if ( !_drinkingParticipants.ContainsKey( target ) )
             {
-                _connection.Send( string.Format( "@{0}, {1} is not participating.", source, target ) );
+                _connection.Send( string.Format( Strings.NotParticipating, source, target ) );
                 return;
             }
 
@@ -229,7 +228,7 @@ namespace TwitchBot
             {
                 if ( _automaticMessageSender != null )
                 {
-                    _automaticMessageSender.Disconnect();
+                    _automaticMessageSender.Stop();
                 }
                 if ( _casino != null )
                 {
@@ -505,7 +504,7 @@ namespace TwitchBot
         {
             if ( _automaticMessageSender != null )
             {
-                _automaticMessageSender.Disconnect();
+                _automaticMessageSender.Stop();
             }
             if ( _casino != null )
             {
