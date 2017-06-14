@@ -126,7 +126,7 @@
     <comment>Tell a player to finish their drink</comment>
   </data>
   <data name="GetDrinkTicket" xml:space="preserve">
-    <value>@{0}, you got a drink ticket for a total of {1}. Use "!give &lt;player&gt;" to give it to someone and make them drink.</value>
+    <value>@{0}, you got a drink ticket. Use "!give &lt;player&gt;" to give it to someone and make them drink.</value>
     <comment>Give a player a drink ticket</comment>
   </data>
   <data name="NoDrinkingGame" xml:space="preserve">
@@ -144,5 +144,9 @@
   <data name="TakeDrink" xml:space="preserve">
     <value>@{0}, take a drink.</value>
     <comment>Tell a player to take a drink</comment>
+  </data>
+  <data name="DrinkTicketsBalance" xml:space="preserve">
+    <value>@{0}, you have {1} tickets.</value>
+    <comment>Tell a player how many drink tickets they have to give out</comment>
   </data>
 </root>

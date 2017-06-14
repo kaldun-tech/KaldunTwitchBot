@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Casino.cs" />
     <Compile Include="Commands\CheckBalanceCommand.cs" />
+    <Compile Include="Commands\CheckTicketsCommand.cs" />
     <Compile Include="Commands\GambleCommand.cs" />
     <Compile Include="Commands\GiveDrinksCommand.cs" />
     <Compile Include="Commands\Interfaces\ICommandFactory.cs" />

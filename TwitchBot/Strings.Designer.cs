@@ -70,6 +70,15 @@ namespace TwitchBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to @{0}, you have {1} tickets..
+        /// </summary>
+        internal static string DrinkTicketsBalance {
+            get {
+                return ResourceManager.GetString("DrinkTicketsBalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @{0}, FINISH your drink!.
         /// </summary>
         internal static string FinishDrink {
@@ -79,7 +88,7 @@ namespace TwitchBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to @{0}, you got a drink ticket for a total of {1}. Use &quot;!give &lt;player&gt;&quot; to give it to someone and make them drink..
+        ///   Looks up a localized string similar to @{0}, you got a drink ticket. Use &quot;!give &lt;player&gt;&quot; to give it to someone and make them drink..
         /// </summary>
         internal static string GetDrinkTicket {
             get {

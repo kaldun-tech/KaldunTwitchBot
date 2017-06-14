@@ -1,5 +1,6 @@
 Proposed Enhancements:
-Save login information ( screename, oath, chat, config file )
-Show the amount of drink tickets a user has to give away, and save this information between sessions
+
+Save login information ( screename, oath, chat, config file path )
+Save the amount of drink tickets a user has
 Store the amount of drinks a player received
 Debug the command queue and list of users to a drinking game participant

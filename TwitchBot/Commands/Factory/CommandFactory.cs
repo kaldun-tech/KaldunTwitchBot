@@ -17,8 +17,9 @@ namespace TwitchBot.Commands
 		/// <param name="quitGameCB"></param>
 		/// <param name="raffleCB"></param>
 		/// <param name="splashCB"></param>
+		/// <param name="checkTicketsCB"></param>
         public CommandFactory( CommandCallback checkBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
-            CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB )
+            CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback checkTicketsCB )
         {
             _checkBalanceCB = checkBalanceCB;
             _gambleCB = gambleCB;
@@ -27,7 +28,9 @@ namespace TwitchBot.Commands
             _quitGameCB = quitGameCB;
             _raffleCB = raffleCB;
             _splashCB = splashCB;
-        }
+			_checkTicketsCB = checkTicketsCB;
+
+		}
 
         private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
 
@@ -38,6 +41,7 @@ namespace TwitchBot.Commands
         private static Regex _quitEx = new Regex( "^!quit$", REGEX_OPTIONS );
         private static Regex _raffleEx = new Regex( "^!raffle$", REGEX_OPTIONS );
         private static Regex _splashEx = new Regex( "^!splash (.*)$", REGEX_OPTIONS );
+		private static Regex _ticketsEx = new Regex( "^!tickets$", REGEX_OPTIONS );
 
         private CommandCallback _checkBalanceCB;
         private CommandCallback _gambleCB;
@@ -46,6 +50,7 @@ namespace TwitchBot.Commands
         private CommandCallback _quitGameCB;
         private CommandCallback _raffleCB;
         private CommandCallback _splashCB;
+		private CommandCallback _checkTicketsCB;
 
 		/// <summary>
 		/// Tries to create a command from a given content and from line. Returns null on failure.
@@ -86,6 +91,10 @@ namespace TwitchBot.Commands
             {
                 result = new SplashCurrencyCommand( content, from, match.Groups[ 1 ].Value, _splashCB );
             }
+			if ( TryGetMatch( _ticketsEx, content, out match ) )
+			{
+				result = new CheckTicketsCommand( content, from, null, _checkTicketsCB ); //TODO callback
+			}
 
             return result;
         }

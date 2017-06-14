@@ -32,7 +32,7 @@ namespace TwitchBot
             _viewers = new Dictionary<string, object>();
             _windowColor = textBoxR.BackColor;
 
-            _commandFactory = new CommandFactory( CheckBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB );
+            _commandFactory = new CommandFactory( CheckBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, CheckTicketsCB );
 
             comboBoxCustomCharacter.Items.Add( 1 );
             comboBoxCustomCharacter.Items.Add( 2 );
@@ -65,25 +65,6 @@ namespace TwitchBot
         // Contains the viewers that are probably in the channel right now. Values are all null.
         private IDictionary<string, object> _viewers;
         private Color _windowColor;
-		
-		//class User
-		//{
-		//	string Name;
-		//	bool IsModerator;
-		//	public override bool Equals( object obj )
-		//	{
-		//		if ( !( obj is User ) )
-		//			return false;
-		//		User other = (User) obj;
-		//		return Name.Equals( other.Name );
-		//	}
-
-		//	public override int GetHashCode()
-		//	{
-		//		return Name.GetHashCode();
-		//	}
-
-		//}
 
         private void RaffleAdd( string viewer )
         {
@@ -148,7 +129,7 @@ namespace TwitchBot
             DrinkingGameParticipant sourceInfo;
             if ( !_drinkingParticipants.TryGetValue( source, out sourceInfo ) || sourceInfo.NumberOfDrinkTickets <= 0 )
             {
-                _connection.Send( string.Format( Strings.NoDrinkingGame, source ) );
+                _connection.Send( string.Format( Strings.NoDrinkTickets, source ) );
                 return;
             }
 
@@ -367,6 +348,21 @@ namespace TwitchBot
             }
             
         }
+
+		private void CheckTicketsCB( string from, string target )
+		{
+			int drinkTickets = 0;
+			if ( _drinkingParticipants != null )
+			{
+				DrinkingGameParticipant drinker = _drinkingParticipants[ from ];
+				if ( drinker != null )
+				{
+					drinkTickets = drinker.NumberOfDrinkTickets;
+				}
+			}
+			string message = string.Format( Strings.DrinkTicketsBalance, from, drinkTickets );
+			_connection.Send( message );
+		}
 
         private void ConnectionPrivateMessageReceived( object sender, Connection.PrivateMessageReceivedEventArgs e )
         {
@@ -743,14 +739,24 @@ namespace TwitchBot
                 return;
             }
 
-            foreach ( KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drinkingParticipants )
+			StringBuilder messageTargets = new StringBuilder();
+			foreach ( KeyValuePair<string, DrinkingGameParticipant> viewerAssignment in _drinkingParticipants )
             {
                 if ( viewerAssignment.Value.PlayerNumber == characterNum )
                 {
                     viewerAssignment.Value.NumberOfDrinkTickets += 1;
-                    _connection.Send( string.Format( Strings.GetDrinkTicket, viewerAssignment.Key, viewerAssignment.Value.NumberOfDrinkTickets ) );
+					if ( messageTargets.Length > 0 )
+					{
+						messageTargets.Append( ", @" );
+					}
+					messageTargets.Append( viewerAssignment.Key );
                 }
             }
+
+			if ( messageTargets.Length > 0 )
+			{
+				_connection.Send( string.Format( Strings.GetDrinkTicket, messageTargets ) );
+			}
         }
 
         private void buttonViewerGetTicket_Click( object sender, EventArgs e )
