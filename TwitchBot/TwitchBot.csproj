@@ -53,6 +53,8 @@
     <Compile Include="ConfigurableMessageSender.cs" />
     <Compile Include="ConfigurationReader.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="CsvDataReader.cs" />
+    <Compile Include="CsvDataWriter.cs" />
     <Compile Include="DrinkingGameParticipant.cs" />
     <Compile Include="Images.cs">
       <SubType>Form</SubType>
@@ -76,6 +78,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserManager.cs" />
     <EmbeddedResource Include="Images.resx">
       <DependentUpon>Images.cs</DependentUpon>
       <SubType>Designer</SubType>

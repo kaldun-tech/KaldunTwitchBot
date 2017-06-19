@@ -29,7 +29,6 @@ namespace TwitchBot
             _imageForm.VisibleChanged += new EventHandler( image_VisibilityChanged );
             _log = null;
             _raffleViewers = new Dictionary<string, object>();
-            _viewers = new Dictionary<string, object>();
             _windowColor = textBoxR.BackColor;
 
             _commandFactory = new CommandFactory( CheckBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, CheckTicketsCB );
@@ -46,7 +45,8 @@ namespace TwitchBot
         OpenFileDialog _fileDialog;
         ConfigurationReader _configReader;
         ConfigurableMessageSender _automaticMessageSender;
-        Casino _casino;
+		UserManager _userManager;
+		Casino _casino;
         CommandFactory _commandFactory;
 
         // Contains all the viewers that have for sure seen the drinking game introduction message.
@@ -61,10 +61,7 @@ namespace TwitchBot
         private Images _imageForm;
         private TextWriter _log;
         private IDictionary<string, object> _raffleViewers;
-
-        // Contains the viewers that are probably in the channel right now. Values are all null.
-        private IDictionary<string, object> _viewers;
-        private Color _windowColor;
+		private Color _windowColor;
 
         private void RaffleAdd( string viewer )
         {
@@ -214,8 +211,13 @@ namespace TwitchBot
                 if ( _casino != null )
                 {
                     _casino.Stop();
-                }
-                _connection.Disconnected -= ConnectionDisconnected;
+				}
+				if ( _userManager != null )
+				{
+					_userManager.Dispose();
+				}
+
+				_connection.Disconnected -= ConnectionDisconnected;
                 _connection.MessageReceived -= ConnectionMessageTransfer;
                 _connection.MessageSent -= ConnectionMessageTransfer;
                 _connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
@@ -277,7 +279,7 @@ namespace TwitchBot
             {
                 // Target is the gamble amount
                 int betAmount = 0;
-                if ( int.TryParse(target, out betAmount ) && betAmount > 0 )
+                if ( int.TryParse( target, out betAmount ) && betAmount > 0 )
                 {
                     if ( _casino.CanUserGamble( from, (uint) betAmount ) )
                     {
@@ -373,9 +375,9 @@ namespace TwitchBot
             }
 
             // We may not have gotten a join notification for this user yet.
-            if ( !_viewers.ContainsKey( e.From ) )
+            if ( !_userManager.IsUserActive( e.From ) )
             {
-                _viewers.Add( e.From, null );
+				_userManager.LoginUser( e.From );
             }
 
             ICommand command = _commandFactory.CreateCommand( e.Content, e.From );
@@ -388,11 +390,11 @@ namespace TwitchBot
             {
                 _connection.Send( string.Format( "Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
                     textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text ) );
-                foreach ( string user in _viewers.Keys )
+                foreach ( string userName in _userManager.ActiveUsers )
                 {
-                    if ( !_drinkingIntroductions.ContainsKey( user ) )
+                    if ( !_drinkingIntroductions.ContainsKey( userName ) )
                     {
-                        _drinkingIntroductions.Add( user, null );
+                        _drinkingIntroductions.Add( userName, null );
                     }
                 }
             }
@@ -400,14 +402,7 @@ namespace TwitchBot
 
         private void ConnectionUserJoined( object sender, Connection.UserEventArgs e )
         {
-            if ( !_viewers.ContainsKey( e.User ) )
-            {
-                _viewers.Add( e.User, null );
-            }
-            if ( _casino != null )
-            {
-                _casino.LoginUser( e.User );
-            }
+			_userManager.LoginUser( e.User );
         }
 
         private void ConnectionUserLeft( object sender, Connection.UserEventArgs e )
@@ -418,13 +413,9 @@ namespace TwitchBot
                 return;
             }
 
-            _viewers.Remove( e.User );
-            if ( _casino != null )
-            {
-                _casino.LogoutUser( e.User );
-            }
+			_userManager.LogoutUser( e.User );
 
-            comboBoxViewer.Items.Remove( e.User.ToLowerInvariant() );
+			comboBoxViewer.Items.Remove( e.User.ToLowerInvariant() );
             comboBoxCustom.Items.Remove( e.User.ToLowerInvariant() );
             _drinkingParticipants.Remove( e.User );
         }
@@ -458,11 +449,11 @@ namespace TwitchBot
             {
                 _automaticMessageSender = new ConfigurableMessageSender( _connection, _configReader.GetConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages );
                 _automaticMessageSender.Start();
+				string dataFilePath = Path.Combine( Environment.CurrentDirectory, "casino_balances.csv" );
+				_userManager = new UserManager( dataFilePath );
                 if ( _configReader.IsGamblingEnabled )
                 {
-					string dataFilePath = Path.Combine( Environment.CurrentDirectory, "casino_balances.csv" );
-                    List<string> usernames = new List<string>( _viewers.Keys );
-                    _casino = new Casino( dataFilePath, _configReader.CurrencyName, usernames, _configReader.CurrencyEarnedPerMinute, _configReader.ChanceToWin );
+                    _casino = new Casino( _userManager, dataFilePath, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );
                     _casino.Start();
                 }
             }
@@ -506,6 +497,10 @@ namespace TwitchBot
             {
                 _casino.Stop();
             }
+			if ( _userManager != null )
+			{
+				_userManager.Dispose();
+			}
             if ( _connection != null )
             {
                 _connection.Disconnected -= ConnectionDisconnected;
@@ -642,11 +637,11 @@ namespace TwitchBot
             {
                 _connection.Send( string.Format( "A drinking game has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
                     textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text ) );
-                foreach ( string user in _viewers.Keys )
+                foreach ( string userName in _userManager.ActiveUsers )
                 {
-                    if ( !_drinkingIntroductions.ContainsKey( user ) )
+                    if ( !_drinkingIntroductions.ContainsKey( userName ) )
                     {
-                        _drinkingIntroductions.Add( user, null );
+                        _drinkingIntroductions.Add( userName, null );
                     }
                 }
             }

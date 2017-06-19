@@ -1,6 +1,6 @@
 Proposed Enhancements:
 
 Save login information ( screename, oath, chat, config file path )
-Save the amount of drink tickets a user has
-Store the amount of drinks a player received
+Look into replacing the _viewers dictionary with the UserManager
 Debug the command queue and list of users to a drinking game participant
+Use TwitchLib instead of connection logic?

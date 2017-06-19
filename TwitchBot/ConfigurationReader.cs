@@ -34,7 +34,7 @@ namespace TwitchBot
         private string _currencyName = DEFAULT_CURRENCY_NAME;
         private uint _currencyEarnRate = DEFAULT_CURRENCY_EARN_RATE;
         private bool _gamblingEnabled = false;
-        private int _minimumGambleAmount = DEFAULT_MINIMUM_GAMBLE_AMOUNT;
+        private uint _minimumGambleAmount = DEFAULT_MINIMUM_GAMBLE_AMOUNT;
         private int _minimumSecondsBetweenGambles = DEFAULT_MINIMUM_GAMBLE_INTERVAL;
         private double _winChance = DEFAULT_WIN_CHANCE;
 
@@ -89,7 +89,7 @@ namespace TwitchBot
 		/// <summary>
 		/// The minimum amount that users can gamble
 		/// </summary>
-        public int MinimumGambleAmount
+        public uint MinimumGambleAmount
         {
             get { return IsGamblingEnabled ? _minimumGambleAmount : 0; }
         }
@@ -196,8 +196,8 @@ namespace TwitchBot
                     if ( minimumGambleAmountNode != null && !string.IsNullOrEmpty( minimumGambleAmountNode.Value ) )
                     {
                         value = minimumGambleAmountNode.Value;
-                        int gambleMinimum;
-                        bool parsed = int.TryParse( value, out gambleMinimum );
+                        uint gambleMinimum;
+                        bool parsed = uint.TryParse( value, out gambleMinimum );
                         if ( parsed && gambleMinimum > 0 )
                         {
                             _minimumGambleAmount = gambleMinimum;
