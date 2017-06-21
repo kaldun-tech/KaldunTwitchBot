@@ -2,7 +2,7 @@
 
 namespace TwitchBot.Commands
 {
-    class CheckBalanceCommand : ACommand
+    class GetBalanceCommand : ACommand
     {
 		/// <summary>
 		/// Check a user's currency balance
@@ -11,7 +11,7 @@ namespace TwitchBot.Commands
 		/// <param name="from"></param>
 		/// <param name="target"></param>
 		/// <param name="cb"></param>
-        public CheckBalanceCommand( string content, string from, string target, CommandCallback cb ) : base( content, from, target, cb )
+        public GetBalanceCommand( string content, string from, string target, CommandCallback cb ) : base( content, from, target, cb )
         {
         }
     }

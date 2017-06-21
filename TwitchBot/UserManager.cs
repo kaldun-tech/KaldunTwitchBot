@@ -242,7 +242,7 @@ namespace TwitchBot
 		/// Increment the number of drink tickets for a list of users
 		/// </summary>
 		/// <param name="usernames"></param>
-		public void IncrementDrinkTickets( IList<string> usernames )
+		public void IncrementDrinkTickets( ICollection<string> usernames )
 		{
 			if ( usernames != null && usernames.Count > 0 )
 			{
@@ -261,17 +261,19 @@ namespace TwitchBot
 		}
 
 		/// <summary>
-		/// Increment the number of drink tickets for a single user
+		/// Give a drink ticket from the source user to the target user
 		/// </summary>
-		/// <param name="userName"></param>
-		public void DecrementDrinkTickets( string userName )
+		/// <param name="sourceUserName"></param>
+		/// <param name="targetUserName"></param>
+		public void GiveDrink( string sourceUserName, string targetUserName )
 		{
 			lock ( _userLock )
 			{
-				User user;
-				if ( _users.TryGetValue( userName, out user ) )
+				User source, target;
+				if ( _users.TryGetValue( sourceUserName, out source ) && _users.TryGetValue( targetUserName, out target ) )
 				{
-					--user.DrinkTickets;
+					--source.DrinkTickets;
+					++target.TotalDrinksTaken;
 				}
 			}
 		}
@@ -294,7 +296,7 @@ namespace TwitchBot
 		/// Increment the number of drinks taken for a list of users
 		/// </summary>
 		/// <param name="usernames"></param>
-		public void IncrementDrinksTaken( IList<string> usernames )
+		public void IncrementDrinksTaken( ICollection<string> usernames )
 		{
 			if ( usernames != null && usernames.Count > 0 )
 			{
@@ -308,6 +310,22 @@ namespace TwitchBot
 							++user.TotalDrinksTaken;
 						}
 					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Increment the number of drinks taken for a single user
+		/// </summary>
+		/// <param name="userNames"></param>
+		public void IncrementDrinksTaken( string userName )
+		{
+			lock ( _userLock )
+			{
+				User user;
+				if ( _users.TryGetValue( userName, out user ) )
+				{
+					++user.TotalDrinksTaken;
 				}
 			}
 		}

@@ -38,9 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Casino.cs" />
-    <Compile Include="Commands\CheckBalanceCommand.cs" />
-    <Compile Include="Commands\CheckTicketsCommand.cs" />
+    <Compile Include="Commands\GetBalanceCommand.cs" />
+    <Compile Include="Commands\GetTicketsCommand.cs" />
     <Compile Include="Commands\GambleCommand.cs" />
+    <Compile Include="Commands\GetTotalDrinksTakenCommand.cs" />
     <Compile Include="Commands\GiveDrinksCommand.cs" />
     <Compile Include="Commands\Interfaces\ICommandFactory.cs" />
     <Compile Include="Commands\JoinDrinkingGameCommand.cs" />
@@ -55,7 +56,6 @@
     <Compile Include="Connection.cs" />
     <Compile Include="CsvDataReader.cs" />
     <Compile Include="CsvDataWriter.cs" />
-    <Compile Include="DrinkingGameParticipant.cs" />
     <Compile Include="Images.cs">
       <SubType>Form</SubType>
     </Compile>

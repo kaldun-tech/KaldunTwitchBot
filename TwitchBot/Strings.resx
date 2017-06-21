@@ -149,4 +149,8 @@
     <value>@{0}, you have {1} tickets.</value>
     <comment>Tell a player how many drink tickets they have to give out</comment>
   </data>
+  <data name="TotalDrinksTaken" xml:space="preserve">
+    <value>@{0}, you have taken {1} drinks!</value>
+    <comment>Tell a player how many drinks they have taken during drinking games</comment>
+  </data>
 </root>

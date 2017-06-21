@@ -131,5 +131,14 @@ namespace TwitchBot {
                 return ResourceManager.GetString("TakeDrink", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0}, you have taken {1} drinks!.
+        /// </summary>
+        internal static string TotalDrinksTaken {
+            get {
+                return ResourceManager.GetString("TotalDrinksTaken", resourceCulture);
+            }
+        }
     }
 }
