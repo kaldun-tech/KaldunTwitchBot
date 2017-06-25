@@ -63,6 +63,18 @@ namespace TwitchBot
 		private string _csvFilePath;
 
 		/// <summary>
+		/// Reload the user manager after it was disconnected
+		/// </summary>
+		public void Reconnect()
+		{
+			if ( _disposed )
+			{
+				_disposed = false;
+				ReadFromCsv();
+			}
+		}
+
+		/// <summary>
 		/// Get the list of currently active users
 		/// </summary>
 		public IList<string> ActiveUsers

@@ -445,6 +445,7 @@ namespace TwitchBot
 			string username = textBoxUser.Text;
 			string password = textBoxPassword.Text;
 			string channel = textBoxChat.Text;
+			_configReader = new ConfigurationReader( _configFilePath );
 
 			_connection = new Connection( channel );
             _connection.Disconnected += ConnectionDisconnected;
@@ -471,6 +472,11 @@ namespace TwitchBot
                     _casino.Start();
                 }
             }
+			// Reconnect the user manager
+			if ( _userManager != null )
+			{
+				_userManager.Reconnect();
+			}
 
             HandleConnectionChange( true );
         }
@@ -935,7 +941,6 @@ namespace TwitchBot
             if ( !string.IsNullOrEmpty( _fileDialog.FileName ) )
             {
 				_configFilePath = _fileDialog.FileName;
-				_configReader = new ConfigurationReader( _configFilePath );
             }
         }
 
