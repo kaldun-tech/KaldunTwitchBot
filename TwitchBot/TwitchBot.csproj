@@ -63,6 +63,7 @@
       <DependentUpon>Images.cs</DependentUpon>
     </Compile>
     <Compile Include="Commands\Interfaces\ICommand.cs" />
+    <Compile Include="LoginCredentialReaderWriter.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -116,6 +117,7 @@
     <Content Include="Config\config_default.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Credentials\credentials_default.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

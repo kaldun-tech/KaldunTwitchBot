@@ -102,6 +102,8 @@
 			this.tabPageTraffic = new System.Windows.Forms.TabPage();
 			this.tabPageEffects = new System.Windows.Forms.TabPage();
 			this.panelDisconnected = new System.Windows.Forms.Panel();
+			this.loadCredentialsButton = new System.Windows.Forms.Button();
+			this.saveCredentialsCheckbox = new System.Windows.Forms.CheckBox();
 			this.ConfigFileButton = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkBoxSSL = new System.Windows.Forms.CheckBox();
@@ -187,7 +189,7 @@
 			// 
 			this.disconnectToolStripMenuItem.Enabled = false;
 			this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-			this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.disconnectToolStripMenuItem.Text = "Disconnect";
 			this.disconnectToolStripMenuItem.Visible = false;
 			this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
@@ -199,7 +201,7 @@
             this.appendToolStripMenuItem});
 			this.logToolStripMenuItem.Enabled = false;
 			this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-			this.logToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.logToolStripMenuItem.Text = "Log";
 			this.logToolStripMenuItem.Visible = false;
 			this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
@@ -222,7 +224,7 @@
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -343,14 +345,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listBoxRaffle.Location = new System.Drawing.Point(6, 6);
 			this.listBoxRaffle.Name = "listBoxRaffle";
-			this.listBoxRaffle.Size = new System.Drawing.Size(560, 199);
+			this.listBoxRaffle.Size = new System.Drawing.Size(560, 160);
 			this.listBoxRaffle.TabIndex = 11;
 			// 
 			// buttonDraw
 			// 
 			this.buttonDraw.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDraw.Location = new System.Drawing.Point(8, 227);
+			this.buttonDraw.Location = new System.Drawing.Point(8, 203);
 			this.buttonDraw.Name = "buttonDraw";
 			this.buttonDraw.Size = new System.Drawing.Size(485, 23);
 			this.buttonDraw.TabIndex = 13;
@@ -361,7 +363,7 @@
 			// buttonClear
 			// 
 			this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonClear.Location = new System.Drawing.Point(499, 227);
+			this.buttonClear.Location = new System.Drawing.Point(499, 203);
 			this.buttonClear.Name = "buttonClear";
 			this.buttonClear.Size = new System.Drawing.Size(65, 23);
 			this.buttonClear.TabIndex = 14;
@@ -470,7 +472,7 @@
 			this.tabPageDrinking.Controls.Add(this.tableLayoutPanelDrinking);
 			this.tabPageDrinking.Location = new System.Drawing.Point(4, 22);
 			this.tabPageDrinking.Name = "tabPageDrinking";
-			this.tabPageDrinking.Size = new System.Drawing.Size(572, 75);
+			this.tabPageDrinking.Size = new System.Drawing.Size(572, 282);
 			this.tabPageDrinking.TabIndex = 3;
 			this.tabPageDrinking.Text = "Drinking Game";
 			this.tabPageDrinking.UseVisualStyleBackColor = true;
@@ -529,16 +531,16 @@
 			this.tableLayoutPanelDrinking.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
 			this.tableLayoutPanelDrinking.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanelDrinking.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-			this.tableLayoutPanelDrinking.Size = new System.Drawing.Size(572, 75);
+			this.tableLayoutPanelDrinking.Size = new System.Drawing.Size(572, 282);
 			this.tableLayoutPanelDrinking.TabIndex = 0;
 			// 
 			// labelViewer
 			// 
 			this.labelViewer.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelViewer.AutoSize = true;
-			this.labelViewer.Location = new System.Drawing.Point(14, 46);
+			this.labelViewer.Location = new System.Drawing.Point(14, 194);
 			this.labelViewer.Name = "labelViewer";
-			this.labelViewer.Size = new System.Drawing.Size(39, 4);
+			this.labelViewer.Size = new System.Drawing.Size(39, 13);
 			this.labelViewer.TabIndex = 24;
 			this.labelViewer.Text = "Viewer";
 			// 
@@ -547,9 +549,9 @@
 			this.buttonViewerFinish.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonViewerFinish.Location = new System.Drawing.Point(449, 49);
+			this.buttonViewerFinish.Location = new System.Drawing.Point(449, 185);
 			this.buttonViewerFinish.Name = "buttonViewerFinish";
-			this.buttonViewerFinish.Size = new System.Drawing.Size(120, 1);
+			this.buttonViewerFinish.Size = new System.Drawing.Size(120, 32);
 			this.buttonViewerFinish.TabIndex = 23;
 			this.buttonViewerFinish.Text = "Finish Your Drink";
 			this.buttonViewerFinish.UseVisualStyleBackColor = true;
@@ -560,9 +562,9 @@
 			this.buttonViewerGetTicket.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonViewerGetTicket.Location = new System.Drawing.Point(323, 49);
+			this.buttonViewerGetTicket.Location = new System.Drawing.Point(323, 185);
 			this.buttonViewerGetTicket.Name = "buttonViewerGetTicket";
-			this.buttonViewerGetTicket.Size = new System.Drawing.Size(120, 1);
+			this.buttonViewerGetTicket.Size = new System.Drawing.Size(120, 32);
 			this.buttonViewerGetTicket.TabIndex = 22;
 			this.buttonViewerGetTicket.Text = "Get a Drink Ticket";
 			this.buttonViewerGetTicket.UseVisualStyleBackColor = true;
@@ -573,9 +575,9 @@
 			this.buttonViewerDrink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonViewerDrink.Location = new System.Drawing.Point(197, 49);
+			this.buttonViewerDrink.Location = new System.Drawing.Point(197, 185);
 			this.buttonViewerDrink.Name = "buttonViewerDrink";
-			this.buttonViewerDrink.Size = new System.Drawing.Size(120, 1);
+			this.buttonViewerDrink.Size = new System.Drawing.Size(120, 32);
 			this.buttonViewerDrink.TabIndex = 21;
 			this.buttonViewerDrink.Text = "Take a Drink";
 			this.buttonViewerDrink.UseVisualStyleBackColor = true;
@@ -586,9 +588,9 @@
 			this.buttonCharacter4Finish.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter4Finish.Location = new System.Drawing.Point(449, 45);
+			this.buttonCharacter4Finish.Location = new System.Drawing.Point(449, 147);
 			this.buttonCharacter4Finish.Name = "buttonCharacter4Finish";
-			this.buttonCharacter4Finish.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter4Finish.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter4Finish.TabIndex = 19;
 			this.buttonCharacter4Finish.Text = "Finish Your Drink";
 			this.buttonCharacter4Finish.UseVisualStyleBackColor = true;
@@ -599,9 +601,9 @@
 			this.buttonCharacter4GetTicket.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter4GetTicket.Location = new System.Drawing.Point(323, 45);
+			this.buttonCharacter4GetTicket.Location = new System.Drawing.Point(323, 147);
 			this.buttonCharacter4GetTicket.Name = "buttonCharacter4GetTicket";
-			this.buttonCharacter4GetTicket.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter4GetTicket.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter4GetTicket.TabIndex = 18;
 			this.buttonCharacter4GetTicket.Text = "Get a Drink Ticket";
 			this.buttonCharacter4GetTicket.UseVisualStyleBackColor = true;
@@ -612,9 +614,9 @@
 			this.buttonCharacter3Finish.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter3Finish.Location = new System.Drawing.Point(449, 41);
+			this.buttonCharacter3Finish.Location = new System.Drawing.Point(449, 109);
 			this.buttonCharacter3Finish.Name = "buttonCharacter3Finish";
-			this.buttonCharacter3Finish.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter3Finish.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter3Finish.TabIndex = 17;
 			this.buttonCharacter3Finish.Text = "Finish Your Drink";
 			this.buttonCharacter3Finish.UseVisualStyleBackColor = true;
@@ -625,9 +627,9 @@
 			this.buttonCharacter3GetTicket.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter3GetTicket.Location = new System.Drawing.Point(323, 41);
+			this.buttonCharacter3GetTicket.Location = new System.Drawing.Point(323, 109);
 			this.buttonCharacter3GetTicket.Name = "buttonCharacter3GetTicket";
-			this.buttonCharacter3GetTicket.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter3GetTicket.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter3GetTicket.TabIndex = 16;
 			this.buttonCharacter3GetTicket.Text = "Get a Drink Ticket";
 			this.buttonCharacter3GetTicket.UseVisualStyleBackColor = true;
@@ -638,9 +640,9 @@
 			this.buttonCharacter2Finish.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter2Finish.Location = new System.Drawing.Point(449, 37);
+			this.buttonCharacter2Finish.Location = new System.Drawing.Point(449, 71);
 			this.buttonCharacter2Finish.Name = "buttonCharacter2Finish";
-			this.buttonCharacter2Finish.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter2Finish.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter2Finish.TabIndex = 15;
 			this.buttonCharacter2Finish.Text = "Finish Your Drink";
 			this.buttonCharacter2Finish.UseVisualStyleBackColor = true;
@@ -651,9 +653,9 @@
 			this.buttonCharacter2GetTicket.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter2GetTicket.Location = new System.Drawing.Point(323, 37);
+			this.buttonCharacter2GetTicket.Location = new System.Drawing.Point(323, 71);
 			this.buttonCharacter2GetTicket.Name = "buttonCharacter2GetTicket";
-			this.buttonCharacter2GetTicket.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter2GetTicket.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter2GetTicket.TabIndex = 14;
 			this.buttonCharacter2GetTicket.Text = "Get a Drink Ticket";
 			this.buttonCharacter2GetTicket.UseVisualStyleBackColor = true;
@@ -666,7 +668,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCharacter1Finish.Location = new System.Drawing.Point(449, 33);
 			this.buttonCharacter1Finish.Name = "buttonCharacter1Finish";
-			this.buttonCharacter1Finish.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter1Finish.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter1Finish.TabIndex = 13;
 			this.buttonCharacter1Finish.Text = "Finish Your Drink";
 			this.buttonCharacter1Finish.UseVisualStyleBackColor = true;
@@ -679,7 +681,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCharacter1GetTicket.Location = new System.Drawing.Point(323, 33);
 			this.buttonCharacter1GetTicket.Name = "buttonCharacter1GetTicket";
-			this.buttonCharacter1GetTicket.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter1GetTicket.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter1GetTicket.TabIndex = 12;
 			this.buttonCharacter1GetTicket.Text = "Get a Drink Ticket";
 			this.buttonCharacter1GetTicket.UseVisualStyleBackColor = true;
@@ -688,7 +690,7 @@
 			// textBoxCharacter1
 			// 
 			this.textBoxCharacter1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxCharacter1.Location = new System.Drawing.Point(71, 33);
+			this.textBoxCharacter1.Location = new System.Drawing.Point(71, 39);
 			this.textBoxCharacter1.Name = "textBoxCharacter1";
 			this.textBoxCharacter1.Size = new System.Drawing.Size(120, 20);
 			this.textBoxCharacter1.TabIndex = 4;
@@ -698,7 +700,7 @@
 			// textBoxCharacter2
 			// 
 			this.textBoxCharacter2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxCharacter2.Location = new System.Drawing.Point(71, 37);
+			this.textBoxCharacter2.Location = new System.Drawing.Point(71, 77);
 			this.textBoxCharacter2.Name = "textBoxCharacter2";
 			this.textBoxCharacter2.Size = new System.Drawing.Size(120, 20);
 			this.textBoxCharacter2.TabIndex = 5;
@@ -708,7 +710,7 @@
 			// textBoxCharacter3
 			// 
 			this.textBoxCharacter3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxCharacter3.Location = new System.Drawing.Point(71, 41);
+			this.textBoxCharacter3.Location = new System.Drawing.Point(71, 115);
 			this.textBoxCharacter3.Name = "textBoxCharacter3";
 			this.textBoxCharacter3.Size = new System.Drawing.Size(120, 20);
 			this.textBoxCharacter3.TabIndex = 6;
@@ -718,7 +720,7 @@
 			// textBoxCharacter4
 			// 
 			this.textBoxCharacter4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxCharacter4.Location = new System.Drawing.Point(71, 45);
+			this.textBoxCharacter4.Location = new System.Drawing.Point(71, 153);
 			this.textBoxCharacter4.Name = "textBoxCharacter4";
 			this.textBoxCharacter4.Size = new System.Drawing.Size(120, 20);
 			this.textBoxCharacter4.TabIndex = 7;
@@ -732,7 +734,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCharacter1Drink.Location = new System.Drawing.Point(197, 33);
 			this.buttonCharacter1Drink.Name = "buttonCharacter1Drink";
-			this.buttonCharacter1Drink.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter1Drink.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter1Drink.TabIndex = 8;
 			this.buttonCharacter1Drink.Text = "Take a Drink";
 			this.buttonCharacter1Drink.UseVisualStyleBackColor = true;
@@ -743,9 +745,9 @@
 			this.buttonCharacter2Drink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter2Drink.Location = new System.Drawing.Point(197, 37);
+			this.buttonCharacter2Drink.Location = new System.Drawing.Point(197, 71);
 			this.buttonCharacter2Drink.Name = "buttonCharacter2Drink";
-			this.buttonCharacter2Drink.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter2Drink.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter2Drink.TabIndex = 9;
 			this.buttonCharacter2Drink.Text = "Take a Drink";
 			this.buttonCharacter2Drink.UseVisualStyleBackColor = true;
@@ -756,9 +758,9 @@
 			this.buttonCharacter3Drink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter3Drink.Location = new System.Drawing.Point(197, 41);
+			this.buttonCharacter3Drink.Location = new System.Drawing.Point(197, 109);
 			this.buttonCharacter3Drink.Name = "buttonCharacter3Drink";
-			this.buttonCharacter3Drink.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter3Drink.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter3Drink.TabIndex = 10;
 			this.buttonCharacter3Drink.Text = "Take a Drink";
 			this.buttonCharacter3Drink.UseVisualStyleBackColor = true;
@@ -769,9 +771,9 @@
 			this.buttonCharacter4Drink.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonCharacter4Drink.Location = new System.Drawing.Point(197, 45);
+			this.buttonCharacter4Drink.Location = new System.Drawing.Point(197, 147);
 			this.buttonCharacter4Drink.Name = "buttonCharacter4Drink";
-			this.buttonCharacter4Drink.Size = new System.Drawing.Size(120, 1);
+			this.buttonCharacter4Drink.Size = new System.Drawing.Size(120, 32);
 			this.buttonCharacter4Drink.TabIndex = 11;
 			this.buttonCharacter4Drink.Text = "Take a Drink";
 			this.buttonCharacter4Drink.UseVisualStyleBackColor = true;
@@ -783,7 +785,7 @@
 			this.comboBoxViewer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
 			this.comboBoxViewer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.comboBoxViewer.FormattingEnabled = true;
-			this.comboBoxViewer.Location = new System.Drawing.Point(71, 49);
+			this.comboBoxViewer.Location = new System.Drawing.Point(71, 190);
 			this.comboBoxViewer.Name = "comboBoxViewer";
 			this.comboBoxViewer.Size = new System.Drawing.Size(120, 21);
 			this.comboBoxViewer.TabIndex = 20;
@@ -792,9 +794,9 @@
 			// 
 			this.labelCharacter1.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCharacter1.AutoSize = true;
-			this.labelCharacter1.Location = new System.Drawing.Point(3, 30);
+			this.labelCharacter1.Location = new System.Drawing.Point(3, 42);
 			this.labelCharacter1.Name = "labelCharacter1";
-			this.labelCharacter1.Size = new System.Drawing.Size(62, 4);
+			this.labelCharacter1.Size = new System.Drawing.Size(62, 13);
 			this.labelCharacter1.TabIndex = 0;
 			this.labelCharacter1.Text = "Character 1";
 			// 
@@ -802,9 +804,9 @@
 			// 
 			this.labelCharacter2.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCharacter2.AutoSize = true;
-			this.labelCharacter2.Location = new System.Drawing.Point(3, 34);
+			this.labelCharacter2.Location = new System.Drawing.Point(3, 80);
 			this.labelCharacter2.Name = "labelCharacter2";
-			this.labelCharacter2.Size = new System.Drawing.Size(62, 4);
+			this.labelCharacter2.Size = new System.Drawing.Size(62, 13);
 			this.labelCharacter2.TabIndex = 25;
 			this.labelCharacter2.Text = "Character 2";
 			// 
@@ -812,9 +814,9 @@
 			// 
 			this.labelCharacter3.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCharacter3.AutoSize = true;
-			this.labelCharacter3.Location = new System.Drawing.Point(3, 38);
+			this.labelCharacter3.Location = new System.Drawing.Point(3, 118);
 			this.labelCharacter3.Name = "labelCharacter3";
-			this.labelCharacter3.Size = new System.Drawing.Size(62, 4);
+			this.labelCharacter3.Size = new System.Drawing.Size(62, 13);
 			this.labelCharacter3.TabIndex = 26;
 			this.labelCharacter3.Text = "Character 3";
 			// 
@@ -822,9 +824,9 @@
 			// 
 			this.labelCharacter4.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCharacter4.AutoSize = true;
-			this.labelCharacter4.Location = new System.Drawing.Point(3, 42);
+			this.labelCharacter4.Location = new System.Drawing.Point(3, 156);
 			this.labelCharacter4.Name = "labelCharacter4";
-			this.labelCharacter4.Size = new System.Drawing.Size(62, 4);
+			this.labelCharacter4.Size = new System.Drawing.Size(62, 13);
 			this.labelCharacter4.TabIndex = 27;
 			this.labelCharacter4.Text = "Character 4";
 			// 
@@ -856,9 +858,9 @@
 			// 
 			this.labelCustom.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCustom.AutoSize = true;
-			this.labelCustom.Location = new System.Drawing.Point(13, 70);
+			this.labelCustom.Location = new System.Drawing.Point(13, 254);
 			this.labelCustom.Name = "labelCustom";
-			this.labelCustom.Size = new System.Drawing.Size(42, 5);
+			this.labelCustom.Size = new System.Drawing.Size(42, 13);
 			this.labelCustom.TabIndex = 32;
 			this.labelCustom.Text = "Manual";
 			// 
@@ -868,7 +870,7 @@
 			this.comboBoxCustom.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
 			this.comboBoxCustom.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.comboBoxCustom.FormattingEnabled = true;
-			this.comboBoxCustom.Location = new System.Drawing.Point(71, 73);
+			this.comboBoxCustom.Location = new System.Drawing.Point(71, 250);
 			this.comboBoxCustom.Name = "comboBoxCustom";
 			this.comboBoxCustom.Size = new System.Drawing.Size(120, 21);
 			this.comboBoxCustom.TabIndex = 33;
@@ -877,9 +879,9 @@
 			// buttonRemove
 			// 
 			this.buttonRemove.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonRemove.Location = new System.Drawing.Point(449, 73);
+			this.buttonRemove.Location = new System.Drawing.Point(449, 243);
 			this.buttonRemove.Name = "buttonRemove";
-			this.buttonRemove.Size = new System.Drawing.Size(120, 1);
+			this.buttonRemove.Size = new System.Drawing.Size(120, 36);
 			this.buttonRemove.TabIndex = 31;
 			this.buttonRemove.Text = "Remove";
 			this.buttonRemove.UseVisualStyleBackColor = true;
@@ -888,9 +890,9 @@
 			// buttonAdd
 			// 
 			this.buttonAdd.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buttonAdd.Location = new System.Drawing.Point(323, 73);
+			this.buttonAdd.Location = new System.Drawing.Point(323, 243);
 			this.buttonAdd.Name = "buttonAdd";
-			this.buttonAdd.Size = new System.Drawing.Size(120, 1);
+			this.buttonAdd.Size = new System.Drawing.Size(120, 36);
 			this.buttonAdd.TabIndex = 30;
 			this.buttonAdd.Text = "Add";
 			this.buttonAdd.UseVisualStyleBackColor = true;
@@ -900,7 +902,7 @@
 			// 
 			this.labelCustomName.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCustomName.AutoSize = true;
-			this.labelCustomName.Location = new System.Drawing.Point(97, 53);
+			this.labelCustomName.Location = new System.Drawing.Point(97, 223);
 			this.labelCustomName.Name = "labelCustomName";
 			this.labelCustomName.Size = new System.Drawing.Size(67, 13);
 			this.labelCustomName.TabIndex = 34;
@@ -910,7 +912,7 @@
 			// 
 			this.labelCustomCharacter.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelCustomCharacter.AutoSize = true;
-			this.labelCustomCharacter.Location = new System.Drawing.Point(210, 53);
+			this.labelCustomCharacter.Location = new System.Drawing.Point(210, 223);
 			this.labelCustomCharacter.Name = "labelCustomCharacter";
 			this.labelCustomCharacter.Size = new System.Drawing.Size(93, 13);
 			this.labelCustomCharacter.TabIndex = 35;
@@ -922,7 +924,7 @@
 			this.comboBoxCustomCharacter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.comboBoxCustomCharacter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxCustomCharacter.FormattingEnabled = true;
-			this.comboBoxCustomCharacter.Location = new System.Drawing.Point(197, 73);
+			this.comboBoxCustomCharacter.Location = new System.Drawing.Point(197, 250);
 			this.comboBoxCustomCharacter.Name = "comboBoxCustomCharacter";
 			this.comboBoxCustomCharacter.Size = new System.Drawing.Size(120, 21);
 			this.comboBoxCustomCharacter.TabIndex = 36;
@@ -937,7 +939,7 @@
 			this.tabPageTraffic.Location = new System.Drawing.Point(4, 22);
 			this.tabPageTraffic.Name = "tabPageTraffic";
 			this.tabPageTraffic.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageTraffic.Size = new System.Drawing.Size(572, 75);
+			this.tabPageTraffic.Size = new System.Drawing.Size(572, 282);
 			this.tabPageTraffic.TabIndex = 1;
 			this.tabPageTraffic.Text = "Traffic";
 			this.tabPageTraffic.UseVisualStyleBackColor = true;
@@ -952,13 +954,15 @@
 			this.tabPageEffects.Controls.Add(this.labelGreen);
 			this.tabPageEffects.Location = new System.Drawing.Point(4, 22);
 			this.tabPageEffects.Name = "tabPageEffects";
-			this.tabPageEffects.Size = new System.Drawing.Size(572, 75);
+			this.tabPageEffects.Size = new System.Drawing.Size(572, 282);
 			this.tabPageEffects.TabIndex = 2;
 			this.tabPageEffects.Text = "Effects";
 			this.tabPageEffects.UseVisualStyleBackColor = true;
 			// 
 			// panelDisconnected
 			// 
+			this.panelDisconnected.Controls.Add(this.loadCredentialsButton);
+			this.panelDisconnected.Controls.Add(this.saveCredentialsCheckbox);
 			this.panelDisconnected.Controls.Add(this.ConfigFileButton);
 			this.panelDisconnected.Controls.Add(this.label1);
 			this.panelDisconnected.Controls.Add(this.checkBoxSSL);
@@ -970,10 +974,32 @@
 			this.panelDisconnected.Controls.Add(this.textBoxPassword);
 			this.panelDisconnected.Controls.Add(this.textBoxChat);
 			this.panelDisconnected.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panelDisconnected.Location = new System.Drawing.Point(0, 0);
+			this.panelDisconnected.Location = new System.Drawing.Point(0, 24);
 			this.panelDisconnected.Name = "panelDisconnected";
-			this.panelDisconnected.Size = new System.Drawing.Size(580, 308);
+			this.panelDisconnected.Size = new System.Drawing.Size(580, 284);
 			this.panelDisconnected.TabIndex = 14;
+			// 
+			// loadCredentialsButton
+			// 
+			this.loadCredentialsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.loadCredentialsButton.Location = new System.Drawing.Point(149, 149);
+			this.loadCredentialsButton.Name = "loadCredentialsButton";
+			this.loadCredentialsButton.Size = new System.Drawing.Size(419, 30);
+			this.loadCredentialsButton.TabIndex = 25;
+			this.loadCredentialsButton.Text = "Load Credentials";
+			this.loadCredentialsButton.UseVisualStyleBackColor = true;
+			this.loadCredentialsButton.Click += new System.EventHandler(this.loadCredentialsButton_Click);
+			// 
+			// saveCredentialsCheckbox
+			// 
+			this.saveCredentialsCheckbox.AutoSize = true;
+			this.saveCredentialsCheckbox.Location = new System.Drawing.Point(15, 162);
+			this.saveCredentialsCheckbox.Name = "saveCredentialsCheckbox";
+			this.saveCredentialsCheckbox.Size = new System.Drawing.Size(106, 17);
+			this.saveCredentialsCheckbox.TabIndex = 24;
+			this.saveCredentialsCheckbox.Text = "Save Credentials";
+			this.saveCredentialsCheckbox.UseVisualStyleBackColor = true;
 			// 
 			// ConfigFileButton
 			// 
@@ -1012,8 +1038,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(580, 308);
 			this.Controls.Add(this.tabControlConnected);
-			this.Controls.Add(this.menuStripMain);
 			this.Controls.Add(this.panelDisconnected);
+			this.Controls.Add(this.menuStripMain);
 			this.MainMenuStrip = this.menuStripMain;
 			this.Name = "TwitchBot";
 			this.Text = "TwitchBot";
@@ -1115,6 +1141,8 @@
 		private System.Windows.Forms.ComboBox comboBoxCustomCharacter;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button ConfigFileButton;
+		private System.Windows.Forms.Button loadCredentialsButton;
+		private System.Windows.Forms.CheckBox saveCredentialsCheckbox;
 	}
 }
 

@@ -1,7 +1,5 @@
 Proposed Enhancements:
 
 Refactor out a drinking game class
-Save login information ( screename, oath, chat, config file path )
 Splash command should be moderator only
-Debug the command queue and list of users to a drinking game participant
-Use TwitchLib instead of connection logic?
+Use TwitchLib instead of connection logic

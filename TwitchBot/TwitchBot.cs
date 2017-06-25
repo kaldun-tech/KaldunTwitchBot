@@ -31,23 +31,32 @@ namespace TwitchBot
             _raffleViewers = new Dictionary<string, object>();
             _windowColor = textBoxR.BackColor;
 
-            _commandFactory = new CommandFactory( GetBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, GetTicketsCB, GetTotalDrinksCB );
+			_commandFactory = new CommandFactory( GetBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, GetTicketsCB, GetTotalDrinksCB );
+			_credentialsReaderWriter = new LoginCredentialReaderWriter( _loginCredentialsPath );
+			_userManager = new UserManager( _userDataFilePath );
 
-            comboBoxCustomCharacter.Items.Add( 1 );
+			comboBoxCustomCharacter.Items.Add( 1 );
             comboBoxCustomCharacter.Items.Add( 2 );
             comboBoxCustomCharacter.Items.Add( 3 );
             comboBoxCustomCharacter.Items.Add( 4 );
             comboBoxCustomCharacter.SelectedIndex = 0;
         }
 
-        private Connection _connection;
+
+		private static readonly string _userDataFilePath = Path.Combine( Environment.CurrentDirectory, "users.csv" );
+		private static readonly string _loginCredentialsPath = Path.Combine( Environment.CurrentDirectory, "credentials.xml" );
+
+		private readonly CommandFactory _commandFactory;
+		private readonly LoginCredentialReaderWriter _credentialsReaderWriter;
+		private readonly UserManager _userManager;
+
+		private Connection _connection;
         // Configuration
         OpenFileDialog _fileDialog;
+		string _configFilePath = null;
         ConfigurationReader _configReader;
         ConfigurableMessageSender _automaticMessageSender;
-		UserManager _userManager;
 		Casino _casino;
-        CommandFactory _commandFactory;
 
         // Contains all the viewers that have for sure seen the drinking game introduction message.
         private IDictionary<string, object> _drinkingIntroductions;
@@ -433,26 +442,32 @@ namespace TwitchBot
             }
 
             string hostname = "irc.chat.twitch.tv";
+			string username = textBoxUser.Text;
+			string password = textBoxPassword.Text;
+			string channel = textBoxChat.Text;
 
-            _connection = new Connection( textBoxChat.Text );
+			_connection = new Connection( channel );
             _connection.Disconnected += ConnectionDisconnected;
             _connection.MessageReceived += ConnectionMessageTransfer;
             _connection.MessageSent += ConnectionMessageTransfer;
             _connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
             _connection.UserJoined += ConnectionUserJoined;
             _connection.UserLeft += ConnectionUserLeft;
-            _connection.Connect( hostname, checkBoxSSL.Checked ? 443 : 6667, checkBoxSSL.Checked, textBoxUser.Text, textBoxPassword.Text );
+            _connection.Connect( hostname, checkBoxSSL.Checked ? 443 : 6667, checkBoxSSL.Checked, username, password );
+
+			if ( saveCredentialsCheckbox.Checked )
+			{
+				_credentialsReaderWriter.WriteCredentials( username, password, channel, _configFilePath );
+			}
 
             // Configure the automatic message sender thread
             if ( _configReader != null )
             {
                 _automaticMessageSender = new ConfigurableMessageSender( _connection, _configReader.GetConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages );
                 _automaticMessageSender.Start();
-				string dataFilePath = Path.Combine( Environment.CurrentDirectory, "casino_balances.csv" );
-				_userManager = new UserManager( dataFilePath );
                 if ( _configReader.IsGamblingEnabled )
                 {
-                    _casino = new Casino( _userManager, dataFilePath, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );
+                    _casino = new Casino( _userManager, _userDataFilePath, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );
                     _casino.Start();
                 }
             }
@@ -919,8 +934,24 @@ namespace TwitchBot
             _fileDialog.ShowDialog();
             if ( !string.IsNullOrEmpty( _fileDialog.FileName ) )
             {
-                _configReader = new ConfigurationReader( _fileDialog.FileName );
+				_configFilePath = _fileDialog.FileName;
+				_configReader = new ConfigurationReader( _configFilePath );
             }
         }
-    }
+
+		private void loadCredentialsButton_Click( object sender, EventArgs e )
+		{
+			IList<string> credentials = _credentialsReaderWriter.ReadCredentials();
+			if ( credentials != null && credentials.Count >= 3 )
+			{
+				textBoxUser.Text = credentials[ 0 ];
+				textBoxPassword.Text = credentials[ 1 ];
+				textBoxChat.Text = credentials[ 2 ];
+				if ( credentials.Count >= 4 )
+				{
+					_configFilePath = credentials[ 3 ];
+				}
+			}
+		}
+	}
 }
