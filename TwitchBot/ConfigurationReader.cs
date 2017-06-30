@@ -6,6 +6,10 @@ namespace TwitchBot
 {
     internal class ConfigurationReader
     {
+		/// <summary>
+		/// Create a configuration reader for a configuration file path
+		/// </summary>
+		/// <param name="configFileName"></param>
         public ConfigurationReader( string configFileName )
         {
             _configFileName = configFileName;

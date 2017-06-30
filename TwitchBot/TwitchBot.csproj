@@ -66,6 +66,7 @@
     <Compile Include="Commands\Interfaces\ICommand.cs" />
     <Compile Include="LoginCredentialReaderWriter.cs" />
     <Compile Include="PriorityQueue.cs" />
+    <Compile Include="Raffle.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

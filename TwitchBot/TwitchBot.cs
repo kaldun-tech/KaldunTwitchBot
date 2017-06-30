@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using TwitchBot.Interfaces;
 using TwitchBot.Commands;
 
 namespace TwitchBot
 {
-    internal partial class TwitchBot : Form
+	internal partial class TwitchBot : Form
     {
+		/// <summary>
+		/// Create a TwitchBot. This does all the UI logic
+		/// </summary>
         public TwitchBot()
         {
             InitializeComponent();
@@ -20,17 +22,16 @@ namespace TwitchBot
             _fileDialog = new OpenFileDialog();
             _configReader = null;
             _automaticMessageSender = null;
-            _generator = new Random();
             _imageForm = new Images();
             _imageForm.VisibleChanged += new EventHandler( image_VisibilityChanged );
             _log = null;
-            _raffleViewers = new Dictionary<string, object>();
             _windowColor = textBoxR.BackColor;
 
 			_commandFactory = new CommandFactory( GetBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, GetTicketsCB, GetTotalDrinksCB );
-			_credentialsReaderWriter = new LoginCredentialReaderWriter( _loginCredentialsPath );
-			_userManager = new UserManager( _userDataFilePath );
+			_credentialsReaderWriter = new LoginCredentialReaderWriter();
+			_userManager = new UserManager();
 			_drinkingGame = new DrinkingGame( _userManager );
+			_raffle = new Raffle();
 
 			comboBoxCustomCharacter.Items.Add( 1 );
             comboBoxCustomCharacter.Items.Add( 2 );
@@ -39,14 +40,11 @@ namespace TwitchBot
             comboBoxCustomCharacter.SelectedIndex = 0;
         }
 
-
-		private static readonly string _userDataFilePath = Path.Combine( Environment.CurrentDirectory, "users.csv" );
-		private static readonly string _loginCredentialsPath = Path.Combine( Environment.CurrentDirectory, "credentials.xml" );
-
 		private readonly CommandFactory _commandFactory;
 		private readonly LoginCredentialReaderWriter _credentialsReaderWriter;
 		private readonly UserManager _userManager;
 		private readonly DrinkingGame _drinkingGame;
+		private readonly Raffle _raffle;
 
 		private Connection _connection;
         // Configuration
@@ -56,21 +54,17 @@ namespace TwitchBot
         ConfigurableMessageSender _automaticMessageSender;
 		Casino _casino;
 
-        private Random _generator;
         private Images _imageForm;
         private TextWriter _log;
-        private IDictionary<string, object> _raffleViewers;
 		private Color _windowColor;
 
-        private void RaffleAdd( string viewer )
+        private void RaffleAdd( string username )
         {
-			if ( _raffleViewers.ContainsKey( viewer ) )
+			if ( !_raffle.IsUserEntered( username ) )
             {
-                return;
-            }
-
-            listBoxRaffle.Items.Add( viewer );
-            _raffleViewers.Add( viewer, null );
+				listBoxRaffle.Items.Add( username );
+				_raffle.AddUser( username );
+			}
         }
 
         private void DrinkingAdd( string viewer, string characterName )
@@ -108,11 +102,6 @@ namespace TwitchBot
 			}
 			_drinkingGame.SetParticipant( username, characterNum );
         }
-
-        private void DrinkingGive( string source, string target )
-        {
-			_drinkingGame.GivePlayerDrink( source, target );
-		}
 
         private void StartLog( bool append )
         {
@@ -233,17 +222,8 @@ namespace TwitchBot
 
         private void GetBalanceCB( string from, string target )
         {
-            string message = null;
-            if ( _casino == null )
-            {
-                message = "The casino is not currently operating, kupo!";
-            }
-            else
-            {
-                uint balance = _casino.GetBalance( from );
-                message = string.Format( "{0}, your balance is {1} {2}", from, balance, _casino.CurrencyName );
-            }
-            _connection.Send( message );
+            string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( from );
+			_connection.Send( message );
         }
 
         private void GambleCB( string from, string target )
@@ -259,17 +239,8 @@ namespace TwitchBot
                 int betAmount = 0;
                 if ( int.TryParse( target, out betAmount ) && betAmount > 0 )
                 {
-                    if ( _casino.CanUserGamble( from, (uint) betAmount ) )
-                    {
-                        long winnings = _casino.Gamble( from, (uint) betAmount );
-                        string winLoseString = winnings > 0 ? "won" : "lost";
-                        message = string.Format( "{0}, you {1} {2} {3}!", from, winLoseString, Math.Abs( winnings ), _casino.CurrencyName );
-                    }
-                    else
-                    {
-                        message = string.Format( "Your funds are grossly insufficent, {0}!", from );
-                    }
-                }
+					message = _casino.Gamble( from, (uint) betAmount );
+				}
                 else
                 {
                     message = string.Format( "Invalid bet amount, {0}!", from );
@@ -280,7 +251,7 @@ namespace TwitchBot
 
         private void GiveDrinksCB( string from, string target )
         {
-            DrinkingGive( from, target );
+			_drinkingGame.GivePlayerDrink( from, target );
 			_drinkingGame.AddIntroducedUser( from );
         }
 
@@ -317,7 +288,6 @@ namespace TwitchBot
             {
                 _connection.Send( "Splash failed!" );
             }
-            
         }
 
 		private void GetTicketsCB( string from, string target )
@@ -419,7 +389,7 @@ namespace TwitchBot
                 _automaticMessageSender.Start();
                 if ( _configReader.IsGamblingEnabled )
                 {
-                    _casino = new Casino( _userManager, _userDataFilePath, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );
+                    _casino = new Casino( _userManager, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );
                     _casino.Start();
                 }
             }
@@ -554,18 +524,17 @@ namespace TwitchBot
 
         private void buttonClear_Click( object sender, EventArgs e )
         {
-            _raffleViewers.Clear();
+			_raffle.ClearUsers();
             listBoxRaffle.Items.Clear();
         }
 
         private void buttonDraw_Click( object sender, EventArgs e )
         {
-            if ( _raffleViewers.Count < 1 )
-            {
-                return;
-            }
-
-            listBoxRaffle.SelectedIndex = _generator.Next( _raffleViewers.Count );
+			int drawIndex = _raffle.DrawUserIndex();
+			if ( drawIndex >= 0 )
+			{
+				listBoxRaffle.SelectedIndex = _raffle.DrawUserIndex();
+			}
         }
 
         private void newToolStripMenuItem_Click( object sender, EventArgs e )
@@ -687,7 +656,6 @@ namespace TwitchBot
         {
             checkBoxPlay.Checked = true;
 			_drinkingGame.GivePlayerTicket( comboBoxViewer.Text );
-			
         }
 
         private void buttonCharacterFinish_Click( object sender, EventArgs e )

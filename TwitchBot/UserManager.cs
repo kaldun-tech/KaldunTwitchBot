@@ -47,6 +47,13 @@ namespace TwitchBot
 		}
 
 		/// <summary>
+		/// Create a user manager using the default user data file path
+		/// </summary>
+		public UserManager() : this ( _defaultUserDataFilePath )
+		{
+		}
+
+		/// <summary>
 		/// Create a user manager
 		/// </summary>
 		/// <param name="csvFilePath">Path fo the csv file to write and read data to</param>
@@ -56,6 +63,8 @@ namespace TwitchBot
 			_users = new Dictionary<string, User>();
 			ReadFromCsv();
 		}
+
+		private static readonly string _defaultUserDataFilePath = Path.Combine( Environment.CurrentDirectory, "users.csv" );
 
 		private bool _disposed = false;
 		private object _userLock = new object();

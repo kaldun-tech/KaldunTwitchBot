@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
-using System.IO;
 
 namespace TwitchBot
 {
@@ -45,15 +43,13 @@ namespace TwitchBot
 		/// Create a casino that will read and write to a csv file
 		/// </summary>
 		/// <param name="userManager">The user manager for the channel</param>
-		/// <param name="csvFilePath">File path to the csv file that contains user data.</param>
 		/// <param name="currencyName">Name of the currency. Must not be null or empty.</param>
 		/// <param name="earnRate">Amount of currency earned per minute. Must be positive.</param>
 		/// <param name="minimumGambleAmount">Minimum amount of currency to gamble</param>
 		/// <param name="winChance">Chance to win when gambling. Must be greater than zero and less than or equal to one.</param>
-		public Casino( UserManager userManager, string csvFilePath, string currencyName, uint earnRate, uint minimumGambleAmount, double winChance )
+		public Casino( UserManager userManager, string currencyName, uint earnRate, uint minimumGambleAmount, double winChance )
 		{
 			_userManager = userManager;
-			_csvFilePath = csvFilePath;
 			_currencyName = currencyName;
 			_minimumGambleAmount = minimumGambleAmount;
 			_earnedCurrencyPerMinute = earnRate;
@@ -64,8 +60,7 @@ namespace TwitchBot
 
 		// The sleeptime is one minute
 		private const int SLEEPTIME_MILLIS = 60 * 1000;
-
-		private readonly string _csvFilePath;
+		
 		private readonly string _currencyName;
 		private UserManager _userManager;
 		private uint _earnedCurrencyPerMinute;
@@ -95,12 +90,34 @@ namespace TwitchBot
         }
 
 		/// <summary>
+		/// Gamble currency for a user. The user may lose or gain currency. Return a string reprentation of the results.
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="betAmount"></param>
+		/// <returns>String represenation of the gamble result</returns>
+		public string Gamble( string username, uint betAmount )
+		{
+			string message = null;
+			if ( CanUserGamble( username, betAmount ) )
+			{
+				long winnings = DoGamble( username, betAmount );
+				string winLoseString = winnings > 0 ? "won" : "lost";
+				message = string.Format( "{0}, you {1} {2} {3}!", username, winLoseString, Math.Abs( winnings ), CurrencyName );
+			}
+			else
+			{
+				message = string.Format( "Your funds are grossly insufficent, {0}!", username );
+			}
+			return message;
+		}
+
+		/// <summary>
 		/// Gamble currency for a user. The user may lose or gain currency.
 		/// </summary>
 		/// <param name="username">Name of user. Must not be null or empty.</param>
 		/// <param name="betAmount">Amount to bet on the gamble. Must be positive and less than or equal to the user's balance.</param>
 		/// <returns>The amount of winnings. This will be negative on a loss and zero on error.</returns>
-        public long Gamble( string username, uint betAmount )
+        private long DoGamble( string username, uint betAmount )
         {
 			if ( CanUserGamble( username, betAmount ) )
 			{
@@ -132,11 +149,22 @@ namespace TwitchBot
 		}
 
 		/// <summary>
+		/// Get the string representation of the casino balance for the user
+		/// </summary>
+		/// <param name="username"></param>
+		/// <returns></returns>
+		public string GetStringBalance( string username )
+		{
+			uint balance = GetCurrencyBalance( username );
+			return string.Format( "{0}, your balance is {1} {2}", username, balance, CurrencyName );
+		}
+
+		/// <summary>
 		/// Get the casino balance for the user
 		/// </summary>
 		/// <param name="username">Name of user. Must not be null or empty.</param>
 		/// <returns>The balance for the user. Zero if not found</returns>
-		public uint GetBalance( string username )
+		private uint GetCurrencyBalance( string username )
         {
             lock ( _lock )
             {

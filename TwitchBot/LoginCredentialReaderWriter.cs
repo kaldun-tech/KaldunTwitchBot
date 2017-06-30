@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -6,14 +7,31 @@ namespace TwitchBot
 {
 	public class LoginCredentialReaderWriter
 	{
+		/// <summary>
+		/// Create a new login credentials reader/writer with the default file path
+		/// </summary>
+		public LoginCredentialReaderWriter() : this( _defaultLoginCredentialsPath )
+		{
+		}
+
+		/// <summary>
+		/// Create a new login credentials reader/writer with the specified file path
+		/// </summary>
+		/// <param name="credentialFilePath"></param>
 		public LoginCredentialReaderWriter( string credentialFilePath )
 		{
 			_filePath = credentialFilePath;
 		}
 
+		private static readonly string _defaultLoginCredentialsPath = Path.Combine( Environment.CurrentDirectory, "credentials.xml" );
+
 		private string _filePath;
 		private object _lock = new object();
 
+		/// <summary>
+		/// Read credentials from a file
+		/// </summary>
+		/// <returns>List of credentials on success, or null on failure. The credentials will contain the username, oauth, channel, and config file name.</returns>
 		public IList<string> ReadCredentials()
 		{
 			lock ( _lock )
@@ -43,6 +61,13 @@ namespace TwitchBot
 			return null;
 		}
 
+		/// <summary>
+		/// Write credentials out to file so we can read them later
+		/// </summary>
+		/// <param name="userName"></param>
+		/// <param name="oauth"></param>
+		/// <param name="channel"></param>
+		/// <param name="configFilePath"></param>
 		public void WriteCredentials( string userName, string oauth, string channel, string configFilePath )
 		{
 			if ( !string.IsNullOrEmpty( userName ) && !string.IsNullOrEmpty( oauth ) && !string.IsNullOrEmpty( channel ) )
