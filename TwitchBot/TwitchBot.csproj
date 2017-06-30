@@ -56,6 +56,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="CsvDataReader.cs" />
     <Compile Include="CsvDataWriter.cs" />
+    <Compile Include="DrinkingGame.cs" />
     <Compile Include="Images.cs">
       <SubType>Form</SubType>
     </Compile>

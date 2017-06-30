@@ -3,5 +3,7 @@ Proposed Enhancements:
 Refactor out a drinking game class
 Refactor as much as possible out of the UI class
 Splash command should be moderator only
-Use TwitchLib instead of connection logic
+Use TwitchLib API instead of connection logic
+Add Unit Tests
 Redo the UI
+Make it compatible with Linux

@@ -1,0 +1,335 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace TwitchBot
+{
+	class DrinkingGame
+	{
+		/// <summary>
+		/// Create a drinking game
+		/// </summary>
+		/// <param name="userManager"></param>
+		public DrinkingGame( UserManager userManager )
+		{
+			_userManager = userManager;
+			_drinkingGameParticipants = new Dictionary<string, int>( StringComparer.InvariantCultureIgnoreCase );
+			_introducedUsers = new HashSet<string>();
+		}
+
+		private UserManager _userManager;
+		private Connection _connection;
+		// Maps case insensitive usernames to player numbers
+		private IDictionary<string, int> _drinkingGameParticipants;
+		// Users who have seen the drinking game intro
+		private HashSet<string> _introducedUsers;
+
+		/// <summary>
+		/// Are we playing the drinking game?
+		/// </summary>
+		public bool IsPlaying
+		{
+			get; private set;
+		}
+
+		/// <summary>
+		/// Start playing the game with the input players
+		/// </summary>
+		/// <param name="player1"></param>
+		/// <param name="player2"></param>
+		/// <param name="player3"></param>
+		/// <param name="player4"></param>
+		public void StartPlaying( string player1, string player2, string player3, string player4 )
+		{
+			if ( !IsPlaying )
+			{
+				IsPlaying = true;
+				_connection.Send( string.Format( "A drinking game has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+						player1, player2, player3, player4 ) );
+				IntroduceAllActiveUsers();
+			}
+		}
+
+		/// <summary>
+		/// Stop playing the drinking game
+		/// </summary>
+		public void StopPlaying()
+		{
+			if ( IsPlaying )
+			{
+				_connection.Send( "The drinking game has ended." );
+				_drinkingGameParticipants.Clear();
+				_introducedUsers.Clear();
+			}
+		}
+
+		/// <summary>
+		/// Is the user playing the drinking game?
+		/// </summary>
+		/// <param name="username"></param>
+		/// <returns></returns>
+		public bool IsUserPlaying( string username )
+		{
+			return _drinkingGameParticipants.ContainsKey( username );
+		}
+
+		/// <summary>
+		/// Get the player number for a user
+		/// </summary>
+		/// <param name="username"></param>
+		/// <returns></returns>
+		public int GetPlayerNumber( string username )
+		{
+			return IsUserPlaying( username ) ? _drinkingGameParticipants[ username ] : 0;
+		}
+
+		/// <summary>
+		/// Add or update a drinking game participant
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="playerNumber"></param>
+		public void SetParticipant( string username, int playerNumber )
+		{
+			if ( IsUserPlaying( username ) )
+			{
+				_drinkingGameParticipants[ username ] = playerNumber;
+			}
+			else
+			{
+				_drinkingGameParticipants.Add( username, playerNumber );
+			}
+		}
+
+		/// <summary>
+		/// Remove a drinking game participant
+		/// </summary>
+		/// <param name="username"></param>
+		public void RemoveParticipant( string username )
+		{
+			if ( IsUserPlaying( username ) )
+			{
+				_drinkingGameParticipants.Remove( username );
+			}
+		}
+
+		/// <summary>
+		/// Give a player a drink
+		/// </summary>
+		/// <param name="username"></param>
+		public void GivePlayerDrink( string username )
+		{
+			if ( IsUserPlaying( username ) )
+			{
+				_userManager.IncrementDrinksTaken( username );
+				_connection.Send( string.Format( Strings.TakeDrink, username ) );
+			}
+		}
+
+		/// <summary>
+		/// Give all players mapped to a given player number drinks
+		/// </summary>
+		/// <param name="playerNumber"></param>
+		public void GivePlayersDrinks( int playerNumber )
+		{
+			StringBuilder messageTargets = new StringBuilder();
+			foreach ( KeyValuePair<string, int> viewerAssignment in _drinkingGameParticipants )
+			{
+				if ( viewerAssignment.Value == playerNumber )
+				{
+					string username = viewerAssignment.Key;
+					_userManager.IncrementDrinksTaken( username );
+					if ( messageTargets.Length > 0 )
+					{
+						messageTargets.Append( ", @" );
+					}
+					messageTargets.Append( username );
+				}
+			}
+
+			if ( messageTargets.Length > 0 )
+			{
+				_connection.Send( string.Format( Strings.TakeDrink, messageTargets ) );
+			}
+		}
+
+		/// <summary>
+		/// A source user gives another user a drink by using a drink ticket
+		/// </summary>
+		/// <param name="sourceUser"></param>
+		/// <param name="targetUser"></param>
+		public void GivePlayerDrink( string sourceUser, string targetUser )
+		{
+			if ( !IsPlaying )
+			{
+				_connection.Send( string.Format( Strings.NoDrinkingGame, sourceUser ) );
+				return;
+			}
+
+			if ( !IsUserPlaying( targetUser ) )
+			{
+				_connection.Send( string.Format( Strings.NotParticipating, sourceUser, targetUser ) );
+				return;
+			}
+			
+			if ( _userManager.GetDrinkTickets( sourceUser ) == 0 )
+			{
+				_connection.Send( string.Format( Strings.NoDrinkTickets, sourceUser ) );
+				return;
+			}
+
+			_userManager.GiveDrink( sourceUser, targetUser );
+			_connection.Send( string.Format( Strings.TakeDrink, targetUser ) );
+		}
+
+		/// <summary>
+		/// All players drink!
+		/// </summary>
+		public void AllPlayersDrink()
+		{
+			_userManager.IncrementDrinksTaken( _drinkingGameParticipants.Keys );
+			_connection.Send( "Everyone drink!" );
+		}
+
+		/// <summary>
+		/// Tell a player to finish their drink
+		/// </summary>
+		/// <param name="username"></param>
+		public void PlayerFinishDrink( string username )
+		{
+			if ( IsUserPlaying( username ) )
+			{
+				_userManager.IncrementDrinksTaken( username );
+				_connection.Send( string.Format( Strings.FinishDrink, username ) );
+			}
+		}
+
+		/// <summary>
+		/// Tell players mapped to a given player number to finish their drinks
+		/// </summary>
+		/// <param name="playerNumber"></param>
+		public void PlayersFinishDrinks( int playerNumber)
+		{
+			StringBuilder messageTargets = new StringBuilder();
+			foreach ( KeyValuePair<string, int> viewerAssignment in _drinkingGameParticipants )
+			{
+				string username = viewerAssignment.Key;
+				_userManager.IncrementDrinksTaken( username );
+				if ( viewerAssignment.Value == playerNumber )
+				{
+					if ( messageTargets.Length > 0 )
+					{
+						messageTargets.Append( ", @" );
+					}
+					messageTargets.Append( username );
+				}
+			}
+
+			if ( messageTargets.Length > 0 )
+			{
+				_connection.Send( string.Format( Strings.FinishDrink, messageTargets ) );
+			}
+		}
+
+		/// <summary>
+		/// Give a single user a drink ticket
+		/// </summary>
+		/// <param name="username"></param>
+		public void GivePlayerTicket( string username )
+		{
+			if ( IsUserPlaying( username ) )
+			{
+				_userManager.IncrementDrinkTickets( username );
+				_connection.Send( string.Format( Strings.GetDrinkTicket, username, _userManager.GetDrinkTickets( username ) ) );
+			}
+		}
+
+		/// <summary>
+		/// Give players a drink ticket who are mapped to a given player number
+		/// </summary>
+		/// <param name="playerNumber"></param>
+		public void GivePlayersTicket( int playerNumber )
+		{
+			StringBuilder messageTargets = new StringBuilder();
+			foreach ( KeyValuePair<string, int> viewerAssignment in _drinkingGameParticipants )
+			{
+				if ( viewerAssignment.Value == playerNumber )
+				{
+					string username = viewerAssignment.Key;
+					_userManager.IncrementDrinkTickets( username );
+					if ( messageTargets.Length > 0 )
+					{
+						messageTargets.Append( ", @" );
+					}
+					messageTargets.Append( username );
+				}
+			}
+
+			if ( messageTargets.Length > 0 )
+			{
+				_connection.Send( string.Format( Strings.GetDrinkTicket, messageTargets ) );
+			}
+		}
+
+		/// <summary>
+		/// Introduce a user to the drinking game being played
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="player1"></param>
+		/// <param name="player2"></param>
+		/// <param name="player3"></param>
+		/// <param name="player4"></param>
+		public void IntroduceUser( string username, string player1, string player2, string player3, string player4 )
+		{
+			if ( IsPlaying && !_introducedUsers.Contains( username ) )
+			{
+				_connection.Send( string.Format( "Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+					player1, player2, player3, player4 ) );
+				_introducedUsers.Add( username );
+				IntroduceAllActiveUsers();				
+			}
+		}
+
+		/// <summary>
+		/// Introduce all active users to our drinking game
+		/// </summary>
+		private void IntroduceAllActiveUsers()
+		{
+			foreach ( string nextActiveUser in _userManager.ActiveUsers )
+			{
+				if ( !_introducedUsers.Contains( nextActiveUser ) )
+				{
+					_introducedUsers.Add( nextActiveUser );
+				}
+			}
+		}
+
+		/// <summary>
+		/// Add a user that does not need to be introduced to the drinking game
+		/// </summary>
+		/// <param name="username"></param>
+		public void AddIntroducedUser( string username )
+		{
+			if ( !_introducedUsers.Contains( username ) )
+			{
+				_introducedUsers.Add( username );
+			}
+		}
+
+		/// <summary>
+		/// Connect the drinking game. Necessary to send messages
+		/// </summary>
+		/// <param name="connection"></param>
+		public void Connect( Connection connection )
+		{
+			_connection = connection;
+		}
+
+		/// <summary>
+		/// Disconnection the connection
+		/// </summary>
+		public void Disconnect()
+		{
+			_connection = null;
+		}
+	}
+}
