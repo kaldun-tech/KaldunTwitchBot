@@ -1,8 +1,9 @@
 Proposed Enhancements:
 
-Splash command should be moderator only
+Look into Moq
 Add Unit Tests
 Use TwitchLib API instead of connection logic
+Splash command should be moderator only
 
 Redo the UI
 Make it compatible with Linux

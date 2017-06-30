@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TwitchBot
 {
-	class Raffle
+	public class Raffle
 	{
 		/// <summary>
 		/// Start a new raffle
