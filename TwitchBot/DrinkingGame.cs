@@ -44,7 +44,7 @@ namespace TwitchBot
 			if ( !IsPlaying )
 			{
 				IsPlaying = true;
-				_connection.Send( string.Format( "A drinking game has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+				SendToConnection( string.Format( "A drinking game has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
 						player1, player2, player3, player4 ) );
 				IntroduceAllActiveUsers();
 			}
@@ -57,7 +57,7 @@ namespace TwitchBot
 		{
 			if ( IsPlaying )
 			{
-				_connection.Send( "The drinking game has ended." );
+				SendToConnection( "The drinking game has ended." );
 				_drinkingGameParticipants.Clear();
 				_introducedUsers.Clear();
 			}
@@ -121,7 +121,7 @@ namespace TwitchBot
 			if ( IsUserPlaying( username ) )
 			{
 				_userManager.IncrementDrinksTaken( username );
-				_connection.Send( string.Format( Strings.TakeDrink, username ) );
+				SendToConnection( string.Format( Strings.TakeDrink, username ) );
 			}
 		}
 
@@ -148,7 +148,7 @@ namespace TwitchBot
 
 			if ( messageTargets.Length > 0 )
 			{
-				_connection.Send( string.Format( Strings.TakeDrink, messageTargets ) );
+				SendToConnection( string.Format( Strings.TakeDrink, messageTargets ) );
 			}
 		}
 
@@ -161,24 +161,24 @@ namespace TwitchBot
 		{
 			if ( !IsPlaying )
 			{
-				_connection.Send( string.Format( Strings.NoDrinkingGame, sourceUser ) );
+				SendToConnection( string.Format( Strings.NoDrinkingGame, sourceUser ) );
 				return;
 			}
 
 			if ( !IsUserPlaying( targetUser ) )
 			{
-				_connection.Send( string.Format( Strings.NotParticipating, sourceUser, targetUser ) );
+				SendToConnection( string.Format( Strings.NotParticipating, sourceUser, targetUser ) );
 				return;
 			}
 			
 			if ( _userManager.GetDrinkTickets( sourceUser ) == 0 )
 			{
-				_connection.Send( string.Format( Strings.NoDrinkTickets, sourceUser ) );
+				SendToConnection( string.Format( Strings.NoDrinkTickets, sourceUser ) );
 				return;
 			}
 
 			_userManager.GiveDrink( sourceUser, targetUser );
-			_connection.Send( string.Format( Strings.TakeDrink, targetUser ) );
+			SendToConnection( string.Format( Strings.TakeDrink, targetUser ) );
 		}
 
 		/// <summary>
@@ -187,7 +187,7 @@ namespace TwitchBot
 		public void AllPlayersDrink()
 		{
 			_userManager.IncrementDrinksTaken( _drinkingGameParticipants.Keys );
-			_connection.Send( "Everyone drink!" );
+			SendToConnection( "Everyone drink!" );
 		}
 
 		/// <summary>
@@ -199,7 +199,7 @@ namespace TwitchBot
 			if ( IsUserPlaying( username ) )
 			{
 				_userManager.IncrementDrinksTaken( username );
-				_connection.Send( string.Format( Strings.FinishDrink, username ) );
+				SendToConnection( string.Format( Strings.FinishDrink, username ) );
 			}
 		}
 
@@ -226,7 +226,7 @@ namespace TwitchBot
 
 			if ( messageTargets.Length > 0 )
 			{
-				_connection.Send( string.Format( Strings.FinishDrink, messageTargets ) );
+				SendToConnection( string.Format( Strings.FinishDrink, messageTargets ) );
 			}
 		}
 
@@ -239,7 +239,7 @@ namespace TwitchBot
 			if ( IsUserPlaying( username ) )
 			{
 				_userManager.IncrementDrinkTickets( username );
-				_connection.Send( string.Format( Strings.GetDrinkTicket, username, _userManager.GetDrinkTickets( username ) ) );
+				SendToConnection( string.Format( Strings.GetDrinkTicket, username, _userManager.GetDrinkTickets( username ) ) );
 			}
 		}
 
@@ -266,7 +266,7 @@ namespace TwitchBot
 
 			if ( messageTargets.Length > 0 )
 			{
-				_connection.Send( string.Format( Strings.GetDrinkTicket, messageTargets ) );
+				SendToConnection( string.Format( Strings.GetDrinkTicket, messageTargets ) );
 			}
 		}
 
@@ -282,7 +282,7 @@ namespace TwitchBot
 		{
 			if ( IsPlaying && !_introducedUsers.Contains( username ) )
 			{
-				_connection.Send( string.Format( "Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+				SendToConnection( string.Format( "Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
 					player1, player2, player3, player4 ) );
 				_introducedUsers.Add( username );
 				IntroduceAllActiveUsers();				
@@ -315,6 +315,11 @@ namespace TwitchBot
 			}
 		}
 
+		public bool IsConnected
+		{
+			get { return _connection != null; }
+		}
+
 		/// <summary>
 		/// Connect the drinking game. Necessary to send messages
 		/// </summary>
@@ -330,6 +335,18 @@ namespace TwitchBot
 		public void Disconnect()
 		{
 			_connection = null;
+		}
+
+		/// <summary>
+		/// Sends a message to the connection if we are connected
+		/// </summary>
+		/// <param name="message"></param>
+		public void SendToConnection( string message )
+		{
+			if ( IsConnected )
+			{
+				_connection.Send( message );
+			}
 		}
 	}
 }

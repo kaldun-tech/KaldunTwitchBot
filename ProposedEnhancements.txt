@@ -1,7 +1,6 @@
 Proposed Enhancements:
 
-Look into Moq
-Add Unit Tests
+Work on unit testing
 Use TwitchLib API instead of connection logic
 Splash command should be moderator only
 

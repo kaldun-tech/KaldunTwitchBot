@@ -62,6 +62,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CasinoTest.cs" />
+    <Compile Include="CommandFactoryTest.cs" />
     <Compile Include="DrinkingGameTest.cs" />
     <Compile Include="RaffleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

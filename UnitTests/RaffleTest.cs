@@ -27,10 +27,12 @@ namespace UnitTests
 			raffle.AddUser( _mockUsers[ 1 ] );
 			raffle.AddUser( _mockUsers[ 2 ] );
 
+			// Test with three users
 			Assert.IsTrue( raffle.IsUserEntered( _mockUsers[ 0 ] ) );
 			Assert.IsTrue( raffle.IsUserEntered( _mockUsers[ 1 ] ) );
 			Assert.IsTrue( raffle.IsUserEntered( _mockUsers[ 2 ] ) );
 
+			// Try adding the same users in and test again
 			raffle.AddUser( _mockUsers[ 0 ] );
 			raffle.AddUser( _mockUsers[ 1 ] );
 			raffle.AddUser( _mockUsers[ 2 ] );
@@ -48,6 +50,7 @@ namespace UnitTests
 			raffle.AddUser( _mockUsers[ 1 ] );
 			raffle.AddUser( _mockUsers[ 2 ] );
 
+			// Check that we always draw a user within bounds
 			for ( int i = 0; i < 30; ++i )
 			{
 				int index = raffle.DrawUserIndex();

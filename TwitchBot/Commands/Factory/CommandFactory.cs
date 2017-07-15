@@ -109,8 +109,16 @@ namespace TwitchBot.Commands
 		// Try to parse a line and see if it matches a given regex
         private bool TryGetMatch( Regex pattern, string line, out Match match )
         {
-            match = pattern.Match( line );
-            return match.Success;
+			if ( pattern != null && line != null )
+			{
+				match = pattern.Match( line );
+				return match.Success;
+			}
+			else
+			{
+				match = null;
+				return false;
+			}
         }
     }
 }
