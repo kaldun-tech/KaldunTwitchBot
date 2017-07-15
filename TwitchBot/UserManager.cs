@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TwitchBot
 {
-	class UserManager : IDisposable
+	public class UserManager : IDisposable
 	{
 		/// <summary>
 		/// Represents users in the Twitch channel
@@ -124,6 +124,11 @@ namespace TwitchBot
 		/// <param name="userName"></param>
 		public void LoginUser( string userName )
 		{
+			if ( string.IsNullOrEmpty( userName ) )
+			{
+				return;
+			}
+
 			lock ( _userLock )
 			{
 				User user;

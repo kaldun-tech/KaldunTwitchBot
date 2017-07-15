@@ -4,5 +4,6 @@ Work on unit testing
 Use TwitchLib API instead of connection logic
 Splash command should be moderator only
 
-Redo the UI
-Make it compatible with Linux
+Long Term:
+
+Redo as a web application
