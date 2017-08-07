@@ -3,9 +3,9 @@ using System.Threading;
 
 namespace TwitchBot
 {
-	class Casino
+	public class Casino
     {
-		internal enum GambleStatus
+		public enum GambleStatus
 		{
 			ENOUGH,
 			LOW_BET,
@@ -51,7 +51,7 @@ namespace TwitchBot
 		/// </summary>
 		/// <param name="userManager">The user manager for the channel</param>
 		/// <param name="currencyName">Name of the currency. Must not be null or empty.</param>
-		/// <param name="earnRate">Amount of currency earned per minute. Must be positive.</param>
+		/// <param name="earnRate">Amount of currency earned per minute.</param>
 		/// <param name="minimumGambleAmount">Minimum amount of currency to gamble</param>
 		/// <param name="winChance">Chance to win when gambling. Must be greater than zero and less than or equal to one.</param>
 		public Casino( UserManager userManager, string currencyName, uint earnRate, uint minimumGambleAmount, double winChance )
@@ -113,7 +113,7 @@ namespace TwitchBot
 					message = string.Format( "{0}, you {1} {2} {3}!", username, winLoseString, Math.Abs( winnings ), CurrencyName );
 					break;
 				case GambleStatus.INSUFFICIENT_FUNDS:
-					message = string.Format( "Your funds are grossly insufficent, {0}!", username );
+					message = string.Format( "Your funds are grossly insufficient, {0}!", username );
 					break;
 				case GambleStatus.LOW_BET:
 					message = string.Format( "What kind of weeny bet is this!?  Bet at least {0} {1}!", _minimumGambleAmount, username);

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TwitchBot
 {
-	public class UserManager : IDisposable
+	public class UserManager : IDisposable, IUserManager
 	{
 		/// <summary>
 		/// Represents users in the Twitch channel

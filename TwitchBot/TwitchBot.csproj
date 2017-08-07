@@ -79,6 +79,7 @@
       <DependentUpon>Images.cs</DependentUpon>
     </Compile>
     <Compile Include="Commands\Interfaces\ICommand.cs" />
+    <Compile Include="Interfaces\IUserManager.cs" />
     <Compile Include="LoginCredentialReaderWriter.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Raffle.cs" />
