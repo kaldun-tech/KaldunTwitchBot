@@ -5,11 +5,13 @@ namespace TwitchBot
 {
 	class Casino
     {
-		internal enum GambleStatus {
+		internal enum GambleStatus
+		{
 			ENOUGH,
 			LOW_BET,
 			INSUFFICIENT_FUNDS
 		}
+
 		/// <summary>
 		/// Represents players for the casino. These are users in chat who may or may not be currently active
 		/// </summary>
@@ -103,19 +105,19 @@ namespace TwitchBot
 		public string Gamble( string username, uint betAmount )
 		{
 			string message = null;
-			switch(CanUserGamble( username, betAmount )
+			switch( CanUserGamble( username, betAmount ) )
 			{
-				case ENOUGH:
-				long winnings = DoGamble( username, betAmount );
-				string winLoseString = winnings > 0 ? "won" : "lost";
-				message = string.Format( "{0}, you {1} {2} {3}!", username, winLoseString, Math.Abs( winnings ), CurrencyName );
-				break;
-				case INSUFFICIENT_FUNDS:
-				message = string.Format( "Your funds are grossly insufficent, {0}!", username );
-				break;
-				case LOW_BET:
-				message = string.Format( "What kind of weeny bet is this!?  Bet at least {0} {1}!", _minimumGambleAmount, username);
-				break;
+				case GambleStatus.ENOUGH:
+					long winnings = DoGamble( username, betAmount );
+					string winLoseString = winnings > 0 ? "won" : "lost";
+					message = string.Format( "{0}, you {1} {2} {3}!", username, winLoseString, Math.Abs( winnings ), CurrencyName );
+					break;
+				case GambleStatus.INSUFFICIENT_FUNDS:
+					message = string.Format( "Your funds are grossly insufficent, {0}!", username );
+					break;
+				case GambleStatus.LOW_BET:
+					message = string.Format( "What kind of weeny bet is this!?  Bet at least {0} {1}!", _minimumGambleAmount, username);
+					break;
 			}
 			return message;
 		}
@@ -154,12 +156,15 @@ namespace TwitchBot
 		/// <returns>Whether the input user can gamble the input amount</returns>
         public GambleStatus CanUserGamble( string username, uint betAmount )
         {
-			if(betAmount < _minimumGambleAmount) {
+			if ( betAmount < _minimumGambleAmount)
+			{
 				return GambleStatus.LOW_BET;
 			}
-			if(_userManager.GetUserCasinoBalance(username) < betAmount) {
+			else if ( _userManager.GetUserCasinoBalance( username ) < betAmount )
+			{
 				return GambleStatus.INSUFFICIENT_FUNDS;
 			}
+
 			return GambleStatus.ENOUGH;
 		}
 
