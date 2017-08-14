@@ -61,11 +61,47 @@ namespace TwitchBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid bet amount, {0}!.
+        /// </summary>
+        internal static string Casino_InvalidBetAmount {
+            get {
+                return ResourceManager.GetString("Casino_InvalidBetAmount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The casino is not currently operating, @{0}!.
+        /// </summary>
+        internal static string Casino_NotOperating {
+            get {
+                return ResourceManager.GetString("Casino_NotOperating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @{0}, choose from {1}, {2}, {3} or {4}..
         /// </summary>
         internal static string ChooseCharacter {
             get {
                 return ResourceManager.GetString("ChooseCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to the channel! We&apos;re playing a drinking game. If you want to join, type \&quot;!join &lt;character&gt;\&quot;. Current characters are {0}, {1}, {2} and {3}. Type \&quot;!quit\&quot; to stop playing..
+        /// </summary>
+        internal static string DrinkingGame_Introduction {
+            get {
+                return ResourceManager.GetString("DrinkingGame_Introduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A drinking game has been started! Type \&quot;!join &lt;character&gt;\&quot; to play. Current characters are @{0}, {1}, {2} and {3}. Type \&quot;!quit\&quot; to stop playing..
+        /// </summary>
+        internal static string DrinkingGame_Start {
+            get {
+                return ResourceManager.GetString("DrinkingGame_Start", resourceCulture);
             }
         }
         
@@ -84,6 +120,42 @@ namespace TwitchBot {
         internal static string FinishDrink {
             get {
                 return ResourceManager.GetString("FinishDrink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to What kind of weeny bet is this!?  Bet at least @{0} @{1}!.
+        /// </summary>
+        internal static string Gamble_BelowMinimumBet {
+            get {
+                return ResourceManager.GetString("Gamble_BelowMinimumBet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your funds are grossly insufficient, @{0}!.
+        /// </summary>
+        internal static string Gamble_InsufficentFunds {
+            get {
+                return ResourceManager.GetString("Gamble_InsufficentFunds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0}, you {1} {2} {3}!.
+        /// </summary>
+        internal static string Gamble_Result {
+            get {
+                return ResourceManager.GetString("Gamble_Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0}, your balance is {1} {2}.
+        /// </summary>
+        internal static string GetBalance_Result {
+            get {
+                return ResourceManager.GetString("GetBalance_Result", resourceCulture);
             }
         }
         

@@ -231,7 +231,7 @@ namespace TwitchBot
             string message = null;
             if ( _casino == null )
             {
-                message = string.Format( "The casino is not currently operating, {0}!", from );
+                message = string.Format( Strings.Casino_NotOperating, from );
             }
             else
             {
@@ -243,7 +243,7 @@ namespace TwitchBot
 				}
                 else
                 {
-                    message = string.Format( "Invalid bet amount, {0}!", from );
+                    message = string.Format( Strings.Casino_InvalidBetAmount, from );
                 }
             }
             _connection.Send( message );

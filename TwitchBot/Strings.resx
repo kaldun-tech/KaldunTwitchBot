@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ChooseCharacter" xml:space="preserve">
     <value>@{0}, choose from {1}, {2}, {3} or {4}.</value>
@@ -152,5 +152,37 @@
   <data name="TotalDrinksTaken" xml:space="preserve">
     <value>@{0}, you have taken {1} drinks!</value>
     <comment>Tell a player how many drinks they have taken during drinking games</comment>
+  </data>
+  <data name="Gamble_BelowMinimumBet" xml:space="preserve">
+    <value>What kind of weeny bet is this!?  Bet at least @{0} @{1}!</value>
+    <comment>Tell a player they have bet below the minimum</comment>
+  </data>
+  <data name="Gamble_InsufficentFunds" xml:space="preserve">
+    <value>Your funds are grossly insufficient, @{0}!</value>
+    <comment>Tell a player they have insufficient funds</comment>
+  </data>
+  <data name="Gamble_Result" xml:space="preserve">
+    <value>@{0}, you {1} {2} {3}!</value>
+    <comment>Tell a player they won or lost a bet</comment>
+  </data>
+  <data name="Casino_InvalidBetAmount" xml:space="preserve">
+    <value>Invalid bet amount, {0}!</value>
+    <comment>Tell a player that their bet amount was invalid</comment>
+  </data>
+  <data name="Casino_NotOperating" xml:space="preserve">
+    <value>The casino is not currently operating, @{0}!</value>
+    <comment>Tell a player the casino is not currently operating</comment>
+  </data>
+  <data name="DrinkingGame_Introduction" xml:space="preserve">
+    <value>Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join &lt;character&gt;\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
+    <comment>Introduce a player to the drinking game</comment>
+  </data>
+  <data name="DrinkingGame_Start" xml:space="preserve">
+    <value>A drinking game has been started! Type \"!join &lt;character&gt;\" to play. Current characters are @{0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
+    <comment>Tell chat that we have started a drinking game.</comment>
+  </data>
+  <data name="GetBalance_Result" xml:space="preserve">
+    <value>@{0}, your balance is {1} {2}</value>
+    <comment>Tell a player their casino balance</comment>
   </data>
 </root>

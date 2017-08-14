@@ -5,10 +5,10 @@ namespace TwitchBot
 {
 	public class Casino
     {
-		public enum GambleStatus
+		public enum CanGambleResult
 		{
-			ENOUGH,
-			LOW_BET,
+			CAN_GAMBLE,
+			BELOW_MINIMUM_BET,
 			INSUFFICIENT_FUNDS
 		}
 
@@ -107,16 +107,16 @@ namespace TwitchBot
 			string message = null;
 			switch( CanUserGamble( username, betAmount ) )
 			{
-				case GambleStatus.ENOUGH:
+				case CanGambleResult.CAN_GAMBLE:
 					long winnings = DoGamble( username, betAmount );
 					string winLoseString = winnings > 0 ? "won" : "lost";
-					message = string.Format( "{0}, you {1} {2} {3}!", username, winLoseString, Math.Abs( winnings ), CurrencyName );
+					message = string.Format( Strings.Gamble_Result, username, winLoseString, Math.Abs( winnings ), CurrencyName );
 					break;
-				case GambleStatus.INSUFFICIENT_FUNDS:
-					message = string.Format( "Your funds are grossly insufficient, {0}!", username );
+				case CanGambleResult.INSUFFICIENT_FUNDS:
+					message = string.Format( Strings.Gamble_InsufficentFunds, username );
 					break;
-				case GambleStatus.LOW_BET:
-					message = string.Format( "What kind of weeny bet is this!?  Bet at least {0} {1}!", _minimumGambleAmount, username);
+				case CanGambleResult.BELOW_MINIMUM_BET:
+					message = string.Format( Strings.Gamble_BelowMinimumBet, _minimumGambleAmount, username);
 					break;
 			}
 			return message;
@@ -130,7 +130,7 @@ namespace TwitchBot
 		/// <returns>The amount of winnings. This will be negative on a loss and zero on error.</returns>
         private long DoGamble( string username, uint betAmount )
         {
-			if ( GambleStatus.ENOUGH.Equals( CanUserGamble( username, betAmount )) )
+			if ( CanGambleResult.CAN_GAMBLE.Equals( CanUserGamble( username, betAmount )) )
 			{
 				Random rand = new Random();
 				double result = rand.NextDouble();
@@ -154,18 +154,18 @@ namespace TwitchBot
 		/// <param name="username">Name of user. Must not be null or empty</param>
 		/// <param name="betAmount">Amount to attempt to gamble</param>
 		/// <returns>Whether the input user can gamble the input amount</returns>
-        public GambleStatus CanUserGamble( string username, uint betAmount )
+        public CanGambleResult CanUserGamble( string username, uint betAmount )
         {
 			if ( betAmount < _minimumGambleAmount)
 			{
-				return GambleStatus.LOW_BET;
+				return CanGambleResult.BELOW_MINIMUM_BET;
 			}
 			else if ( _userManager.GetUserCasinoBalance( username ) < betAmount )
 			{
-				return GambleStatus.INSUFFICIENT_FUNDS;
+				return CanGambleResult.INSUFFICIENT_FUNDS;
 			}
 
-			return GambleStatus.ENOUGH;
+			return CanGambleResult.CAN_GAMBLE;
 		}
 
 		/// <summary>
@@ -176,7 +176,7 @@ namespace TwitchBot
 		public string GetStringBalance( string username )
 		{
 			uint balance = GetCurrencyBalance( username );
-			return string.Format( "{0}, your balance is {1} {2}", username, balance, CurrencyName );
+			return string.Format( Strings.GetBalance_Result, username, balance, CurrencyName );
 		}
 
 		/// <summary>

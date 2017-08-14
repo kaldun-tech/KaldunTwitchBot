@@ -9,7 +9,7 @@ namespace UnitTests
 	[TestClass]
 	public class CasinoTest
 	{
-		public const string ALICE = "Alice";
+		private const string ALICE = "Alice";
 		private const string BOB = "Bob";
 		private const string CHARLIE = "Charlie";
 		private const uint ZERO = 0;
@@ -43,21 +43,21 @@ namespace UnitTests
 		{
 			// Alice has 50
 			Assert.IsTrue( _casino.GetStringBalance( ALICE ).Contains( FIFTY.ToString() ) );
-			Assert.AreEqual( _casino.CanUserGamble( ALICE, ZERO ), Casino.GambleStatus.LOW_BET );
-			Assert.AreEqual( _casino.CanUserGamble( ALICE, FIFTY ), Casino.GambleStatus.ENOUGH );
-			Assert.AreEqual( _casino.CanUserGamble( ALICE, HUNDRED ), Casino.GambleStatus.INSUFFICIENT_FUNDS );
+			Assert.AreEqual( _casino.CanUserGamble( ALICE, ZERO ), Casino.CanGambleResult.BELOW_MINIMUM_BET );
+			Assert.AreEqual( _casino.CanUserGamble( ALICE, FIFTY ), Casino.CanGambleResult.CAN_GAMBLE );
+			Assert.AreEqual( _casino.CanUserGamble( ALICE, HUNDRED ), Casino.CanGambleResult.INSUFFICIENT_FUNDS );
 
 			// Bob has 100
 			Assert.IsTrue( _casino.GetStringBalance( BOB ).Contains( HUNDRED.ToString() ) );
-			Assert.AreEqual( _casino.CanUserGamble( BOB, FIFTY ), Casino.GambleStatus.ENOUGH );
-			Assert.AreEqual( _casino.CanUserGamble( BOB, HUNDRED ), Casino.GambleStatus.ENOUGH );
-			Assert.AreEqual( _casino.CanUserGamble( BOB, HUNDRED_FIFTY ), Casino.GambleStatus.INSUFFICIENT_FUNDS );
+			Assert.AreEqual( _casino.CanUserGamble( BOB, FIFTY ), Casino.CanGambleResult.CAN_GAMBLE );
+			Assert.AreEqual( _casino.CanUserGamble( BOB, HUNDRED ), Casino.CanGambleResult.CAN_GAMBLE );
+			Assert.AreEqual( _casino.CanUserGamble( BOB, HUNDRED_FIFTY ), Casino.CanGambleResult.INSUFFICIENT_FUNDS );
 
 			// Charlie's got nothing
 			Assert.IsFalse( _casino.GetStringBalance( CHARLIE ).Contains( FIFTY.ToString() ) );
 			Assert.IsFalse( _casino.GetStringBalance( CHARLIE ).Contains( HUNDRED.ToString() ) );
 			Assert.IsFalse( _casino.GetStringBalance( CHARLIE ).Contains( HUNDRED_FIFTY.ToString() ) );
-			Assert.AreEqual( _casino.CanUserGamble( CHARLIE, FIFTY ), Casino.GambleStatus.INSUFFICIENT_FUNDS );
+			Assert.AreEqual( _casino.CanUserGamble( CHARLIE, FIFTY ), Casino.CanGambleResult.INSUFFICIENT_FUNDS );
 		}
 
 		[TestMethod]

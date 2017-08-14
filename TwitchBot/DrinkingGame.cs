@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TwitchBot
 {
-	class DrinkingGame
+	public class DrinkingGame
 	{
 		/// <summary>
 		/// Create a drinking game
@@ -44,7 +44,7 @@ namespace TwitchBot
 			if ( !IsPlaying )
 			{
 				IsPlaying = true;
-				SendToConnection( string.Format( "A drinking game has been started! Type \"!join <character>\" to play. Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+				SendToConnection( string.Format( Strings.DrinkingGame_Start,
 						player1, player2, player3, player4 ) );
 				IntroduceAllActiveUsers();
 			}
@@ -57,6 +57,7 @@ namespace TwitchBot
 		{
 			if ( IsPlaying )
 			{
+				IsPlaying = false;
 				SendToConnection( "The drinking game has ended." );
 				_drinkingGameParticipants.Clear();
 				_introducedUsers.Clear();
@@ -118,6 +119,12 @@ namespace TwitchBot
 		/// <param name="username"></param>
 		public void GivePlayerDrink( string username )
 		{
+			if ( !IsPlaying )
+			{
+				SendToConnection( string.Format( Strings.NoDrinkingGame, username ) );
+				return;
+			}
+
 			if ( IsUserPlaying( username ) )
 			{
 				_userManager.IncrementDrinksTaken( username );
@@ -131,6 +138,11 @@ namespace TwitchBot
 		/// <param name="playerNumber"></param>
 		public void GivePlayersDrinks( int playerNumber )
 		{
+			if ( !IsPlaying )
+			{
+				return;
+			}
+
 			StringBuilder messageTargets = new StringBuilder();
 			foreach ( KeyValuePair<string, int> viewerAssignment in _drinkingGameParticipants )
 			{
@@ -186,6 +198,11 @@ namespace TwitchBot
 		/// </summary>
 		public void AllPlayersDrink()
 		{
+			if ( !IsPlaying )
+			{
+				return;
+			}
+
 			_userManager.IncrementDrinksTaken( _drinkingGameParticipants.Keys );
 			SendToConnection( "Everyone drink!" );
 		}
@@ -196,6 +213,12 @@ namespace TwitchBot
 		/// <param name="username"></param>
 		public void PlayerFinishDrink( string username )
 		{
+			if ( !IsPlaying )
+			{
+				SendToConnection( string.Format( Strings.NoDrinkingGame, username ) );
+				return;
+			}
+
 			if ( IsUserPlaying( username ) )
 			{
 				_userManager.IncrementDrinksTaken( username );
@@ -209,6 +232,11 @@ namespace TwitchBot
 		/// <param name="playerNumber"></param>
 		public void PlayersFinishDrinks( int playerNumber)
 		{
+			if ( !IsPlaying )
+			{
+				return;
+			}
+
 			StringBuilder messageTargets = new StringBuilder();
 			foreach ( KeyValuePair<string, int> viewerAssignment in _drinkingGameParticipants )
 			{
@@ -236,6 +264,12 @@ namespace TwitchBot
 		/// <param name="username"></param>
 		public void GivePlayerTicket( string username )
 		{
+			if ( !IsPlaying )
+			{
+				SendToConnection( string.Format( Strings.NoDrinkingGame, username ) );
+				return;
+			}
+
 			if ( IsUserPlaying( username ) )
 			{
 				_userManager.IncrementDrinkTickets( username );
@@ -249,6 +283,11 @@ namespace TwitchBot
 		/// <param name="playerNumber"></param>
 		public void GivePlayersTicket( int playerNumber )
 		{
+			if ( !IsPlaying )
+			{
+				return;
+			}
+
 			StringBuilder messageTargets = new StringBuilder();
 			foreach ( KeyValuePair<string, int> viewerAssignment in _drinkingGameParticipants )
 			{
@@ -282,7 +321,7 @@ namespace TwitchBot
 		{
 			if ( IsPlaying && !_introducedUsers.Contains( username ) )
 			{
-				SendToConnection( string.Format( "Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join <character>\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.",
+				SendToConnection( string.Format( Strings.DrinkingGame_Introduction,
 					player1, player2, player3, player4 ) );
 				_introducedUsers.Add( username );
 				IntroduceAllActiveUsers();				
@@ -324,7 +363,7 @@ namespace TwitchBot
 		/// Connect the drinking game. Necessary to send messages
 		/// </summary>
 		/// <param name="connection"></param>
-		public void Connect( Connection connection )
+		internal void Connect( Connection connection )
 		{
 			_connection = connection;
 		}

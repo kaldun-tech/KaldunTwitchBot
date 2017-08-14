@@ -1,6 +1,6 @@
 Proposed Enhancements:
 
-Finish Unit Testing with Moq
+Rebrand as BrewBot
 Use TwitchLib API instead of connection logic
 Splash command should be moderator only
 
