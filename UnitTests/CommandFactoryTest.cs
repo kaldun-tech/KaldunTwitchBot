@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TwitchBot.Commands;
-using TwitchBot.Interfaces;
+using BrewBot.Commands;
+using BrewBot.Interfaces;
 
 namespace UnitTests
 {

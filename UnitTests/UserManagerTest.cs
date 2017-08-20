@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TwitchBot;
+using BrewBot;
 using System.Collections.Generic;
 
 namespace UnitTests
