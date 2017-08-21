@@ -79,6 +79,15 @@ namespace BrewBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HeyGuys BrewBot ready for action!.
+        /// </summary>
+        internal static string ChannelJoined {
+            get {
+                return ResourceManager.GetString("ChannelJoined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @{0}, choose from {1}, {2}, {3} or {4}..
         /// </summary>
         internal static string ChooseCharacter {
@@ -192,6 +201,24 @@ namespace BrewBot {
         internal static string NotParticipating {
             get {
                 return ResourceManager.GetString("NotParticipating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome @{0} to the {1}!.
+        /// </summary>
+        internal static string SubscriptionReceived {
+            get {
+                return ResourceManager.GetString("SubscriptionReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome @{0} to the {1}! So kind of you to use your Twitch Prime on this channel!.
+        /// </summary>
+        internal static string SubscriptionReceivedPrime {
+            get {
+                return ResourceManager.GetString("SubscriptionReceivedPrime", resourceCulture);
             }
         }
         

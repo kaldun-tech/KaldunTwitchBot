@@ -185,4 +185,16 @@
     <value>@{0}, your balance is {1} {2}</value>
     <comment>Tell a player their casino balance</comment>
   </data>
+  <data name="ChannelJoined" xml:space="preserve">
+    <value>HeyGuys BrewBot ready for action!</value>
+    <comment>Tell chat that the bot is in the house</comment>
+  </data>
+  <data name="SubscriptionReceived" xml:space="preserve">
+    <value>Welcome @{0} to the {1}!</value>
+    <comment>Welcome a new subscriber</comment>
+  </data>
+  <data name="SubscriptionReceivedPrime" xml:space="preserve">
+    <value>Welcome @{0} to the {1}! So kind of you to use your Twitch Prime on this channel!</value>
+    <comment>Welcome a new TwitchPrime subscriber</comment>
+  </data>
 </root>
