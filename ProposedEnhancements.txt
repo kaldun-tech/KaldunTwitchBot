@@ -1,8 +1,13 @@
-Proposed Enhancements:
+Business Plan:
 
 Use TwitchLib API instead of connection logic
+Add a !commands command that explains all of the commands
+Add a list of configurable timeout/ban words
 Splash command should be moderator only
+Add a .ico icon file ( ask an artist??? )
 
 Long Term:
 
 Redo as a web application
+???
+Profit!!!

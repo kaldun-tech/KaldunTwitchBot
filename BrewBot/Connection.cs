@@ -8,8 +8,8 @@ using System.Threading;
 
 namespace BrewBot
 {
-    internal class Connection : IDisposable
-    {
+    internal class Connection : IDisposable, IConnection
+	{
 		/// <summary>
 		/// Create a new connection
 		/// </summary>
