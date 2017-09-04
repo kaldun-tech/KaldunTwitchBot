@@ -1,0 +1,52 @@
+{
+	{
+		"commandName" : "getCommands",
+		"description" : "!commands - get this list of commands",
+		"regex" : "^!commands$"
+	},
+	{
+		"commandName" : "getBalance",
+		"description" : "!balance - Display your currency balance",
+		"regex" : "^!balance$"
+	},
+	{
+		"commandName" : "gamble",
+		"description" : "!gamble (amount) - Gamble currency",
+		"regex" : "^!gamble (.*)$"
+	},
+	{
+		"commandName" : "joinDrinkingGame",
+		"description" : "!join (player) - Join the drinking game as the input player",
+		"regex" : "^!join (.*)$"
+	},
+	{
+		"commandName" : "quitDrinkingGame",
+		"description" : "!quit - Quit the drinking game",
+		"regex" : "^!quit$"
+	},
+	{
+		"commandName" : "giveDrink",
+		"description" : "!give (username) - Spend a drink ticket to make a player drink",
+		"regex" : "^!give (.*)$"
+	},
+	{
+		"commandName" : "playRaffle",
+		"description" : "!raffle - Enter the current raffle",
+		"regex" : "^!raffle$"
+	},
+	{
+		"commandName" : "getTickets",
+		"description" : "!tickets - Display your drink ticket balance",
+		"regex" : "^!tickets$"
+	},
+	{
+		"commandName" : "getDrinks",
+		"description" : "!drinks - Display how many drinks you have taken during active drinking games",
+		"regex" : "^!drinks$"
+	},
+	{
+		"commandName" : "splashCurrency",
+		"description" "!splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency",
+		"regex" : "^!splash (.*)$"
+	}
+}

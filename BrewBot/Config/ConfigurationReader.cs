@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 
-namespace BrewBot
+namespace BrewBot.Config
 {
     internal class ConfigurationReader
     {
@@ -20,8 +20,10 @@ namespace BrewBot
         private const int DEFAULT_MESSAGE_INTERVAL = 120;
         // Minimum time between messages
         private const int MINIMUM_MESSAGE_INTERVAL = 30;
-        // Default currency name
-        private const string DEFAULT_CURRENCY_NAME = "cheddar";
+		// Default title to address subscribers with
+		private const string DEFAULT_SUBSCRIBER_TITLE = "subscriberino";
+		// Default currency name
+		private const string DEFAULT_CURRENCY_NAME = "cheddar";
         // Default amount of currency earned per minute
         private const uint DEFAULT_CURRENCY_EARN_RATE = 100;
         // Default minimum amount to gamble
@@ -34,6 +36,7 @@ namespace BrewBot
         private string _configFileName;
         private List<string> _configuredMessages = null;
         private int? _configuredMessageInterval = null;
+		private string _subscriberTitle = DEFAULT_SUBSCRIBER_TITLE;
         private bool _currencyEnabled = false;
         private string _currencyName = DEFAULT_CURRENCY_NAME;
         private uint _currencyEarnRate = DEFAULT_CURRENCY_EARN_RATE;
@@ -53,10 +56,18 @@ namespace BrewBot
 		/// <summary>
 		/// Get the configured interval in seconds between sending messages
 		/// </summary>
-        public int GetConfiguredMessageIntervalInSeconds
+        public int ConfiguredMessageIntervalInSeconds
         {
             get { return _configuredMessageInterval ?? DEFAULT_MESSAGE_INTERVAL; }
         }
+
+		/// <summary>
+		/// Get the title we will use to address our subscribers
+		/// </summary>
+		public string GetSubscriberTitle
+		{
+			get { return _subscriberTitle; }
+		}
 
 		/// <summary>
 		/// Whether accrual of currency is enabled. This must be enabled gambling to function.
@@ -156,6 +167,16 @@ namespace BrewBot
 						{
 							_configuredMessages.Add( messageNode.InnerText );
 						}
+					}
+				}
+
+				XmlNode subscriberNode = document.DocumentElement.SelectSingleNode( "/config/subscribers" );
+				if ( subscriberNode != null && subscriberNode.Attributes != null )
+				{
+					XmlNode titleNode = subscriberNode.Attributes.GetNamedItem( "title" );
+					if ( titleNode != null && !string.IsNullOrEmpty( titleNode.Value ) )
+					{
+						_subscriberTitle = titleNode.Value;
 					}
 				}
 

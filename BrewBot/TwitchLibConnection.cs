@@ -1,7 +1,8 @@
 ﻿using TwitchLib;
 using TwitchLib.Models.Client;
 using TwitchLib.Events.Client;
-using System;
+using BrewBot.Commands;
+using BrewBot.Interfaces;
 
 namespace BrewBot
 {
@@ -11,10 +12,12 @@ namespace BrewBot
 		/// Create a new connection
 		/// </summary>
 		/// <param name="chat">Target IRC chat</param>
-		public TwitchLibConnection( string hostname, int port, string chat, string username, string oauth )
+		public TwitchLibConnection( string hostname, int port, string chat, string username, string oauth, CommandFactory commandFactory, string subscriberTitle )
 		{
 			_channel = chat;
+			_subscriberTitle = subscriberTitle;
 			_credentials = new ConnectionCredentials( username, oauth, hostname, port );
+			_commandFactory = commandFactory;
 
 			_client = new TwitchClient( _credentials, _channel );
 			_client.OnJoinedChannel += onJoinedChannel;
@@ -23,11 +26,11 @@ namespace BrewBot
 			_client.OnNewSubscriber += onNewSubscriber;
 		}
 
-		private const string SUBSCRIBER_TITLE = "Brewster";
-
-		private string _channel;
+		private readonly string _channel;
+		private readonly string _subscriberTitle;
 		private ConnectionCredentials _credentials;
 		private TwitchClient _client;
+		private CommandFactory _commandFactory;
 
 		public void Connect()
 		{
@@ -57,13 +60,12 @@ namespace BrewBot
 
 		private void onJoinedChannel( object sender, OnJoinedChannelArgs e )
 		{
-			// TODO Strings.Resx
 			Send( Strings.ChannelJoined );
 		}
 
 		private void onMessageReceived( object sender, OnMessageReceivedArgs e )
 		{
-			// TODO configure a list of naughty words
+			// TODO configure a list of banned words
 			if ( e.ChatMessage.Message.Contains( "badword" ) )
 			{
 				// TODO time user out
@@ -72,25 +74,31 @@ namespace BrewBot
 
 		private void onCommandReceived( object sender, OnWhisperCommandReceivedArgs e )
 		{
-			// TODO delegate to CommandFactory
+			if ( _commandFactory != null && _client.IsConnected )
+			{
+				ICommand command = _commandFactory.CreateCommand( e.WhisperMessage.Message, e.WhisperMessage.Username );
+				if ( command != null )
+				{
+					command.ExecuteCommand();
+				}
+			}
 		}
 
 		private void onWhisperReceived( object sender, OnWhisperReceivedArgs e )
 		{
-			// TODO We currently don't care about whispers
+			// We currently don't care about whispers
 		}
 
 		private void onNewSubscriber( object sender, OnNewSubscriberArgs e )
 		{
-			// TODO Strings.Resx
 			if ( e.Subscriber.IsTwitchPrime )
 			{
-				string message = string.Format( Strings.SubscriptionReceivedPrime, e.Subscriber.DisplayName, SUBSCRIBER_TITLE );
+				string message = string.Format( Strings.SubscriptionReceivedPrime, e.Subscriber.DisplayName, _subscriberTitle );
 				Send( message );
 			}
 			else
 			{
-				string message = string.Format( Strings.SubscriptionReceived, e.Subscriber.DisplayName, SUBSCRIBER_TITLE );
+				string message = string.Format( Strings.SubscriptionReceived, e.Subscriber.DisplayName, _subscriberTitle );
 				Send( message );
 			}
 		}

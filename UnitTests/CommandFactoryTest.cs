@@ -7,7 +7,7 @@ namespace UnitTests
 	[TestClass]
 	public class CommandFactoryTest
 	{
-		private readonly CommandFactory _mockFactory = new CommandFactory( null, null, null, null, null, null, null, null, null );
+		private readonly CommandFactory _mockFactory = new CommandFactory( null, null, null, null, null, null, null, null, null, null );
 
 		[TestMethod]
 		public void TestCreateCommand_Fail()

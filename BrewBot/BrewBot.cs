@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Forms;
 using BrewBot.Interfaces;
 using BrewBot.Commands;
+using BrewBot.Config;
 
 namespace BrewBot
 {
@@ -27,7 +28,7 @@ namespace BrewBot
             _log = null;
             _windowColor = textBoxR.BackColor;
 
-			_commandFactory = new CommandFactory( GetBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, GetTicketsCB, GetTotalDrinksCB );
+			_commandFactory = new CommandFactory( GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, GetTicketsCB, GetTotalDrinksCB );
 			_credentialsReaderWriter = new LoginCredentialReaderWriter();
 			_userManager = new UserManager();
 			_drinkingGame = new DrinkingGame( _userManager );
@@ -220,6 +221,11 @@ namespace BrewBot
             }
         }
 
+		private void GetCommandsCB( string from, string target )
+		{
+			//TODO
+		}
+
         private void GetBalanceCB( string from, string target )
         {
             string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( from );
@@ -385,7 +391,7 @@ namespace BrewBot
             // Configure the automatic message sender thread
             if ( _configReader != null )
             {
-                _automaticMessageSender = new ConfigurableMessageSender( _connection, _configReader.GetConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages );
+                _automaticMessageSender = new ConfigurableMessageSender( _connection, _configReader.ConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages );
                 _automaticMessageSender.Start();
                 if ( _configReader.IsGamblingEnabled )
                 {

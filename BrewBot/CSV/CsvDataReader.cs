@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace BrewBot
+namespace BrewBot.CSV
 {
 	/// <summary>
 	/// Read data from CSV files

@@ -2,6 +2,10 @@
 using BrewBot.Commands.Interfaces;
 using BrewBot.Interfaces;
 using static BrewBot.CommandParsing.Templates.ACommand;
+using System.Collections.Generic;
+using System.IO;
+using System;
+using Newtonsoft.Json;
 
 namespace BrewBot.Commands
 {
@@ -10,6 +14,7 @@ namespace BrewBot.Commands
 		/// <summary>
 		/// Create a commandfactory given callbacks to use for command actions.
 		/// </summary>
+		/// <param name="getCommandsCB"></param>
 		/// <param name="getBalanceCB"></param>
 		/// <param name="gambleCB"></param>
 		/// <param name="giveDrinksCB"></param>
@@ -19,7 +24,7 @@ namespace BrewBot.Commands
 		/// <param name="splashCB"></param>
 		/// <param name="getTicketsCB"></param>
 		/// <param name="getTotalDrinksCB"></param>
-        public CommandFactory( CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
+        public CommandFactory( CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
             CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB )
         {
             _getBalanceCB = getBalanceCB;
@@ -31,10 +36,15 @@ namespace BrewBot.Commands
             _splashCB = splashCB;
 			_getTicketsCB = getTicketsCB;
 			_getTotalDrinksCB = getTotalDrinksCB;
+
+			ReadJSONCommands();
 		}
 
         private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
+		private readonly string JSON_COMMANDS_FILE_PATH = Path.Combine( Environment.CurrentDirectory, "commands.json" );
 
+		private IList<JSONCommand> _jsonCommands = new List<JSONCommand>();
+		private static Regex _commandsEx = new Regex( "^!commands$", REGEX_OPTIONS );
         private static Regex _balanceEx = new Regex( "^!balance$", REGEX_OPTIONS );
         private static Regex _gambleEx = new Regex( "^!gamble (.*)$", REGEX_OPTIONS );
         private static Regex _giveEx = new Regex( "^!give (.*)$", REGEX_OPTIONS );
@@ -104,7 +114,29 @@ namespace BrewBot.Commands
 			}
 
             return result;
-        }
+		}
+
+		private struct JSONCommand
+		{
+			//string commandName;
+			//string description;
+			//Regex regex;
+		}
+
+		/// <summary>
+		/// Read the commands in from the JSON file
+		/// </summary>
+		private void ReadJSONCommands()
+		{
+			//using ( StreamReader reader = new StreamReader( JSON_COMMANDS_FILE_PATH ) )
+			//{
+			//	string json = reader.ReadToEnd();
+			//	if ( json != null )
+			//	{
+			//		_jsonCommands = JsonConvert.DeserializeObject<List<JSONCommand>>( json );
+			//	}
+			//}
+		}
 
 		// Try to parse a line and see if it matches a given regex
         private bool TryGetMatch( Regex pattern, string line, out Match match )
