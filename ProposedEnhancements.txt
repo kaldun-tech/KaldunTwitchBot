@@ -1,13 +1,15 @@
 Business Plan:
 
-Use TwitchLib API instead of connection logic
+Replace Connection logic with TwitchLibConnection
+Load the commands from JSON or XML
 Add a !commands command that explains all of the commands
-Add a list of configurable timeout/ban words
 Splash command should be moderator only
 Add a .ico icon file ( ask an artist??? )
+Release
 
 Long Term:
 
+Add a list of configurable timeout/ban words
 Redo as a web application
 ???
 Profit!!!

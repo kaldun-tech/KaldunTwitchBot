@@ -201,11 +201,8 @@ namespace BrewBot
         /// forwarding it, so we are the new sender.</param>
         protected virtual void OnMessageSent( object sender, MessageEventArgs e )
         {
-            if ( MessageSent != null )
-            {
-                MessageSent( this, e );
-            }
-        }
+			MessageSent?.Invoke( this, e );
+		}
 
         /// <summary>
         /// Raise the PrivateMessageReceived event.
