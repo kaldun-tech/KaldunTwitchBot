@@ -25,7 +25,7 @@ namespace BrewBot
         /// Occurs when any traffic is actually sent to the server, not when it is added to
         /// queue to be sent.
         /// </summary>
-        public event Connection.MessageEventHandler MessageSent;
+        public event LegacyConnection.MessageEventHandler MessageSent;
 
         private bool _exit;
         private IList<DateTime> _history;
@@ -64,7 +64,7 @@ namespace BrewBot
         {
             if ( MessageSent != null )
             {
-                Connection.MessageEventArgs e = new Connection.MessageEventArgs( text, false );
+                LegacyConnection.MessageEventArgs e = new LegacyConnection.MessageEventArgs( text, false );
                 MessageSent( this, e );
             }
         }

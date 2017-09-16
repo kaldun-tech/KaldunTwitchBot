@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BrewBot.Connection;
 
 namespace BrewBot
 {
@@ -18,7 +19,7 @@ namespace BrewBot
 		}
 
 		private UserManager _userManager;
-		private Connection _connection;
+		private TwitchLibConnection _connection;
 		// Maps case insensitive usernames to player numbers
 		private IDictionary<string, int> _drinkingGameParticipants;
 		// Users who have seen the drinking game intro
@@ -356,14 +357,14 @@ namespace BrewBot
 
 		public bool IsConnected
 		{
-			get { return _connection != null; }
+			get { return _connection != null && _connection.IsConnected; }
 		}
 
 		/// <summary>
 		/// Connect the drinking game. Necessary to send messages
 		/// </summary>
 		/// <param name="connection"></param>
-		internal void Connect( Connection connection )
+		internal void Connect( TwitchLibConnection connection )
 		{
 			_connection = connection;
 		}

@@ -8,13 +8,13 @@ using System.Threading;
 
 namespace BrewBot
 {
-    internal class Connection : IDisposable, IConnection
+    internal class LegacyConnection : IDisposable
 	{
 		/// <summary>
 		/// Create a new connection
 		/// </summary>
 		/// <param name="chat">Target IRC chat</param>
-        public Connection( string chat )
+        public LegacyConnection( string chat )
         {
             _channel = chat;
             _client = null;

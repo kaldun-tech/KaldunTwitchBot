@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using BrewBot.Connection;
 
 namespace BrewBot.Config
 {
@@ -11,7 +12,7 @@ namespace BrewBot.Config
 		/// <param name="connection">Connection to use. Must not be null.</param>
 		/// <param name="messageIntervalInSeconds">Interval between messages. Must be greater than or equal to zero.</param>
 		/// <param name="configuredMessages">List of messages to send. Should be non-null of length greater than or equal to zero.</param>
-        public ConfigurableMessageSender( Connection connection, int messageIntervalInSeconds, List<string> configuredMessages )
+        public ConfigurableMessageSender( TwitchLibConnection connection, int messageIntervalInSeconds, List<string> configuredMessages )
         {
             _connection = connection;
             _messageIntervalInSeconds = messageIntervalInSeconds;
@@ -21,7 +22,7 @@ namespace BrewBot.Config
         }
 
         private object _lock;
-        private Connection _connection;
+        private TwitchLibConnection _connection;
         private int _messageIntervalInSeconds;
         private List<string> _configuredMessages;
         private Thread _senderThread;

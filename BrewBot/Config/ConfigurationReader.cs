@@ -64,7 +64,7 @@ namespace BrewBot.Config
 		/// <summary>
 		/// Get the title we will use to address our subscribers
 		/// </summary>
-		public string GetSubscriberTitle
+		public string SubscriberTitle
 		{
 			get { return _subscriberTitle; }
 		}

@@ -7,6 +7,9 @@ using System.Windows.Forms;
 using BrewBot.Interfaces;
 using BrewBot.Commands;
 using BrewBot.Config;
+using BrewBot.Connection;
+using TwitchLib.Models.Client;
+using TwitchLib.Events.Client;
 
 namespace BrewBot
 {
@@ -28,7 +31,7 @@ namespace BrewBot
             _log = null;
             _windowColor = textBoxR.BackColor;
 
-			_commandFactory = new CommandFactory( GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinCB, QuitCB, RaffleCB, SplashCB, GetTicketsCB, GetTotalDrinksCB );
+			_commandFactory = new CommandFactory( GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinDrinkingGameCB, QuitDrinkingGameCB, RaffleCB, SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB );
 			_credentialsReaderWriter = new LoginCredentialReaderWriter();
 			_userManager = new UserManager();
 			_drinkingGame = new DrinkingGame( _userManager );
@@ -41,13 +44,17 @@ namespace BrewBot
             comboBoxCustomCharacter.SelectedIndex = 0;
         }
 
+		private const int SSL_DEFAULT_PORT = 443;
+		private const int NON_SSL_DEFAULT_PORT = 6667;
+
 		private readonly CommandFactory _commandFactory;
 		private readonly LoginCredentialReaderWriter _credentialsReaderWriter;
 		private readonly UserManager _userManager;
 		private readonly DrinkingGame _drinkingGame;
 		private readonly Raffle _raffle;
 
-		private Connection _connection;
+		private string _chatChannel;
+		private TwitchLibConnection _connection;
         // Configuration
         OpenFileDialog _fileDialog;
 		string _configFilePath = null;
@@ -158,15 +165,15 @@ namespace BrewBot
             scrollToNewMessageToolStripMenuItem.Visible = isTrafficSelected;
         }
 
-        private void ConnectionDisconnected( object sender, EventArgs e )
+		private void OnDisconnect( object sender, EventArgs e )
         {
-            if ( InvokeRequired )
-            {
-                BeginInvoke( new EventHandler( ConnectionDisconnected ), sender, e );
-                return;
-            }
+			if ( InvokeRequired )
+			{
+				BeginInvoke( new EventHandler( OnDisconnect ), sender, e );
+				return;
+			}
 
-            if ( _connection != null )
+			if ( _connection != null )
             {
                 if ( _automaticMessageSender != null )
                 {
@@ -185,41 +192,143 @@ namespace BrewBot
 					_drinkingGame.Disconnect();
 				}
 
-				_connection.Disconnected -= ConnectionDisconnected;
-                _connection.MessageReceived -= ConnectionMessageTransfer;
-                _connection.MessageSent -= ConnectionMessageTransfer;
-                _connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
-                _connection.UserJoined -= ConnectionUserJoined;
-                _connection.UserLeft -= ConnectionUserLeft;
-                _connection.Dispose();
+				_connection.OnDisconnected -= OnDisconnect;
+                _connection.OnMessageReceived -= OnMessageReceived;
+                _connection.OnMessageSent -= OnMessageSent;
+                _connection.OnWhisperReceived -= OnWhisperReceived;
+				_connection.OnNewSubscriber -= OnNewSubscriber;
+				_connection.OnUserJoined -= OnUserJoined;
+                _connection.OnUserLeft -= OnUserLeft;
                 _connection = null;
             }
 
             HandleConnectionChange( false );
         }
 
-        private void ConnectionMessageTransfer( object sender, Connection.MessageEventArgs e )
+		/// <summary>
+		/// Used for message transfer
+		/// </summary>
+		private class MessageTransferArgs : EventArgs
+		{
+			public MessageTransferArgs( string user, string message, bool received )
+			{
+				_username = user;
+				_message = message;
+				_received = received;
+			}
+
+			private string _username;
+			private string _message;
+			private bool _received;
+
+			public string UserName { get { return _username; } }
+			public string Message { get { return _message; } }
+			public bool Received { get { return _received; } }
+		}
+
+		private delegate void MessageTransferHandler( object sender, MessageTransferArgs e );
+
+		private void HandleChatTraffic( object sender, MessageTransferArgs e )
+		{
+			string carrot = e.Received ? " > " : " < ";
+			string toAppend = DateTime.Now.ToString( "HH:mm:ss.f" ) + " - " + e.UserName + carrot + e.Message;
+
+			textBoxLog.Text += toAppend + Environment.NewLine;
+			if ( scrollToNewMessageToolStripMenuItem.Checked )
+			{
+				textBoxLog.Select( textBoxLog.Text.Length, 0 );
+				textBoxLog.ScrollToCaret();
+			}
+
+			if ( _log != null )
+			{
+				_log.WriteLine( toAppend );
+			}
+		}
+
+		private void HandleMessageReceived( object sender, MessageTransferArgs e )
+		{
+			if ( InvokeRequired )
+			{
+				BeginInvoke( new MessageTransferHandler( HandleMessageReceived ), sender, e );
+				return;
+			}
+
+			// We may not have gotten a join notification for this user yet.
+			if ( !_userManager.IsUserActive( e.UserName ) )
+			{
+				_userManager.LoginUser( e.UserName );
+			}
+
+			ICommand command = _commandFactory.CreateCommand( e.Message, e.UserName );
+			if ( command != null )
+			{
+				command.ExecuteCommand();
+			}
+
+			_drinkingGame.IntroduceUser( e.UserName, textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text );
+			HandleChatTraffic( sender, e );
+		}
+
+		private void HandleMessageSent( object sender, MessageTransferArgs e )
+		{
+			if ( InvokeRequired )
+			{
+				BeginInvoke( new MessageTransferHandler( HandleMessageSent ), sender, e );
+				return;
+			}
+
+			HandleChatTraffic( sender, e );
+		}
+
+		private void OnMessageReceived( object sender, OnMessageReceivedArgs e )
         {
-            if ( InvokeRequired )
-            {
-                BeginInvoke( new Connection.MessageEventHandler( ConnectionMessageTransfer ), sender, e );
-                return;
-            }
-
-            string toAppend = DateTime.Now.ToString( "HH:mm:ss.f" ) + ( e.IsReceived ? " >" : " <" ) + e.Text;
-
-            textBoxLog.Text += toAppend + Environment.NewLine;
-            if ( scrollToNewMessageToolStripMenuItem.Checked )
-            {
-                textBoxLog.Select( textBoxLog.Text.Length, 0 );
-                textBoxLog.ScrollToCaret();
-            }
-
-            if ( _log != null )
-            {
-                _log.WriteLine( toAppend );
-            }
+			// TODO configure a list of banned words
+			if ( e.ChatMessage.Message.Contains( "badword" ) )
+			{
+				// TODO time user out
+			}
+			HandleMessageReceived( sender, new MessageTransferArgs( e.ChatMessage.Username, e.ChatMessage.Message, true ) );
         }
+
+		private void OnWhisperReceived( object sender, OnWhisperReceivedArgs e )
+		{
+			HandleMessageReceived( sender, new MessageTransferArgs( e.WhisperMessage.Username, e.WhisperMessage.Message, true ) );
+		}
+
+		private void OnMessageSent( object sender, OnMessageSentArgs e )
+		{
+			HandleMessageSent( sender, new MessageTransferArgs( e.SentMessage.DisplayName, e.SentMessage.Message, false ) );
+		}
+
+		private void OnNewSubscriber( object sender, OnNewSubscriberArgs e )
+		{
+			string format = e.Subscriber.IsTwitchPrime ? Strings.SubscriptionReceivedPrime : Strings.SubscriptionReceived;
+			string message = string.Format( format, e.Subscriber.DisplayName, _configReader.SubscriberTitle );
+			_connection.Send( message );
+		}
+
+		private void OnUserJoined( object sender, OnUserJoinedArgs e )
+		{
+			_userManager.LoginUser( e.Username );
+		}
+
+		private delegate void OnUserLeftEvent( object sender, OnUserLeftArgs e );
+
+		private void OnUserLeft( object sender, OnUserLeftArgs e )
+		{
+			if ( InvokeRequired )
+			{
+				BeginInvoke( new OnUserLeftEvent( OnUserLeft ), sender, e );
+				return;
+			}
+
+			_userManager.LogoutUser( e.Username );
+
+			comboBoxViewer.Items.Remove( e.Username.ToLowerInvariant() );
+			comboBoxCustom.Items.Remove( e.Username.ToLowerInvariant() );
+			_drinkingGame.RemoveParticipant( e.Username );
+		}
 
 		private void GetCommandsCB( string from, string target )
 		{
@@ -261,13 +370,13 @@ namespace BrewBot
 			_drinkingGame.AddIntroducedUser( from );
         }
 
-        private void JoinCB( string from, string target )
+        private void JoinDrinkingGameCB( string from, string target )
         {
             DrinkingAdd( from, target );
 			_drinkingGame.AddIntroducedUser( from );
         }
 
-        private void QuitCB( string from, string target )
+        private void QuitDrinkingGameCB( string from, string target )
         {
             string fromToLower = from.ToLowerInvariant();
             comboBoxViewer.Items.Remove( fromToLower );
@@ -282,7 +391,7 @@ namespace BrewBot
         }
 
         // TODO: We need the concept of an admin so randos can't just be splashing
-        private void SplashCB( string from, string target )
+        private void SplashCurrencyCB( string from, string target )
         {
             // Target is the splash amount
             int splashAmount = 0;
@@ -296,7 +405,7 @@ namespace BrewBot
             }
         }
 
-		private void GetTicketsCB( string from, string target )
+		private void GetDrinkTickets( string from, string target )
 		{
 			uint drinkTickets = _userManager.GetDrinkTickets( from );
 			string message = string.Format( Strings.DrinkTicketsBalance, from, drinkTickets );
@@ -310,82 +419,39 @@ namespace BrewBot
 			_connection.Send( message );
 		}
 
-        private void ConnectionPrivateMessageReceived( object sender, Connection.PrivateMessageReceivedEventArgs e )
-        {
-            if ( InvokeRequired )
-            {
-                BeginInvoke( new Connection.PrivateMessageReceivedEventHandler( ConnectionPrivateMessageReceived ), sender, e );
-                return;
-            }
-
-            // We may not have gotten a join notification for this user yet.
-            if ( !_userManager.IsUserActive( e.From ) )
-            {
-				_userManager.LoginUser( e.From );
-            }
-
-            ICommand command = _commandFactory.CreateCommand( e.Content, e.From );
-            if ( command != null )
-            {
-                command.ExecuteCommand();
-            }
-
-			_drinkingGame.IntroduceUser( e.From, textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text );
-        }
-
-        private void ConnectionUserJoined( object sender, Connection.UserEventArgs e )
-        {
-			_userManager.LoginUser( e.User );
-        }
-
-        private void ConnectionUserLeft( object sender, Connection.UserEventArgs e )
-        {
-            if ( InvokeRequired )
-            {
-                BeginInvoke( new Connection.UserEventHandler( ConnectionUserLeft ), sender, e );
-                return;
-            }
-
-			_userManager.LogoutUser( e.User );
-
-			comboBoxViewer.Items.Remove( e.User.ToLowerInvariant() );
-            comboBoxCustom.Items.Remove( e.User.ToLowerInvariant() );
-            _drinkingGame.RemoveParticipant( e.User );
-        }
-
         private void buttonDoWork_Click( object sender, EventArgs e )
         {
             if ( _connection != null )
             {
 				_drinkingGame.Disconnect();
-                _connection.Disconnected -= ConnectionDisconnected;
-                _connection.MessageReceived -= ConnectionMessageTransfer;
-                _connection.MessageSent -= ConnectionMessageTransfer;
-                _connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
-                _connection.UserJoined -= ConnectionUserJoined;
-                _connection.UserLeft -= ConnectionUserLeft;
-                _connection.Dispose();
+                _connection.OnDisconnected -= OnDisconnect;
+                _connection.OnMessageReceived -= OnMessageReceived;
+				_connection.OnMessageSent -= OnMessageSent;
+                _connection.OnWhisperReceived -= OnWhisperReceived;
+				_connection.OnNewSubscriber -= OnNewSubscriber;
+                _connection.OnUserJoined -= OnUserJoined;
+                _connection.OnUserLeft -= OnUserLeft;
             }
-
-            string hostname = "irc.chat.twitch.tv";
+			
 			string username = textBoxUser.Text;
-			string password = textBoxPassword.Text;
-			string channel = textBoxChat.Text;
+			string oauth = textBoxPassword.Text;
+			_chatChannel = textBoxChat.Text;
 			_configReader = new ConfigurationReader( _configFilePath );
 
-			_connection = new Connection( channel );
-            _connection.Disconnected += ConnectionDisconnected;
-            _connection.MessageReceived += ConnectionMessageTransfer;
-            _connection.MessageSent += ConnectionMessageTransfer;
-            _connection.PrivateMessageReceived += ConnectionPrivateMessageReceived;
-            _connection.UserJoined += ConnectionUserJoined;
-            _connection.UserLeft += ConnectionUserLeft;
-            _connection.Connect( hostname, checkBoxSSL.Checked ? 443 : 6667, checkBoxSSL.Checked, username, password );
+			_connection = new TwitchLibConnection( _chatChannel, username, oauth );
+            _connection.OnDisconnected += OnDisconnect;
+            _connection.OnMessageReceived += OnMessageReceived;
+            _connection.OnMessageSent += OnMessageSent;
+            _connection.OnWhisperReceived += OnWhisperReceived;
+			_connection.OnNewSubscriber += OnNewSubscriber;
+            _connection.OnUserJoined += OnUserJoined;
+            _connection.OnUserLeft += OnUserLeft;
+            _connection.Connect();
 			_drinkingGame.Connect( _connection );
 
 			if ( saveCredentialsCheckbox.Checked )
 			{
-				_credentialsReaderWriter.WriteCredentials( username, password, channel, _configFilePath );
+				_credentialsReaderWriter.WriteCredentials( username, oauth, _chatChannel, _configFilePath );
 			}
 
             // Configure the automatic message sender thread
@@ -454,14 +520,14 @@ namespace BrewBot
 			}
 			if ( _connection != null )
             {
-                _connection.Disconnected -= ConnectionDisconnected;
-                _connection.MessageReceived -= ConnectionMessageTransfer;
-                _connection.MessageSent -= ConnectionMessageTransfer;
-                _connection.PrivateMessageReceived -= ConnectionPrivateMessageReceived;
-                _connection.UserJoined -= ConnectionUserJoined;
-                _connection.UserLeft -= ConnectionUserLeft;
-                _connection.Dispose();
-                _connection = null;
+                _connection.OnDisconnected -= OnDisconnect;
+                _connection.OnMessageReceived -= OnMessageReceived;
+                _connection.OnMessageSent -= OnMessageSent;
+                _connection.OnWhisperReceived -= OnWhisperReceived;
+				_connection.OnNewSubscriber -= OnNewSubscriber;
+                _connection.OnUserJoined -= OnUserJoined;
+                _connection.OnUserLeft -= OnUserLeft;
+                _connection.Disconnect();
             }
             if ( _log != null )
             {
@@ -577,9 +643,8 @@ namespace BrewBot
                 return;
             }
 
-			ConnectionDisconnected( sender, e );
-            HandleConnectionChange( false );
-        }
+			_connection.Disconnect();
+		}
 
         private void checkBoxPlay_CheckedChanged( object sender, EventArgs e )
         {

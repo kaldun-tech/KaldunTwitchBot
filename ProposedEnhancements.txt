@@ -1,6 +1,5 @@
 Business Plan:
 
-Replace Connection logic with TwitchLibConnection
 Load the commands from JSON or XML
 Add a !commands command that explains all of the commands
 Splash command should be moderator only
@@ -10,6 +9,6 @@ Release
 Long Term:
 
 Add a list of configurable timeout/ban words
-Redo as a web application
+Redo as a web application or Streamlabs plugin
 ???
 Profit!!!
