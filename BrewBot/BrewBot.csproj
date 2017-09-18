@@ -53,6 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Casino.cs" />
+    <Compile Include="Commands\Factory\Commands.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Commands.resx</DependentUpon>
+    </Compile>
     <Compile Include="Commands\GetBalanceCommand.cs" />
     <Compile Include="Commands\GetCommandsCommand.cs" />
     <Compile Include="Commands\GetTicketsCommand.cs" />
@@ -100,6 +105,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Connection\TwitchLibConnection.cs" />
     <Compile Include="UserManager.cs" />
+    <EmbeddedResource Include="Commands\Factory\Commands.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Commands.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Images.resx">
       <DependentUpon>Images.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -124,7 +133,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="Commands\Factory\commands.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

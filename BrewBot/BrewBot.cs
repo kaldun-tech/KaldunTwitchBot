@@ -8,8 +8,9 @@ using BrewBot.Interfaces;
 using BrewBot.Commands;
 using BrewBot.Config;
 using BrewBot.Connection;
-using TwitchLib.Models.Client;
 using TwitchLib.Events.Client;
+using System.Text;
+using System.Threading;
 
 namespace BrewBot
 {
@@ -332,7 +333,12 @@ namespace BrewBot
 
 		private void GetCommandsCB( string from, string target )
 		{
-			//TODO
+			List<string> commandDescriptionList = ( _commandFactory == null ) ? new List<string>() : _commandFactory.GetCommandDescriptionList();
+			foreach ( string description in commandDescriptionList )
+			{
+				//TODO do something elegant
+				_connection.SendWhisper( from, description );
+			}
 		}
 
         private void GetBalanceCB( string from, string target )

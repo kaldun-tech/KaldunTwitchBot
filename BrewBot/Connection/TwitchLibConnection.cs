@@ -85,10 +85,20 @@ namespace BrewBot.Connection
 		/// <param name="text"></param>
 		public void Send( string text )
 		{
-			if ( _client.IsConnected )
+			if ( _client.IsConnected && !string.IsNullOrEmpty( text ) )
 			{
 				_client.SendMessage( text );
 			}
+		}
+
+		/// <summary>
+		/// Sends a whisper to another user in IRC
+		/// </summary>
+		/// <param name="receiver">Target user</param>
+		/// <param name="message"></param>
+		public void SendWhisper( string receiver, string message )
+		{
+			_client.SendWhisper( receiver, message );
 		}
 
 		/// <summary>

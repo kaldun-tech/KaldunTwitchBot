@@ -1,8 +1,8 @@
 Business Plan:
 
-Load the commands from JSON or XML
-Add a !commands command that explains all of the commands
 Splash command should be moderator only
+Do whispers instead of messages where appropriate
+Encrypt the stored Username/Oauth credentials file
 Add a .ico icon file ( ask an artist??? )
 Release
 

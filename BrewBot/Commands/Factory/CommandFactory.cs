@@ -3,13 +3,11 @@ using BrewBot.Commands.Interfaces;
 using BrewBot.Interfaces;
 using static BrewBot.CommandParsing.Templates.ACommand;
 using System.Collections.Generic;
-using System.IO;
-using System;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace BrewBot.Commands
 {
-    public class CommandFactory : ICommandFactory
+	public class CommandFactory : ICommandFactory
     {
 		/// <summary>
 		/// Create a commandfactory given callbacks to use for command actions.
@@ -27,6 +25,8 @@ namespace BrewBot.Commands
         public CommandFactory( CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
             CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB )
         {
+			// Assign callbacks
+			_getCommandsCB = getCommandsCB;
             _getBalanceCB = getBalanceCB;
             _gambleCB = gambleCB;
             _giveDrinksCB = giveDrinksCB;
@@ -37,24 +37,39 @@ namespace BrewBot.Commands
 			_getTicketsCB = getTicketsCB;
 			_getTotalDrinksCB = getTotalDrinksCB;
 
-			ReadJSONCommands();
+			// Initialize structs
+			_getCommandsStruct = new CommandStruct( "!commands - get this list of commands", "^!commands$" );
+			_casinoGetBalanceStruct = new CommandStruct( "!balance - Display your currency balance", "^!balance$" );
+			_casinoGambleStruct = new CommandStruct( "!gamble (amount) - Gamble currency", "^!gamble (.*)$" );
+			_casinoSplashStruct = new CommandStruct( "!splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency", "^!splash (.*)$" );
+			_drinkingGameGiveStruct = new CommandStruct( "!give (username) - Spend a drink ticket to make a player drink", "^!give (.*)$" );
+			_drinkingGameJoinStruct = new CommandStruct( "!join (player) - Join the drinking game as the input player", "^!join (.*)$" );
+			_drinkingGameQuitStruct = new CommandStruct( "!quit - Quit the drinking game", "^!quit$" );
+			_raffleStruct = new CommandStruct( "!raffle - Enter the current raffle", "^!raffle$" );
+			_getDrinkTicketsStruct = new CommandStruct( "!tickets - Display your drink ticket balance", "^!tickets$" );
+			_getDrinksStruct = new CommandStruct( "!drinks - Display how many drinks you have taken during active drinking games", "^!drinks$" );
+
+			// Initiate commands list, order represents how they are displayed in GetCommands
+			_commandList = new List<CommandStruct> { _getCommandsStruct, _casinoGetBalanceStruct, _casinoGambleStruct, _casinoSplashStruct, _drinkingGameGiveStruct, _drinkingGameJoinStruct,
+				_drinkingGameQuitStruct, _raffleStruct, _getDrinkTicketsStruct, _getDrinksStruct };
 		}
 
         private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
-		private readonly string JSON_COMMANDS_FILE_PATH = Path.Combine( Environment.CurrentDirectory, "commands.json" );
 
-		private IList<JSONCommand> _jsonCommands = new List<JSONCommand>();
-		private static Regex _commandsEx = new Regex( "^!commands$", REGEX_OPTIONS );
-        private static Regex _balanceEx = new Regex( "^!balance$", REGEX_OPTIONS );
-        private static Regex _gambleEx = new Regex( "^!gamble (.*)$", REGEX_OPTIONS );
-        private static Regex _giveEx = new Regex( "^!give (.*)$", REGEX_OPTIONS );
-        private static Regex _joinEx = new Regex( "^!join (.*)$", REGEX_OPTIONS );
-        private static Regex _quitEx = new Regex( "^!quit$", REGEX_OPTIONS );
-        private static Regex _raffleEx = new Regex( "^!raffle$", REGEX_OPTIONS );
-        private static Regex _splashEx = new Regex( "^!splash (.*)$", REGEX_OPTIONS );
-		private static Regex _ticketsEx = new Regex( "^!tickets$", REGEX_OPTIONS );
-		private static Regex _drinksEx = new Regex( "^!drinks$", REGEX_OPTIONS );
+		private IList<CommandStruct> _commandList;
 
+		private static CommandStruct _getCommandsStruct;
+		private static CommandStruct _casinoGetBalanceStruct;
+		private static CommandStruct _casinoGambleStruct;
+		private static CommandStruct _casinoSplashStruct;
+		private static CommandStruct _drinkingGameGiveStruct;
+		private static CommandStruct _drinkingGameJoinStruct;
+		private static CommandStruct _drinkingGameQuitStruct;
+		private static CommandStruct _raffleStruct;
+		private static CommandStruct _getDrinkTicketsStruct;
+		private static CommandStruct _getDrinksStruct;
+
+		private CommandCallback _getCommandsCB;
         private CommandCallback _getBalanceCB;
         private CommandCallback _gambleCB;
         private CommandCallback _giveDrinksCB;
@@ -76,39 +91,43 @@ namespace BrewBot.Commands
             Match match;
             ICommand result = null;
 
-            if ( TryGetMatch( _balanceEx, content, out match ) )
+			if ( TryGetMatch( _getCommandsStruct.Regex, content, out match ) )
+			{
+				result = new GetCommandsCommand( content, from, null, _getCommandsCB );
+			}
+			else if ( TryGetMatch( _casinoGetBalanceStruct.Regex, content, out match ) )
             {
                 result = new GetBalanceCommand( content, from, null, _getBalanceCB );
             }
-            else if ( TryGetMatch( _gambleEx, content, out match ) )
+            else if ( TryGetMatch( _casinoGambleStruct.Regex, content, out match ) )
             {
                 result = new GambleCommand( content, from, match.Groups[ 1 ].Value, _gambleCB );
             }
-			else if ( TryGetMatch( _giveEx, content, out match ) )
+			else if ( TryGetMatch( _drinkingGameGiveStruct.Regex, content, out match ) )
             {
                 result = new GiveDrinksCommand( content, from, match.Groups[ 1 ].Value, _giveDrinksCB );
             }
-			else if ( TryGetMatch( _joinEx, content, out match ) )
+			else if ( TryGetMatch( _drinkingGameJoinStruct.Regex, content, out match ) )
             {
                 result = new JoinDrinkingGameCommand( content, from, match.Groups[ 1 ].Value, _joinGameCB );
             }
-			else if ( TryGetMatch( _quitEx, content, out match ) )
+			else if ( TryGetMatch( _drinkingGameQuitStruct.Regex, content, out match ) )
             {
                 result = new QuitDrinkingGameCommand( content, from, null, _quitGameCB );
             }
-			else if ( TryGetMatch( _raffleEx, content, out match ) )
+			else if ( TryGetMatch( _raffleStruct.Regex, content, out match ) )
             {
                 result = new RaffleCommand( content, from, null, _raffleCB );
             }
-			else if ( TryGetMatch( _splashEx, content, out match ) )
+			else if ( TryGetMatch( _casinoSplashStruct.Regex, content, out match ) )
             {
                 result = new SplashCurrencyCommand( content, from, match.Groups[ 1 ].Value, _splashCB );
             }
-			else if ( TryGetMatch( _ticketsEx, content, out match ) )
+			else if ( TryGetMatch( _getDrinkTicketsStruct.Regex, content, out match ) )
 			{
 				result = new GetTicketsCommand( content, from, null, _getTicketsCB );
 			}
-			else if ( TryGetMatch( _drinksEx, content, out match ) )
+			else if ( TryGetMatch( _getDrinksStruct.Regex, content, out match ) )
 			{
 				result = new GetTotalDrinksTakenCommand( content, from, null, _getTotalDrinksCB );
 			}
@@ -116,26 +135,27 @@ namespace BrewBot.Commands
             return result;
 		}
 
-		private struct JSONCommand
+		// Gives a list of commands
+		public List<string> GetCommandDescriptionList()
 		{
-			//string commandName;
-			//string description;
-			//Regex regex;
+			List<string> commandDescriptions = new List<string>();
+			foreach ( CommandStruct commandStr in _commandList )
+			{
+				commandDescriptions.Add( commandStr.Description );
+			}
+			return commandDescriptions;
 		}
 
-		/// <summary>
-		/// Read the commands in from the JSON file
-		/// </summary>
-		private void ReadJSONCommands()
+		private struct CommandStruct
 		{
-			//using ( StreamReader reader = new StreamReader( JSON_COMMANDS_FILE_PATH ) )
-			//{
-			//	string json = reader.ReadToEnd();
-			//	if ( json != null )
-			//	{
-			//		_jsonCommands = JsonConvert.DeserializeObject<List<JSONCommand>>( json );
-			//	}
-			//}
+			public CommandStruct( string description, string regex )
+			{
+				Description = description;
+				Regex = new Regex( regex, REGEX_OPTIONS );
+			}
+			
+			public readonly string Description;
+			public readonly Regex Regex;
 		}
 
 		// Try to parse a line and see if it matches a given regex

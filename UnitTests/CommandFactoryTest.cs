@@ -27,6 +27,18 @@ namespace UnitTests
 		}
 
 		[TestMethod]
+		public void TestGetCommands()
+		{
+			Assert.IsNotNull( _mockFactory.GetCommandDescriptionList() );
+		}
+
+		[TestMethod]
+		public void TestCreateCommand_GetCommands()
+		{
+			TestSimpleCommand( "commands" );
+		}
+
+		[TestMethod]
 		public void TestCreateCommand_GetBalance()
 		{
 			TestSimpleCommand( "balance" );
