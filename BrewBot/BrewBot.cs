@@ -9,8 +9,6 @@ using BrewBot.Commands;
 using BrewBot.Config;
 using BrewBot.Connection;
 using TwitchLib.Events.Client;
-using System.Text;
-using System.Threading;
 
 namespace BrewBot
 {
@@ -211,20 +209,21 @@ namespace BrewBot
 		/// </summary>
 		private class MessageTransferArgs : EventArgs
 		{
-			public MessageTransferArgs( string user, string message, bool received )
+			public MessageTransferArgs( string user, bool isUserMod, string message, bool received )
 			{
-				_username = user;
-				_message = message;
-				_received = received;
+				UserName = user;
+				IsUserModerator = isUserMod;
+				Message = message;
+				Received = received;
 			}
 
-			private string _username;
-			private string _message;
-			private bool _received;
+			public MessageTransferArgs( string user, string message, bool received ) : this( user, false, message, received )
+			{ }
 
-			public string UserName { get { return _username; } }
-			public string Message { get { return _message; } }
-			public bool Received { get { return _received; } }
+			public string UserName { get; private set; }
+			public bool IsUserModerator { get; private set; }
+			public string Message { get; private set; }
+			public bool Received { get; private set; }
 		}
 
 		private delegate void MessageTransferHandler( object sender, MessageTransferArgs e );
@@ -261,7 +260,7 @@ namespace BrewBot
 				_userManager.LoginUser( e.UserName );
 			}
 
-			ICommand command = _commandFactory.CreateCommand( e.Message, e.UserName );
+			ICommand command = _commandFactory.CreateCommand( e.Message, e.UserName, e.IsUserModerator );
 			if ( command != null )
 			{
 				command.ExecuteCommand();
@@ -289,16 +288,21 @@ namespace BrewBot
 			{
 				// TODO time user out
 			}
-			HandleMessageReceived( sender, new MessageTransferArgs( e.ChatMessage.Username, e.ChatMessage.Message, true ) );
+
+			// Broadcaster also has moderator privileges
+			bool isBroadcasterOrModerator = e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster;
+			HandleMessageReceived( sender, new MessageTransferArgs( e.ChatMessage.Username, isBroadcasterOrModerator, e.ChatMessage.Message, true ) );
         }
 
 		private void OnWhisperReceived( object sender, OnWhisperReceivedArgs e )
 		{
+			// Whispers will not be treated with moderator privileges
 			HandleMessageReceived( sender, new MessageTransferArgs( e.WhisperMessage.Username, e.WhisperMessage.Message, true ) );
 		}
 
 		private void OnMessageSent( object sender, OnMessageSentArgs e )
 		{
+			// Sent messages will not be treated with moderator privileges
 			HandleMessageSent( sender, new MessageTransferArgs( e.SentMessage.DisplayName, e.SentMessage.Message, false ) );
 		}
 
@@ -331,28 +335,28 @@ namespace BrewBot
 			_drinkingGame.RemoveParticipant( e.Username );
 		}
 
-		private void GetCommandsCB( string from, string target )
+		private void GetCommandsCB( string sender, string target )
 		{
 			List<string> commandDescriptionList = ( _commandFactory == null ) ? new List<string>() : _commandFactory.GetCommandDescriptionList();
 			foreach ( string description in commandDescriptionList )
 			{
 				//TODO do something elegant
-				_connection.SendWhisper( from, description );
+				_connection.SendWhisper( sender, description );
 			}
 		}
 
-        private void GetBalanceCB( string from, string target )
+        private void GetBalanceCB( string sender, string target )
         {
-            string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( from );
+            string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( sender );
 			_connection.Send( message );
         }
 
-        private void GambleCB( string from, string target )
+        private void GambleCB( string sender, string target )
         {
             string message = null;
             if ( _casino == null )
             {
-                message = string.Format( Strings.Casino_NotOperating, from );
+                message = string.Format( Strings.Casino_NotOperating, sender );
             }
             else
             {
@@ -360,44 +364,44 @@ namespace BrewBot
                 int betAmount = 0;
                 if ( int.TryParse( target, out betAmount ) && betAmount > 0 )
                 {
-					message = _casino.Gamble( from, (uint) betAmount );
+					message = _casino.Gamble( sender, (uint) betAmount );
 				}
                 else
                 {
-                    message = string.Format( Strings.Casino_InvalidBetAmount, from );
+                    message = string.Format( Strings.Casino_InvalidBetAmount, sender );
                 }
             }
             _connection.Send( message );
         }
 
-        private void GiveDrinksCB( string from, string target )
+        private void GiveDrinksCB( string sender, string target )
         {
-			_drinkingGame.GivePlayerDrink( from, target );
-			_drinkingGame.AddIntroducedUser( from );
+			_drinkingGame.GivePlayerDrink( sender, target );
+			_drinkingGame.AddIntroducedUser( sender );
         }
 
-        private void JoinDrinkingGameCB( string from, string target )
+        private void JoinDrinkingGameCB( string sender, string target )
         {
-            DrinkingAdd( from, target );
-			_drinkingGame.AddIntroducedUser( from );
+            DrinkingAdd( sender, target );
+			_drinkingGame.AddIntroducedUser( sender );
         }
 
-        private void QuitDrinkingGameCB( string from, string target )
+        private void QuitDrinkingGameCB( string sender, string target )
         {
-            string fromToLower = from.ToLowerInvariant();
+            string fromToLower = sender.ToLowerInvariant();
             comboBoxViewer.Items.Remove( fromToLower );
             comboBoxCustom.Items.Remove( fromToLower );
-			_drinkingGame.RemoveParticipant( from );
-			_drinkingGame.AddIntroducedUser( from );
+			_drinkingGame.RemoveParticipant( sender );
+			_drinkingGame.AddIntroducedUser( sender );
         }
 
-        private void RaffleCB( string from, string target )
+        private void RaffleCB( string sender, string target )
         {
-            RaffleAdd( from );
+            RaffleAdd( sender );
         }
 
         // TODO: We need the concept of an admin so randos can't just be splashing
-        private void SplashCurrencyCB( string from, string target )
+        private void SplashCurrencyCB( string sender, string target )
         {
             // Target is the splash amount
             int splashAmount = 0;
@@ -411,17 +415,17 @@ namespace BrewBot
             }
         }
 
-		private void GetDrinkTickets( string from, string target )
+		private void GetDrinkTickets( string sender, string target )
 		{
-			uint drinkTickets = _userManager.GetDrinkTickets( from );
-			string message = string.Format( Strings.DrinkTicketsBalance, from, drinkTickets );
+			uint drinkTickets = _userManager.GetDrinkTickets( sender );
+			string message = string.Format( Strings.DrinkTicketsBalance, sender, drinkTickets );
 			_connection.Send( message );
 		}
 
-		private void GetTotalDrinksCB( string from, string target )
+		private void GetTotalDrinksCB( string sender, string target )
 		{
-			uint numberOfDrinks = _userManager.GetNumberOfDrinksTaken( from );
-			string message = string.Format( Strings.TotalDrinksTaken, from, numberOfDrinks );
+			uint numberOfDrinks = _userManager.GetNumberOfDrinksTaken( sender );
+			string message = string.Format( Strings.TotalDrinksTaken, sender, numberOfDrinks );
 			_connection.Send( message );
 		}
 

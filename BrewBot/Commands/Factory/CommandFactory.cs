@@ -3,7 +3,6 @@ using BrewBot.Commands.Interfaces;
 using BrewBot.Interfaces;
 using static BrewBot.CommandParsing.Templates.ACommand;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrewBot.Commands
 {
@@ -84,55 +83,67 @@ namespace BrewBot.Commands
 		/// Tries to create a command from a given content and from line. Returns null on failure.
 		/// </summary>
 		/// <param name="content">The string to create the command from. Should not be null or empty.</param>
-		/// <param name="from">The string denoting the sender of the command. May be null or empty.</param>
+		/// <param name="sender">The string denoting the sender of the command. May be null or empty.</param>
+		/// <param name="senderIsModerator">A flag denoting whether the user who originated the command is a channel moderator.</param>
 		/// <returns>Executable ICommand object or nullon failure</returns>
-		public ICommand CreateCommand( string content, string from )
+		public ICommand CreateCommand( string content, string sender, bool senderIsModerator )
         {
             Match match;
             ICommand result = null;
 
 			if ( TryGetMatch( _getCommandsStruct.Regex, content, out match ) )
 			{
-				result = new GetCommandsCommand( content, from, null, _getCommandsCB );
+				result = new GetCommandsCommand( content, sender, null, _getCommandsCB );
 			}
 			else if ( TryGetMatch( _casinoGetBalanceStruct.Regex, content, out match ) )
             {
-                result = new GetBalanceCommand( content, from, null, _getBalanceCB );
+                result = new GetBalanceCommand( content, sender, null, _getBalanceCB );
             }
             else if ( TryGetMatch( _casinoGambleStruct.Regex, content, out match ) )
             {
-                result = new GambleCommand( content, from, match.Groups[ 1 ].Value, _gambleCB );
+                result = new GambleCommand( content, sender, match.Groups[ 1 ].Value, _gambleCB );
             }
 			else if ( TryGetMatch( _drinkingGameGiveStruct.Regex, content, out match ) )
             {
-                result = new GiveDrinksCommand( content, from, match.Groups[ 1 ].Value, _giveDrinksCB );
+                result = new GiveDrinksCommand( content, sender, match.Groups[ 1 ].Value, _giveDrinksCB );
             }
 			else if ( TryGetMatch( _drinkingGameJoinStruct.Regex, content, out match ) )
             {
-                result = new JoinDrinkingGameCommand( content, from, match.Groups[ 1 ].Value, _joinGameCB );
+                result = new JoinDrinkingGameCommand( content, sender, match.Groups[ 1 ].Value, _joinGameCB );
             }
 			else if ( TryGetMatch( _drinkingGameQuitStruct.Regex, content, out match ) )
             {
-                result = new QuitDrinkingGameCommand( content, from, null, _quitGameCB );
+                result = new QuitDrinkingGameCommand( content, sender, null, _quitGameCB );
             }
 			else if ( TryGetMatch( _raffleStruct.Regex, content, out match ) )
             {
-                result = new RaffleCommand( content, from, null, _raffleCB );
+                result = new RaffleCommand( content, sender, null, _raffleCB );
             }
 			else if ( TryGetMatch( _casinoSplashStruct.Regex, content, out match ) )
             {
-                result = new SplashCurrencyCommand( content, from, match.Groups[ 1 ].Value, _splashCB );
+                result = new SplashCurrencyCommand( content, sender, senderIsModerator, match.Groups[ 1 ].Value, _splashCB );
             }
 			else if ( TryGetMatch( _getDrinkTicketsStruct.Regex, content, out match ) )
 			{
-				result = new GetTicketsCommand( content, from, null, _getTicketsCB );
+				result = new GetTicketsCommand( content, sender, null, _getTicketsCB );
 			}
 			else if ( TryGetMatch( _getDrinksStruct.Regex, content, out match ) )
 			{
-				result = new GetTotalDrinksTakenCommand( content, from, null, _getTotalDrinksCB );
+				result = new GetTotalDrinksTakenCommand( content, sender, null, _getTotalDrinksCB );
 			}
 
             return result;
+		}
+
+		/// <summary>
+		/// Tries to create a command from a given content and from line. Returns null on failure.
+		/// </summary>
+		/// <param name="content">The string to create the command from. Should not be null or empty.</param>
+		/// <param name="sender">The string denoting the sender of the command. May be null or empty.</param>
+		/// <returns></returns>
+		public ICommand CreateCommand( string content, string from )
+		{
+			return CreateCommand( content, from, false );
 		}
 
 		// Gives a list of commands

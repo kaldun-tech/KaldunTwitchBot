@@ -4,6 +4,6 @@ namespace BrewBot.Commands.Interfaces
 {
     public interface ICommandFactory
     {
-		ICommand CreateCommand( string content, string from );
+		ICommand CreateCommand( string content, string sender );
     }
 }

@@ -7,21 +7,21 @@ namespace BrewBot.CommandParsing.Templates
 		/// <summary>
 		/// Callback to be executed by the command
 		/// </summary>
-		/// <param name="from"></param>
+		/// <param name="sender"></param>
 		/// <param name="target"></param>
-        public delegate void CommandCallback( string from, string target );
+        public delegate void CommandCallback( string sender, string target );
 
 		/// <summary>
 		/// Create a command
 		/// </summary>
 		/// <param name="content">Line to create the command with. Must not be null or empty</param>
-		/// <param name="from">Who sent the command</param>
+		/// <param name="sender">Who sent the command</param>
 		/// <param name="target">What the command is targeting</param>
 		/// <param name="cb">Callback to call</param>
-        public ACommand( string content, string from, string target, CommandCallback cb )
+        public ACommand( string content, string sender, string target, CommandCallback cb )
         {
             Content = content;
-            From = from;
+            Sender = sender;
             Target = target;
             CB = cb;
         }
@@ -37,7 +37,7 @@ namespace BrewBot.CommandParsing.Templates
 		/// <summary>
 		/// Name of the user who originated this command
 		/// </summary>
-        internal string From
+        internal string Sender
         {
             get; set;
         }
@@ -63,7 +63,7 @@ namespace BrewBot.CommandParsing.Templates
 		/// </summary>
 		public virtual void ExecuteCommand()
         {
-            CB( From, Target );
+            CB( Sender, Target );
         }
     }
 }
