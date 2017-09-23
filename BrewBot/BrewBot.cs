@@ -43,8 +43,8 @@ namespace BrewBot
             comboBoxCustomCharacter.SelectedIndex = 0;
         }
 
-		private const int SSL_DEFAULT_PORT = 443;
-		private const int NON_SSL_DEFAULT_PORT = 6667;
+		// Wait two minutes between sending the commands list
+		private readonly TimeSpan TIME_TO_WAIT_BETWEEN_SENDING_COMMANDS_LIST = TimeSpan.FromMinutes( 2 );
 
 		private readonly CommandFactory _commandFactory;
 		private readonly LoginCredentialReaderWriter _credentialsReaderWriter;
@@ -54,6 +54,8 @@ namespace BrewBot
 
 		private string _chatChannel;
 		private TwitchLibConnection _connection;
+		private DateTime? _commandsLastSent = null;
+
         // Configuration
         OpenFileDialog _fileDialog;
 		string _configFilePath = null;
@@ -337,11 +339,20 @@ namespace BrewBot
 
 		private void GetCommandsCB( string sender, string target )
 		{
-			List<string> commandDescriptionList = ( _commandFactory == null ) ? new List<string>() : _commandFactory.GetCommandDescriptionList();
-			foreach ( string description in commandDescriptionList )
+			DateTime currentTime = DateTime.UtcNow;
+			// Send if we have waited a proper amount of time between the last send
+			if ( !_commandsLastSent.HasValue || currentTime.Subtract( _commandsLastSent.Value ) > TIME_TO_WAIT_BETWEEN_SENDING_COMMANDS_LIST )
 			{
-				//TODO do something elegant
-				_connection.SendWhisper( sender, description );
+				List<string> commandDescriptionList = ( _commandFactory == null ) ? new List<string>() : _commandFactory.GetCommandDescriptionList();
+				foreach ( string description in commandDescriptionList )
+				{
+					_connection.Send( description );
+				}
+				_commandsLastSent = currentTime;
+			}
+			else
+			{
+				_connection.SendWhisper( sender, Strings.CommandOnCooldown );
 			}
 		}
 

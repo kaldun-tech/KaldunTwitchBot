@@ -1,14 +1,13 @@
 Business Plan:
 
-Splash command should be moderator only
-Do whispers instead of messages where appropriate
-Encrypt the stored Username/Oauth credentials file
-Add a .ico icon file ( ask an artist??? )
+Encrypt the stored Username/Oauth credentials file. bcrypt?
 Release
 
 Long Term:
 
+Do whispers instead of messages where appropriate
 Add a list of configurable timeout/ban words
 Redo as a web application or Streamlabs plugin
+Look into a better icon perhaps
 ???
 Profit!!!

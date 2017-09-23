@@ -197,4 +197,8 @@
     <value>Welcome @{0} to the {1}! So kind of you to use your Twitch Prime on this channel!</value>
     <comment>Welcome a new TwitchPrime subscriber</comment>
   </data>
+  <data name="CommandOnCooldown" xml:space="preserve">
+    <value>That command is on cooldown to avoid spamming chat.</value>
+    <comment>Tell a user that the command they requested is on cooldown</comment>
+  </data>
 </root>

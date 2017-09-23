@@ -97,6 +97,15 @@ namespace BrewBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to That command is on cooldown to avoid spamming chat..
+        /// </summary>
+        internal static string CommandOnCooldown {
+            get {
+                return ResourceManager.GetString("CommandOnCooldown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Welcome to the channel! We&apos;re playing a drinking game. If you want to join, type \&quot;!join &lt;character&gt;\&quot;. Current characters are {0}, {1}, {2} and {3}. Type \&quot;!quit\&quot; to stop playing..
         /// </summary>
         internal static string DrinkingGame_Introduction {
