@@ -136,7 +136,7 @@ namespace BrewBot.Commands
 			{
 				result = new GetTotalDrinksTakenCommand( content, sender, null, _getTotalDrinksCB );
 			}
-			else
+			else if ( !string.IsNullOrEmpty( content ) && content[ 0 ] == '!' )
 			{
 				// If a callback was provided for when a command is invalid, call it
 				_invalidCommandCB?.Invoke( sender, null );
