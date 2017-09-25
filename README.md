@@ -87,7 +87,8 @@ Exit the program by clicking File->Exit or by hitting the Alt + F4 keys. View th
 View->Image Window. You can navigate to the various other functions of the bot using the tabs
 provided below File and View. Access the available commands for the bot by typing
 !commands in chat. This will send the command list to chat up to once every two minutes to
-avoid spamming the connection.
+avoid spamming the connection. Results of commands will be whispered to the user who issued
+the command.
 
 ********************************************************************************
 
@@ -142,6 +143,9 @@ Traffic
 All traffic in the channel is monitored by the bot and can be viewed in the Traffic tab.
 All messages have timestamps, and associated user names. Messages sent to the chat by
 the bot are denoted with a < and messages sent to chat by other users are denoted with a >.
+You can send messages to the chat using the textbox and the Send Message and Send Message Raw
+buttons. Send Message Raw can be used to send custom format messages to the server and should
+only be used if you know what you are doing.
 
 For example, the below message is an outgoing message from the bot:
 18:44:53.0 - chatbot < HeyGuys BrewBot ready for action!

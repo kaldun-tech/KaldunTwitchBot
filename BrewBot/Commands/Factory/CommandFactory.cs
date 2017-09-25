@@ -11,6 +11,7 @@ namespace BrewBot.Commands
 		/// <summary>
 		/// Create a commandfactory given callbacks to use for command actions.
 		/// </summary>
+		/// <param name="invalidCommandCB"></param>
 		/// <param name="getCommandsCB"></param>
 		/// <param name="getBalanceCB"></param>
 		/// <param name="gambleCB"></param>
@@ -21,10 +22,11 @@ namespace BrewBot.Commands
 		/// <param name="splashCB"></param>
 		/// <param name="getTicketsCB"></param>
 		/// <param name="getTotalDrinksCB"></param>
-        public CommandFactory( CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
+        public CommandFactory( CommandCallback invalidCommandCB, CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
             CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB )
         {
 			// Assign callbacks
+			_invalidCommandCB = invalidCommandCB;
 			_getCommandsCB = getCommandsCB;
             _getBalanceCB = getBalanceCB;
             _gambleCB = gambleCB;
@@ -67,6 +69,9 @@ namespace BrewBot.Commands
 		private static CommandStruct _raffleStruct;
 		private static CommandStruct _getDrinkTicketsStruct;
 		private static CommandStruct _getDrinksStruct;
+
+		// Invalid command is the only one without an associated struct
+		private CommandCallback _invalidCommandCB;
 
 		private CommandCallback _getCommandsCB;
         private CommandCallback _getBalanceCB;
@@ -131,8 +136,13 @@ namespace BrewBot.Commands
 			{
 				result = new GetTotalDrinksTakenCommand( content, sender, null, _getTotalDrinksCB );
 			}
+			else
+			{
+				// If a callback was provided for when a command is invalid, call it
+				_invalidCommandCB?.Invoke( sender, null );
+			}
 
-            return result;
+			return result;
 		}
 
 		/// <summary>

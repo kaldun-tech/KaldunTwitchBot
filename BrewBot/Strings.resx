@@ -201,4 +201,8 @@
     <value>That command is on cooldown to avoid spamming chat.</value>
     <comment>Tell a user that the command they requested is on cooldown</comment>
   </data>
+  <data name="Commands_InvalidCommand" xml:space="preserve">
+    <value>Sorry @{0}, your command was invalid. Use !commands to get a list of commands.</value>
+    <comment>Tell a player that their command was invalid</comment>
+  </data>
 </root>

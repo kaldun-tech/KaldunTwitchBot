@@ -106,6 +106,15 @@ namespace BrewBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry @{0}, your command was invalid. Use !commands to get a list of commands..
+        /// </summary>
+        internal static string Commands_InvalidCommand {
+            get {
+                return ResourceManager.GetString("Commands_InvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Welcome to the channel! We&apos;re playing a drinking game. If you want to join, type \&quot;!join &lt;character&gt;\&quot;. Current characters are {0}, {1}, {2} and {3}. Type \&quot;!quit\&quot; to stop playing..
         /// </summary>
         internal static string DrinkingGame_Introduction {

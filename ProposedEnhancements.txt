@@ -1,13 +1,7 @@
 Business Plan:
 
-Post complete documentation on github, notify Trash
-Investigate if things are being stored correctly on user manager
 Release
-
-Long Term:
-
-Further generalize the drinking game, update documentation
-Do whispers instead of messages where appropriate
+Further generalize the drinking game
 Add a list of configurable timeout/ban words and add the ability to timeout/ban users
 Streamline raffle process - post to chat
 Redo as a web application or Streamlabs plugin

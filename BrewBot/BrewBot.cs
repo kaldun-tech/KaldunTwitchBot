@@ -30,7 +30,8 @@ namespace BrewBot
             _log = null;
             _windowColor = textBoxR.BackColor;
 
-			_commandFactory = new CommandFactory( GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinDrinkingGameCB, QuitDrinkingGameCB, RaffleCB, SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB );
+			_commandFactory = new CommandFactory( InvalidCommandCB, GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinDrinkingGameCB, QuitDrinkingGameCB, RaffleCB,
+				SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB );
 			_credentialsReaderWriter = new LoginCredentialReaderWriter();
 			_userManager = new UserManager();
 			_drinkingGame = new DrinkingGame( _userManager );
@@ -74,42 +75,6 @@ namespace BrewBot
 				listBoxRaffle.Items.Add( username );
 				_raffle.AddUser( username );
 			}
-        }
-
-        private void DrinkingAdd( string viewer, string characterName )
-        {
-            int characterNum;
-            if ( characterName.Equals( textBoxCharacter1.Text, StringComparison.InvariantCultureIgnoreCase ) )
-            {
-                characterNum = 1;
-            }
-            else if ( characterName.Equals( textBoxCharacter2.Text, StringComparison.InvariantCultureIgnoreCase ) )
-            {
-                characterNum = 2;
-            }
-            else if ( characterName.Equals( textBoxCharacter3.Text, StringComparison.InvariantCultureIgnoreCase ) )
-            {
-                characterNum = 3;
-            }
-            else if ( characterName.Equals( textBoxCharacter4.Text, StringComparison.InvariantCultureIgnoreCase ) )
-            {
-                characterNum = 4;
-            }
-            else
-            {
-                _connection.Send( string.Format( Strings.ChooseCharacter,
-                    viewer, textBoxCharacter1.Text, textBoxCharacter2.Text,
-                    textBoxCharacter3.Text, textBoxCharacter4.Text ) );
-                return;
-            }
-
-			string username = viewer.ToLowerInvariant();
-			if ( _drinkingGame.IsUserPlaying( username ) )
-			{
-				comboBoxViewer.Items.Add( username );
-				comboBoxCustom.Items.Add( username );
-			}
-			_drinkingGame.SetParticipant( username, characterNum );
         }
 
         private void StartLog( bool append )
@@ -337,6 +302,12 @@ namespace BrewBot
 			_drinkingGame.RemoveParticipant( e.Username );
 		}
 
+		private void InvalidCommandCB( string sender, string target )
+		{
+			string message = string.Format( Strings.Commands_InvalidCommand, sender );
+			_connection.SendWhisper( sender, message );
+		}
+
 		private void GetCommandsCB( string sender, string target )
 		{
 			DateTime currentTime = DateTime.UtcNow;
@@ -359,7 +330,7 @@ namespace BrewBot
         private void GetBalanceCB( string sender, string target )
         {
             string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( sender );
-			_connection.Send( message );
+			_connection.SendWhisper( sender, message );
         }
 
         private void GambleCB( string sender, string target )
@@ -382,7 +353,7 @@ namespace BrewBot
                     message = string.Format( Strings.Casino_InvalidBetAmount, sender );
                 }
             }
-            _connection.Send( message );
+            _connection.SendWhisper( sender, message );
         }
 
         private void GiveDrinksCB( string sender, string target )
@@ -392,14 +363,58 @@ namespace BrewBot
         }
 
         private void JoinDrinkingGameCB( string sender, string target )
-        {
-            DrinkingAdd( sender, target );
+		{
+			if ( !_drinkingGame.IsPlaying )
+			{
+				_drinkingGame.NotifyNotPlaying( sender );
+				return;
+			}
+
+			string playerName = target;
+			int playerNumber;
+			if ( playerName.Equals( textBoxCharacter1.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			{
+				playerNumber = 1;
+			}
+			else if ( playerName.Equals( textBoxCharacter2.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			{
+				playerNumber = 2;
+			}
+			else if ( playerName.Equals( textBoxCharacter3.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			{
+				playerNumber = 3;
+			}
+			else if ( playerName.Equals( textBoxCharacter4.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			{
+				playerNumber = 4;
+			}
+			else
+			{
+				_connection.SendWhisper( sender, string.Format( Strings.ChooseCharacter,
+					sender, textBoxCharacter1.Text, textBoxCharacter2.Text,
+					textBoxCharacter3.Text, textBoxCharacter4.Text ) );
+				return;
+			}
+
+			string username = sender.ToLowerInvariant();
+			if ( _drinkingGame.IsUserPlaying( username ) )
+			{
+				comboBoxViewer.Items.Add( username );
+				comboBoxCustom.Items.Add( username );
+			}
+			_drinkingGame.SetParticipant( username, playerNumber );
 			_drinkingGame.AddIntroducedUser( sender );
         }
 
         private void QuitDrinkingGameCB( string sender, string target )
         {
-            string fromToLower = sender.ToLowerInvariant();
+			if ( !_drinkingGame.IsPlaying )
+			{
+				_drinkingGame.NotifyNotPlaying( sender );
+				return;
+			}
+
+			string fromToLower = sender.ToLowerInvariant();
             comboBoxViewer.Items.Remove( fromToLower );
             comboBoxCustom.Items.Remove( fromToLower );
 			_drinkingGame.RemoveParticipant( sender );
@@ -422,7 +437,7 @@ namespace BrewBot
             }
             else
             {
-                _connection.Send( "Splash failed!" );
+                _connection.SendWhisper( sender, "Splash failed!" );
             }
         }
 
@@ -430,14 +445,14 @@ namespace BrewBot
 		{
 			uint drinkTickets = _userManager.GetDrinkTickets( sender );
 			string message = string.Format( Strings.DrinkTicketsBalance, sender, drinkTickets );
-			_connection.Send( message );
+			_connection.SendWhisper( sender, message );
 		}
 
 		private void GetTotalDrinksCB( string sender, string target )
 		{
 			uint numberOfDrinks = _userManager.GetNumberOfDrinksTaken( sender );
 			string message = string.Format( Strings.TotalDrinksTaken, sender, numberOfDrinks );
-			_connection.Send( message );
+			_connection.SendWhisper( sender, message );
 		}
 
         private void buttonDoWork_Click( object sender, EventArgs e )

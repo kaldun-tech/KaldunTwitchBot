@@ -34,6 +34,35 @@ namespace BrewBot
 		}
 
 		/// <summary>
+		/// Notify the user that we are not playing a drinking game. If no user is provided, send to all users.
+		/// </summary>
+		/// <param name="username"></param>
+		public void NotifyNotPlaying(string username)
+		{
+			if ( !IsPlaying )
+			{
+				if ( !string.IsNullOrEmpty( username ) )
+				{
+					// Notify the user
+					_connection.SendWhisper( username, Strings.NoDrinkingGame );
+				}
+				else
+				{
+					// Notify all users
+					_connection.Send( Strings.NoDrinkingGame );
+				}
+			}
+		}
+
+		/// <summary>
+		/// Notify all users that we are not playing a drinking game.
+		/// </summary>
+		public void NotifyNotPlaying()
+		{
+			NotifyNotPlaying( null );
+		}
+
+		/// <summary>
 		/// Start playing the game with the input players
 		/// </summary>
 		/// <param name="player1"></param>
@@ -122,7 +151,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
-				SendToConnection( string.Format( Strings.NoDrinkingGame, username ) );
+				NotifyNotPlaying();
 				return;
 			}
 
@@ -141,6 +170,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
+				NotifyNotPlaying();
 				return;
 			}
 
@@ -174,7 +204,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
-				SendToConnection( string.Format( Strings.NoDrinkingGame, sourceUser ) );
+				NotifyNotPlaying( sourceUser );
 				return;
 			}
 
@@ -201,6 +231,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
+				NotifyNotPlaying();
 				return;
 			}
 
@@ -216,7 +247,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
-				SendToConnection( string.Format( Strings.NoDrinkingGame, username ) );
+				NotifyNotPlaying();
 				return;
 			}
 
@@ -235,6 +266,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
+				NotifyNotPlaying();
 				return;
 			}
 
@@ -267,7 +299,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
-				SendToConnection( string.Format( Strings.NoDrinkingGame, username ) );
+				NotifyNotPlaying();
 				return;
 			}
 
@@ -286,6 +318,7 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
+				NotifyNotPlaying();
 				return;
 			}
 
