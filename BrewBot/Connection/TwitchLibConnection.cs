@@ -29,6 +29,7 @@ namespace BrewBot.Connection
 		public EventHandler<OnMessageReceivedArgs> OnMessageReceived;
 		public EventHandler<OnMessageSentArgs> OnMessageSent;
 		public EventHandler<OnWhisperReceivedArgs> OnWhisperReceived;
+		public EventHandler<OnWhisperSentArgs> OnWhisperSent;
 		public EventHandler<OnNewSubscriberArgs> OnNewSubscriber;
 		public EventHandler<OnUserJoinedArgs> OnUserJoined;
 		public EventHandler<OnUserLeftArgs> OnUserLeft;
@@ -54,6 +55,7 @@ namespace BrewBot.Connection
 			_client.OnMessageReceived += OnMessageReceived;
 			_client.OnMessageSent += OnMessageSent;
 			_client.OnWhisperReceived += OnWhisperReceived;
+			_client.OnWhisperSent += OnWhisperSent;
 			_client.OnNewSubscriber += OnNewSubscriber;
 			_client.OnUserJoined += OnUserJoined;
 			_client.OnUserLeft += OnUserLeft;
@@ -71,6 +73,7 @@ namespace BrewBot.Connection
 			_client.OnMessageReceived -= OnMessageReceived;
 			_client.OnMessageSent -= OnMessageSent;
 			_client.OnWhisperReceived -= OnWhisperReceived;
+			_client.OnWhisperSent += OnWhisperSent;
 			_client.OnNewSubscriber -= OnNewSubscriber;
 			_client.OnUserJoined -= OnUserJoined;
 			_client.OnUserLeft -= OnUserLeft;
@@ -98,7 +101,10 @@ namespace BrewBot.Connection
 		/// <param name="message"></param>
 		public void SendWhisper( string receiver, string message )
 		{
-			_client.SendWhisper( receiver, message );
+			if ( _client.IsConnected && !string.IsNullOrEmpty( receiver ) && !string.IsNullOrEmpty( message ) )
+			{
+				_client.SendWhisper( receiver, message );
+			}
 		}
 
 		/// <summary>

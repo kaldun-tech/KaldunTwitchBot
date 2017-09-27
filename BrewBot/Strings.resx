@@ -205,4 +205,8 @@
     <value>Sorry @{0}, your command was invalid. Use !commands to get a list of commands.</value>
     <comment>Tell a player that their command was invalid</comment>
   </data>
+  <data name="ChannelExited" xml:space="preserve">
+    <value>BloodTrail BrewBot is shutting down!</value>
+    <comment>Tell chat that the bot is no longer in the house</comment>
+  </data>
 </root>
