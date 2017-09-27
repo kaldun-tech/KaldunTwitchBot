@@ -36,24 +36,27 @@ namespace BrewBot
 		{
 			lock ( _lock )
 			{
-				using ( Stream credentialsStream = new FileStream( _filePath, FileMode.Open, FileAccess.Read ) )
+				if ( File.Exists( _filePath ) )
 				{
-					XmlDocument document = new XmlDocument();
-					document.Load( credentialsStream );
-					XmlNode userNameNode = document.DocumentElement.SelectSingleNode( "/credentials/username" );
-					XmlNode oauthTokenNode = document.DocumentElement.SelectSingleNode( "/credentials/oauth" );
-					XmlNode chatChannelNode = document.DocumentElement.SelectSingleNode( "/credentials/channel" );
-					XmlNode configFileNode = document.DocumentElement.SelectSingleNode( "/credentials/config-file" );
-
-					string userName = ( userNameNode == null ) ? null : userNameNode.InnerText;
-					string oauth = ( oauthTokenNode == null ) ? null : oauthTokenNode.InnerText;
-					string channel = ( chatChannelNode == null ) ? null : chatChannelNode.InnerText;
-					string configFileName = ( configFileNode == null ) ? null : configFileNode.InnerText;
-
-					// Config file name can be null
-					if ( !string.IsNullOrEmpty( userName ) && !string.IsNullOrEmpty( oauth ) && !string.IsNullOrEmpty( channel ) )
+					using ( Stream credentialsStream = new FileStream( _filePath, FileMode.Open, FileAccess.Read ) )
 					{
-						return new List<string> { userName, oauth, channel, configFileName };
+						XmlDocument document = new XmlDocument();
+						document.Load( credentialsStream );
+						XmlNode userNameNode = document.DocumentElement.SelectSingleNode( "/credentials/username" );
+						XmlNode oauthTokenNode = document.DocumentElement.SelectSingleNode( "/credentials/oauth" );
+						XmlNode chatChannelNode = document.DocumentElement.SelectSingleNode( "/credentials/channel" );
+						XmlNode configFileNode = document.DocumentElement.SelectSingleNode( "/credentials/config-file" );
+
+						string userName = ( userNameNode == null ) ? null : userNameNode.InnerText;
+						string oauth = ( oauthTokenNode == null ) ? null : oauthTokenNode.InnerText;
+						string channel = ( chatChannelNode == null ) ? null : chatChannelNode.InnerText;
+						string configFileName = ( configFileNode == null ) ? null : configFileNode.InnerText;
+
+						// Config file name can be null
+						if ( !string.IsNullOrEmpty( userName ) && !string.IsNullOrEmpty( oauth ) && !string.IsNullOrEmpty( channel ) )
+						{
+							return new List<string> { userName, oauth, channel, configFileName };
+						}
 					}
 				}
 			}

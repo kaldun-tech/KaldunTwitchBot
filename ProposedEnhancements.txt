@@ -1,10 +1,9 @@
-Business Plan:
-
-Release
 Further generalize the drinking game
 Add a list of configurable timeout/ban words and add the ability to timeout/ban users
 Streamline raffle process - post to chat
 Redo as a web application or Streamlabs plugin
 Look into a better icon perhaps
+
 ???
+
 Profit!!!
