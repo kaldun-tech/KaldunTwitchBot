@@ -1,4 +1,4 @@
-Further generalize the drinking game
+Look into whispers not being received
 Add a list of configurable timeout/ban words and add the ability to timeout/ban users
 Streamline raffle process - post to chat
 Redo as a web application or Streamlabs plugin

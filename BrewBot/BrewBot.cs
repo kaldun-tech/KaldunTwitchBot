@@ -37,11 +37,11 @@ namespace BrewBot
 			_drinkingGame = new DrinkingGame( _userManager );
 			_raffle = new Raffle();
 
-			comboBoxCustomCharacter.Items.Add( 1 );
-			comboBoxCustomCharacter.Items.Add( 2 );
-			comboBoxCustomCharacter.Items.Add( 3 );
-			comboBoxCustomCharacter.Items.Add( 4 );
-			comboBoxCustomCharacter.SelectedIndex = 0;
+			comboBoxCustomPlayer.Items.Add( 1 );
+			comboBoxCustomPlayer.Items.Add( 2 );
+			comboBoxCustomPlayer.Items.Add( 3 );
+			comboBoxCustomPlayer.Items.Add( 4 );
+			comboBoxCustomPlayer.SelectedIndex = 0;
 		}
 
 		// Wait two minutes between sending the commands list
@@ -96,7 +96,7 @@ namespace BrewBot
 			}
 
 			_log = new StreamWriter( saveFileDialogLog.FileName, append );
-			_log.Write( textBoxLog.Text );
+			_log.Write( textBoxTrafficLog.Text );
 		}
 
 		private void HandleConnectionChange( bool isConnect )
@@ -201,11 +201,11 @@ namespace BrewBot
 			string carrot = e.Received ? " > " : " < ";
 			string toAppend = DateTime.Now.ToString( "HH:mm:ss.f" ) + " - " + e.UserName + carrot + e.Message;
 
-			textBoxLog.Text += toAppend + Environment.NewLine;
+			textBoxTrafficLog.Text += toAppend + Environment.NewLine;
 			if ( scrollToNewMessageToolStripMenuItem.Checked )
 			{
-				textBoxLog.Select( textBoxLog.Text.Length, 0 );
-				textBoxLog.ScrollToCaret();
+				textBoxTrafficLog.Select( textBoxTrafficLog.Text.Length, 0 );
+				textBoxTrafficLog.ScrollToCaret();
 			}
 
 			if ( _log != null )
@@ -234,7 +234,7 @@ namespace BrewBot
 				command.ExecuteCommand();
 			}
 
-			_drinkingGame.IntroduceUser( e.UserName, textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text );
+			_drinkingGame.IntroduceUser( e.UserName, textBoxPlayer1.Text, textBoxPlayer2.Text, textBoxPlayer3.Text, textBoxPlayer4.Text );
 			HandleChatTraffic( sender, e );
 		}
 
@@ -379,27 +379,27 @@ namespace BrewBot
 
 			string playerName = target;
 			int playerNumber;
-			if ( playerName.Equals( textBoxCharacter1.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			if ( playerName.Equals( textBoxPlayer1.Text, StringComparison.InvariantCultureIgnoreCase ) )
 			{
 				playerNumber = 1;
 			}
-			else if ( playerName.Equals( textBoxCharacter2.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			else if ( playerName.Equals( textBoxPlayer2.Text, StringComparison.InvariantCultureIgnoreCase ) )
 			{
 				playerNumber = 2;
 			}
-			else if ( playerName.Equals( textBoxCharacter3.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			else if ( playerName.Equals( textBoxPlayer3.Text, StringComparison.InvariantCultureIgnoreCase ) )
 			{
 				playerNumber = 3;
 			}
-			else if ( playerName.Equals( textBoxCharacter4.Text, StringComparison.InvariantCultureIgnoreCase ) )
+			else if ( playerName.Equals( textBoxPlayer4.Text, StringComparison.InvariantCultureIgnoreCase ) )
 			{
 				playerNumber = 4;
 			}
 			else
 			{
-				_connection.SendWhisper( sender, string.Format( Strings.ChooseCharacter,
-					sender, textBoxCharacter1.Text, textBoxCharacter2.Text,
-					textBoxCharacter3.Text, textBoxCharacter4.Text ) );
+				_connection.SendWhisper( sender, string.Format( Strings.ChoosePlayer,
+					sender, textBoxPlayer1.Text, textBoxPlayer2.Text,
+					textBoxPlayer3.Text, textBoxPlayer4.Text ) );
 				return;
 			}
 
@@ -525,18 +525,31 @@ namespace BrewBot
 			{
 				return;
 			}
-			_connection.SendRaw( textBoxInput.Text );
-			textBoxInput.Clear();
+			_connection.SendRaw( textBoxTrafficInput.Text );
+			textBoxTrafficInput.Clear();
 		}
 
 		private void buttonSend_Click( object sender, EventArgs e )
 		{
-			if ( _connection == null )
+			trafficDoSend();
+		}
+
+		private void trafficInputEnterPressed( object sender, KeyPressEventArgs e )
+		{
+			if ( e.KeyChar == (char) 13 )
+			{
+				trafficDoSend();
+			}
+		}
+
+		private void trafficDoSend()
+		{
+			if ( _connection == null && !string.IsNullOrEmpty( textBoxTrafficInput.Text ) )
 			{
 				return;
 			}
-			_connection.Send( textBoxInput.Text );
-			textBoxInput.Clear();
+			_connection.Send( textBoxTrafficInput.Text );
+			textBoxTrafficInput.Clear();
 		}
 
 		private void exitToolStripMenuItem_Click( object sender, EventArgs e )
@@ -590,7 +603,7 @@ namespace BrewBot
 
 		private void clearToolStripMenuItem_Click( object sender, EventArgs e )
 		{
-			textBoxLog.Clear();
+			textBoxTrafficLog.Clear();
 		}
 
 		private void imageWindowToolStripMenuItem_Click( object sender, EventArgs e )
@@ -700,7 +713,7 @@ namespace BrewBot
 		{
 			if ( checkBoxPlay.Checked )
 			{
-				_drinkingGame.StartPlaying( textBoxCharacter1.Text, textBoxCharacter2.Text, textBoxCharacter3.Text, textBoxCharacter4.Text );
+				_drinkingGame.StartPlaying( textBoxPlayer1.Text, textBoxPlayer2.Text, textBoxPlayer3.Text, textBoxPlayer4.Text );
 			}
 			else
 			{
@@ -708,33 +721,33 @@ namespace BrewBot
 			}
 		}
 
-		private void buttonCharacterDrink_Click( object sender, EventArgs e )
+		private void buttonPlayerDrink_Click( object sender, EventArgs e )
 		{
 			checkBoxPlay.Checked = true;
 
-			int characterNum;
-			if ( sender == buttonCharacter1Drink )
+			int playerNum;
+			if ( sender == buttonPlayer1Drink )
 			{
-				characterNum = 1;
+				playerNum = 1;
 			}
-			else if ( sender == buttonCharacter2Drink )
+			else if ( sender == buttonPlayer2Drink )
 			{
-				characterNum = 2;
+				playerNum = 2;
 			}
-			else if ( sender == buttonCharacter3Drink )
+			else if ( sender == buttonPlayer3Drink )
 			{
-				characterNum = 3;
+				playerNum = 3;
 			}
-			else if ( sender == buttonCharacter4Drink )
+			else if ( sender == buttonPlayer4Drink )
 			{
-				characterNum = 4;
+				playerNum = 4;
 			}
 			else
 			{
 				return;
 			}
 
-			_drinkingGame.GivePlayersDrinks( characterNum );
+			_drinkingGame.GivePlayersDrinks( playerNum );
 
 		}
 
@@ -744,33 +757,33 @@ namespace BrewBot
 			_drinkingGame.GivePlayerDrink( comboBoxViewer.Text );
 		}
 
-		private void buttonCharacterGetTicket_Click( object sender, EventArgs e )
+		private void buttonPlayerGetTicket_Click( object sender, EventArgs e )
 		{
 			checkBoxPlay.Checked = true;
 
-			int characterNum;
-			if ( sender == buttonCharacter1GetTicket )
+			int playerNum;
+			if ( sender == buttonPlayer1GetTicket )
 			{
-				characterNum = 1;
+				playerNum = 1;
 			}
-			else if ( sender == buttonCharacter2GetTicket )
+			else if ( sender == buttonPlayer2GetTicket )
 			{
-				characterNum = 2;
+				playerNum = 2;
 			}
-			else if ( sender == buttonCharacter3GetTicket )
+			else if ( sender == buttonPlayer3GetTicket )
 			{
-				characterNum = 3;
+				playerNum = 3;
 			}
-			else if ( sender == buttonCharacter4GetTicket )
+			else if ( sender == buttonPlayer4GetTicket )
 			{
-				characterNum = 4;
+				playerNum = 4;
 			}
 			else
 			{
 				return;
 			}
 
-			_drinkingGame.GivePlayersTicket( characterNum );
+			_drinkingGame.GivePlayersTicket( playerNum );
 		}
 
 		private void buttonViewerGetTicket_Click( object sender, EventArgs e )
@@ -779,33 +792,33 @@ namespace BrewBot
 			_drinkingGame.GivePlayerTicket( comboBoxViewer.Text );
 		}
 
-		private void buttonCharacterFinish_Click( object sender, EventArgs e )
+		private void buttonPlayerFinish_Click( object sender, EventArgs e )
 		{
 			checkBoxPlay.Checked = true;
 
-			int characterNum;
-			if ( sender == buttonCharacter1Finish )
+			int playerNum;
+			if ( sender == buttonPlayer1Finish )
 			{
-				characterNum = 1;
+				playerNum = 1;
 			}
-			else if ( sender == buttonCharacter2Finish )
+			else if ( sender == buttonPlayer2Finish )
 			{
-				characterNum = 2;
+				playerNum = 2;
 			}
-			else if ( sender == buttonCharacter3Finish )
+			else if ( sender == buttonPlayer3Finish )
 			{
-				characterNum = 3;
+				playerNum = 3;
 			}
-			else if ( sender == buttonCharacter4Finish )
+			else if ( sender == buttonPlayer4Finish )
 			{
-				characterNum = 4;
+				playerNum = 4;
 			}
 			else
 			{
 				return;
 			}
 
-			_drinkingGame.PlayersFinishDrinks( characterNum );
+			_drinkingGame.PlayersFinishDrinks( playerNum );
 		}
 
 		private void buttonViewerFinish_Click( object sender, EventArgs e )
@@ -828,8 +841,8 @@ namespace BrewBot
 		private void buttonAdd_Click( object sender, EventArgs e )
 		{
 			string viewer = comboBoxCustom.Text.ToLowerInvariant();
-			int characterNum = (int) comboBoxCustomCharacter.SelectedItem;
-			_drinkingGame.SetParticipant( viewer, characterNum );
+			int playerNum = (int) comboBoxCustomPlayer.SelectedItem;
+			_drinkingGame.SetParticipant( viewer, playerNum );
 
 			comboBoxCustom.Text = "";
 			comboBoxViewer.Items.Add( viewer );
@@ -850,8 +863,8 @@ namespace BrewBot
 		}
 
 		/// <summary>
-		/// Update the character number combobox for the manually entered drinking game
-		/// participant. This can be used to check the current character assignment of any
+		/// Update the player number combobox for the manually entered drinking game
+		/// participant. This can be used to check the current player assignment of any
 		/// participant.
 		/// </summary>
 		private void comboBoxCustom_SelectedIndexChanged( object sender, EventArgs e )
@@ -859,16 +872,16 @@ namespace BrewBot
 			string username = (string) comboBoxCustom.SelectedItem;
 			if ( _drinkingGame.IsUserPlaying( username ) )
 			{
-				comboBoxCustomCharacter.SelectedItem = _drinkingGame.GetPlayerNumber( username );
+				comboBoxCustomPlayer.SelectedItem = _drinkingGame.GetPlayerNumber( username );
 			}
 		}
 
 		/// <summary>
-		/// Update the participant's character assignment.
+		/// Update the participant's player assignment.
 		/// </summary>
-		private void comboBoxCustomCharacter_SelectedIndexChanged( object sender, EventArgs e )
+		private void comboBoxCustomPlayer_SelectedIndexChanged( object sender, EventArgs e )
 		{
-			_drinkingGame.SetParticipant( comboBoxCustom.Text, (int) comboBoxCustomCharacter.SelectedItem );
+			_drinkingGame.SetParticipant( comboBoxCustom.Text, (int) comboBoxCustomPlayer.SelectedItem );
 		}
 
 		private void ConfigFileButton_Click( object sender, EventArgs e )

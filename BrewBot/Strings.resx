@@ -117,9 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChooseCharacter" xml:space="preserve">
+  <data name="ChoosePlayer" xml:space="preserve">
     <value>@{0}, choose from {1}, {2}, {3} or {4}.</value>
-    <comment>Tell a player which characters to choose from</comment>
+    <comment>Tell a viewer which players to choose from</comment>
   </data>
   <data name="FinishDrink" xml:space="preserve">
     <value>@{0}, FINISH your drink!</value>
@@ -174,11 +174,11 @@
     <comment>Tell a player the casino is not currently operating</comment>
   </data>
   <data name="DrinkingGame_Introduction" xml:space="preserve">
-    <value>Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join &lt;character&gt;\". Current characters are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
+    <value>Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join &lt;player&gt;\". Current players are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
     <comment>Introduce a player to the drinking game</comment>
   </data>
   <data name="DrinkingGame_Start" xml:space="preserve">
-    <value>A drinking game has been started! Type \"!join &lt;character&gt;\" to play. Current characters are @{0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
+    <value>A drinking game has been started! Type \"!join &lt;player&gt;\" to play. Current players are @{0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
     <comment>Tell chat that we have started a drinking game.</comment>
   </data>
   <data name="GetBalance_Result" xml:space="preserve">
@@ -206,7 +206,7 @@
     <comment>Tell a player that their command was invalid</comment>
   </data>
   <data name="ChannelExited" xml:space="preserve">
-    <value>BloodTrail BrewBot is shutting down!</value>
+    <value>BrewBot is exiting chat. See you soon! BloodTrail</value>
     <comment>Tell chat that the bot is no longer in the house</comment>
   </data>
 </root>
