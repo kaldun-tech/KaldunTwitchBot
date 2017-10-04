@@ -95,7 +95,8 @@ namespace BrewBot.Connection
 		}
 
 		/// <summary>
-		/// Sends a whisper to another user in IRC
+		/// Sends a whisper to another user in IRC. Note that a user must have previously whispered the bot to
+		/// be able to receive messages from the bot. Should only be used to communicate with moderators.
 		/// </summary>
 		/// <param name="receiver">Target user</param>
 		/// <param name="message"></param>

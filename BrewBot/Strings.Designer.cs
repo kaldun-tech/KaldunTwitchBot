@@ -106,7 +106,7 @@ namespace BrewBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That command is on cooldown to avoid spamming chat..
+        ///   Looks up a localized string similar to @{0}, that command is on cooldown to avoid spamming chat..
         /// </summary>
         internal static string CommandOnCooldown {
             get {
@@ -228,6 +228,15 @@ namespace BrewBot {
         internal static string NotParticipating {
             get {
                 return ResourceManager.GetString("NotParticipating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @{0} has won the raffle drawing!.
+        /// </summary>
+        internal static string RaffleWinner {
+            get {
+                return ResourceManager.GetString("RaffleWinner", resourceCulture);
             }
         }
         

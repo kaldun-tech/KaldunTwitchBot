@@ -41,16 +41,8 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
-				if ( !string.IsNullOrEmpty( username ) )
-				{
-					// Notify the user
-					_connection.SendWhisper( username, Strings.NoDrinkingGame );
-				}
-				else
-				{
-					// Notify all users
-					_connection.Send( Strings.NoDrinkingGame );
-				}
+				// Notify all users
+				_connection.Send( Strings.NoDrinkingGame );
 			}
 		}
 

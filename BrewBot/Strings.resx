@@ -198,7 +198,7 @@
     <comment>Welcome a new TwitchPrime subscriber</comment>
   </data>
   <data name="CommandOnCooldown" xml:space="preserve">
-    <value>That command is on cooldown to avoid spamming chat.</value>
+    <value>@{0}, that command is on cooldown to avoid spamming chat.</value>
     <comment>Tell a user that the command they requested is on cooldown</comment>
   </data>
   <data name="Commands_InvalidCommand" xml:space="preserve">
@@ -208,5 +208,9 @@
   <data name="ChannelExited" xml:space="preserve">
     <value>BrewBot is exiting chat. See you soon! BloodTrail</value>
     <comment>Tell chat that the bot is no longer in the house</comment>
+  </data>
+  <data name="RaffleWinner" xml:space="preserve">
+    <value>@{0} has won the raffle drawing!</value>
+    <comment>Announce a raffle winner</comment>
   </data>
 </root>

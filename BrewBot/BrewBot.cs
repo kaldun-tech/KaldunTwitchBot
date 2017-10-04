@@ -312,7 +312,7 @@ namespace BrewBot
 		private void InvalidCommandCB( string sender, string target )
 		{
 			string message = string.Format( Strings.Commands_InvalidCommand, sender );
-			_connection.SendWhisper( sender, message );
+			_connection.Send( message );
 		}
 
 		private void GetCommandsCB( string sender, string target )
@@ -330,14 +330,15 @@ namespace BrewBot
 			}
 			else
 			{
-				_connection.SendWhisper( sender, Strings.CommandOnCooldown );
+				string message = string.Format( Strings.CommandOnCooldown, sender );
+				_connection.Send( message );
 			}
 		}
 
 		private void GetBalanceCB( string sender, string target )
 		{
 			string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( sender );
-			_connection.SendWhisper( sender, message );
+			_connection.Send( message );
 		}
 
 		private void GambleCB( string sender, string target )
@@ -360,7 +361,7 @@ namespace BrewBot
 					message = string.Format( Strings.Casino_InvalidBetAmount, sender );
 				}
 			}
-			_connection.SendWhisper( sender, message );
+			_connection.Send( message );
 		}
 
 		private void GiveDrinksCB( string sender, string target )
@@ -397,9 +398,8 @@ namespace BrewBot
 			}
 			else
 			{
-				_connection.SendWhisper( sender, string.Format( Strings.ChoosePlayer,
-					sender, textBoxPlayer1.Text, textBoxPlayer2.Text,
-					textBoxPlayer3.Text, textBoxPlayer4.Text ) );
+				string message = string.Format( Strings.ChoosePlayer, sender, textBoxPlayer1.Text, textBoxPlayer2.Text, textBoxPlayer3.Text, textBoxPlayer4.Text );
+				_connection.Send( message );
 				return;
 			}
 
@@ -444,6 +444,7 @@ namespace BrewBot
 			}
 			else
 			{
+				// The user is assumed to be a moderator and have whispered the bot previously
 				_connection.SendWhisper( sender, "Splash failed!" );
 			}
 		}
@@ -452,14 +453,14 @@ namespace BrewBot
 		{
 			uint drinkTickets = _userManager.GetDrinkTickets( sender );
 			string message = string.Format( Strings.DrinkTicketsBalance, sender, drinkTickets );
-			_connection.SendWhisper( sender, message );
+			_connection.Send( message );
 		}
 
 		private void GetTotalDrinksCB( string sender, string target )
 		{
 			uint numberOfDrinks = _userManager.GetNumberOfDrinksTaken( sender );
 			string message = string.Format( Strings.TotalDrinksTaken, sender, numberOfDrinks );
-			_connection.SendWhisper( sender, message );
+			_connection.Send( message );
 		}
 
 		private void buttonDoWork_Click( object sender, EventArgs e )
@@ -671,6 +672,8 @@ namespace BrewBot
 			if ( drawIndex >= 0 )
 			{
 				listBoxRaffle.SelectedIndex = _raffle.DrawUserIndex();
+				string message = string.Format( Strings.RaffleWinner, listBoxRaffle.SelectedItem.ToString() );
+				_connection.Send( message );
 			}
 		}
 
