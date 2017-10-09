@@ -15,4 +15,13 @@
   <!-- use frequency="Y" to set the minimum interval between gambles in seconds. The default is 60 seconds -->
   <!-- odds="Z" to set the chance to win as a decimal between 0 and 1. The default is 0.5 (fifty-fify odds) -->
   <gambling />
+  <!-- use timeout-time="X" to set the timeout time in seconds. The default is 120 ( two minutes ) -->
+  <moderation timeout-time="120">
+    <timeout-words>
+      <!-- use <word>bad word</word> to setup words that will timeout a user -->
+    </timeout-words>
+    <banned-words>
+      <!-- use <word>bad word</word> to setup words that will cause a user to be banned permanently from the channel -->
+    </banned-words>
+  </moderation>
 </config>

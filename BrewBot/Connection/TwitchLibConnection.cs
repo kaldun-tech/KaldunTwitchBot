@@ -120,6 +120,47 @@ namespace BrewBot.Connection
 			}
 		}
 
+		/// <summary>
+		/// Times out a user for the specified number of seconds. Only works if the bot is a moderator.
+		/// </summary>
+		/// <param name="user"></param>
+		/// <param name="timeoutSeconds"></param>
+		public void TimeoutUser( string user, int timeoutSeconds )
+		{
+			string timeoutMessage = string.Format( "/timeout {0} {1}", user, timeoutSeconds );
+			Send( timeoutMessage );
+		}
+
+		/// <summary>
+		/// Un-timeoutes a user who is timed out. Only works if the bot is a moderator.
+		/// </summary>
+		/// <param name="user"></param>
+		public void UntimeoutUser( string user )
+		{
+			string untimeoutMessage = string.Format( "/untimeout {0}", user );
+			Send( untimeoutMessage );
+		}
+
+		/// <summary>
+		/// Bans a user. Only works if the bot is a moderator.
+		/// </summary>
+		/// <param name="user"></param>
+		public void BanUser( string user )
+		{
+			string banMessage = string.Format( "/ban {0}", user );
+			Send( banMessage );
+		}
+
+		/// <summary>
+		/// Unbans a user. Only works if the bot is a moderator.
+		/// </summary>
+		/// <param name="user"></param>
+		public void UnbanUser( string user )
+		{
+			string unbanMessage = string.Format( "/unban {0}", user );
+			Send( unbanMessage );
+		}
+
 		private void ConnectedCB( object sender, OnConnectedArgs e )
 		{
 			_client.JoinChannel( _channel );

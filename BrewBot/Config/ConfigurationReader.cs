@@ -32,6 +32,8 @@ namespace BrewBot.Config
         private const int DEFAULT_MINIMUM_GAMBLE_INTERVAL = 60;
         // Default chance to win. The chance to win must be between zero and one.
         private const double DEFAULT_WIN_CHANCE = 0.5;
+		// Default time to time users out if they have said a bad word
+		private const int DEFAULT_TIMEOUT_SECONDS = 120;
 
         private string _configFileName;
         private List<string> _configuredMessages = null;
@@ -44,6 +46,9 @@ namespace BrewBot.Config
         private uint _minimumGambleAmount = DEFAULT_MINIMUM_GAMBLE_AMOUNT;
         private int _minimumSecondsBetweenGambles = DEFAULT_MINIMUM_GAMBLE_INTERVAL;
         private double _winChance = DEFAULT_WIN_CHANCE;
+		private int _timeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
+		private List<string> _timeoutWords = new List<string>();
+		private List<string> _bannedWords = new List<string>();
 
 		/// <summary>
 		/// Get a list of configured messages to send
@@ -126,6 +131,38 @@ namespace BrewBot.Config
         }
 
 		/// <summary>
+		/// Check whether automated chat channel moderation is enabled
+		/// </summary>
+		public bool IsModerationEnabled
+		{
+			get { return _timeoutWords.Count > 0 || _bannedWords.Count > 0; }
+		}
+
+		/// <summary>
+		/// Get the number of seconds to timeout users who use bad words
+		/// </summary>
+		public int TimeoutSeconds
+		{
+			get { return _timeoutSeconds; }
+		}
+
+		/// <summary>
+		/// Get the list of words that will cause a user to be timed out
+		/// </summary>
+		public List<string> TimeoutWords
+		{
+			get { return _timeoutWords; }
+		}
+
+		/// <summary>
+		/// Get the list of words that will cause a user to be banned from chat
+		/// </summary>
+		public List<string> BannedWords
+		{
+			get { return _bannedWords; }
+		}
+
+		/// <summary>
 		/// Read the config file to parse values
 		/// </summary>
         private void ReadConfig()
@@ -140,118 +177,173 @@ namespace BrewBot.Config
 				XmlDocument document = new XmlDocument();
 				document.Load( configStream );
 
-				XmlNode intervalNode = document.DocumentElement.SelectSingleNode( "/config/interval" );
-				XmlAttributeCollection attributes;
-				XmlNode waitTimeNode;
-				if ( intervalNode != null && ( attributes = intervalNode.Attributes ) != null && ( waitTimeNode = attributes.GetNamedItem( "wait-time" ) ) != null )
+				ReadMessageSenderConfig( document );
+				ReadSubscriberConfig( document );
+				ReadCasinoConfig( document );
+				ReadModerationConfig( document );
+			}
+        }
+
+		private void ReadMessageSenderConfig( XmlDocument document )
+		{
+			XmlNode intervalNode = document.DocumentElement.SelectSingleNode( "/config/interval" );
+			XmlAttributeCollection attributes;
+			XmlNode waitTimeNode;
+			if ( intervalNode != null && ( attributes = intervalNode.Attributes ) != null && ( waitTimeNode = attributes.GetNamedItem( "wait-time" ) ) != null )
+			{
+				string value = waitTimeNode.Value;
+				_configuredMessageInterval = int.Parse( value );
+				if ( _configuredMessageInterval < MINIMUM_MESSAGE_INTERVAL )
 				{
-					string value = waitTimeNode.Value;
-					_configuredMessageInterval = int.Parse( value );
-					if ( _configuredMessageInterval < MINIMUM_MESSAGE_INTERVAL )
+					_configuredMessageInterval = MINIMUM_MESSAGE_INTERVAL;
+				}
+			}
+			else
+			{
+				_configuredMessageInterval = DEFAULT_MESSAGE_INTERVAL;
+			}
+
+			XmlNodeList messagesList = document.DocumentElement.SelectNodes( "/config/messages/message" );
+			if ( messagesList != null )
+			{
+				_configuredMessages = new List<string>();
+				foreach ( XmlNode messageNode in messagesList )
+				{
+					if ( messageNode != null && !string.IsNullOrEmpty( messageNode.InnerText ) )
 					{
-						_configuredMessageInterval = MINIMUM_MESSAGE_INTERVAL;
+						_configuredMessages.Add( messageNode.InnerText );
 					}
 				}
-				else
-				{
-					_configuredMessageInterval = DEFAULT_MESSAGE_INTERVAL;
-				}
+			}
+		}
 
-				XmlNodeList messagesList = document.DocumentElement.SelectNodes( "/config/messages/message" );
-				if ( messagesList != null )
+		private void ReadSubscriberConfig( XmlDocument document )
+		{
+			XmlNode subscriberNode = document.DocumentElement.SelectSingleNode( "/config/subscribers" );
+			if ( subscriberNode != null && subscriberNode.Attributes != null )
+			{
+				XmlNode titleNode = subscriberNode.Attributes.GetNamedItem( "title" );
+				if ( titleNode != null && !string.IsNullOrEmpty( titleNode.Value ) )
 				{
-					_configuredMessages = new List<string>();
-					foreach ( XmlNode messageNode in messagesList )
+					_subscriberTitle = titleNode.Value;
+				}
+			}
+		}
+
+		private void ReadCasinoConfig( XmlDocument document )
+		{
+			XmlAttributeCollection attributes;
+			XmlNode currencyNode = document.DocumentElement.SelectSingleNode( "/config/currency" );
+			if ( currencyNode != null )
+			{
+				_currencyEnabled = true;
+				attributes = currencyNode.Attributes;
+				if ( attributes != null )
+				{
+					XmlNode customNameNode = attributes.GetNamedItem( "custom-name" );
+					XmlNode earnRateNode = attributes.GetNamedItem( "earn-rate" );
+					string value;
+
+					if ( customNameNode != null && !string.IsNullOrEmpty( value = customNameNode.Value ) )
 					{
-						if ( messageNode != null && !string.IsNullOrEmpty( messageNode.InnerText ) )
-						{
-							_configuredMessages.Add( messageNode.InnerText );
-						}
+						_currencyName = value;
 					}
-				}
-
-				XmlNode subscriberNode = document.DocumentElement.SelectSingleNode( "/config/subscribers" );
-				if ( subscriberNode != null && subscriberNode.Attributes != null )
-				{
-					XmlNode titleNode = subscriberNode.Attributes.GetNamedItem( "title" );
-					if ( titleNode != null && !string.IsNullOrEmpty( titleNode.Value ) )
+					if ( earnRateNode != null && !string.IsNullOrEmpty( value = earnRateNode.Value ) )
 					{
-						_subscriberTitle = titleNode.Value;
-					}
-				}
-
-				XmlNode currencyNode = document.DocumentElement.SelectSingleNode( "/config/currency" );
-				if ( currencyNode != null )
-				{
-					_currencyEnabled = true;
-					attributes = currencyNode.Attributes;
-					if ( attributes != null )
-					{
-						XmlNode customNameNode = attributes.GetNamedItem( "custom-name" );
-						XmlNode earnRateNode = attributes.GetNamedItem( "earn-rate" );
-						string value;
-
-						if ( customNameNode != null && !string.IsNullOrEmpty( value = customNameNode.Value ) )
+						int earnRate;
+						bool parsed = int.TryParse( value, out earnRate );
+						if ( parsed && earnRate > 0 )
 						{
-							_currencyName = value;
-						}
-						if ( earnRateNode != null && !string.IsNullOrEmpty( value = earnRateNode.Value ) )
-						{
-							int earnRate;
-							bool parsed = int.TryParse( value, out earnRate );
-							if ( parsed && earnRate > 0 )
-							{
-								_currencyEarnRate = (uint) earnRate;
-							}
-						}
-					}
-				}
-
-				XmlNode gamblingNode = document.DocumentElement.SelectSingleNode( "/config/gambling" );
-				if ( gamblingNode != null )
-				{
-					_gamblingEnabled = true;
-					attributes = gamblingNode.Attributes;
-					if ( attributes != null )
-					{
-						XmlNode minimumGambleAmountNode = attributes.GetNamedItem( "minimum" );
-						XmlNode gamblingFrequencyNode = attributes.GetNamedItem( "frequency" );
-						XmlNode oddsNode = attributes.GetNamedItem( "odds" );
-						string value;
-
-						if ( minimumGambleAmountNode != null && !string.IsNullOrEmpty( minimumGambleAmountNode.Value ) )
-						{
-							value = minimumGambleAmountNode.Value;
-							uint gambleMinimum;
-							bool parsed = uint.TryParse( value, out gambleMinimum );
-							if ( parsed && gambleMinimum > 0 )
-							{
-								_minimumGambleAmount = gambleMinimum;
-							}
-						}
-						if ( gamblingFrequencyNode != null && !string.IsNullOrEmpty( gamblingFrequencyNode.Value ) )
-						{
-							value = gamblingFrequencyNode.Value;
-							int gamblingFrequency;
-							bool parsed = int.TryParse( value, out gamblingFrequency );
-							if ( parsed && gamblingFrequency > 0 )
-							{
-								_minimumSecondsBetweenGambles = gamblingFrequency;
-							}
-						}
-						if ( oddsNode != null && !string.IsNullOrEmpty( oddsNode.Value ) )
-						{
-							value = oddsNode.Value;
-							double odds;
-							bool parsed = double.TryParse( value, out odds );
-							if ( parsed && odds >= 0 && odds <= 1 )
-							{
-								_winChance = odds;
-							}
+							_currencyEarnRate = (uint) earnRate;
 						}
 					}
 				}
 			}
-        }
+
+			XmlNode gamblingNode = document.DocumentElement.SelectSingleNode( "/config/gambling" );
+			if ( gamblingNode != null )
+			{
+				_gamblingEnabled = true;
+				attributes = gamblingNode.Attributes;
+				if ( attributes != null )
+				{
+					XmlNode minimumGambleAmountNode = attributes.GetNamedItem( "minimum" );
+					XmlNode gamblingFrequencyNode = attributes.GetNamedItem( "frequency" );
+					XmlNode oddsNode = attributes.GetNamedItem( "odds" );
+					string value;
+
+					if ( minimumGambleAmountNode != null && !string.IsNullOrEmpty( minimumGambleAmountNode.Value ) )
+					{
+						value = minimumGambleAmountNode.Value;
+						uint gambleMinimum;
+						bool parsed = uint.TryParse( value, out gambleMinimum );
+						if ( parsed && gambleMinimum > 0 )
+						{
+							_minimumGambleAmount = gambleMinimum;
+						}
+					}
+					if ( gamblingFrequencyNode != null && !string.IsNullOrEmpty( gamblingFrequencyNode.Value ) )
+					{
+						value = gamblingFrequencyNode.Value;
+						int gamblingFrequency;
+						bool parsed = int.TryParse( value, out gamblingFrequency );
+						if ( parsed && gamblingFrequency > 0 )
+						{
+							_minimumSecondsBetweenGambles = gamblingFrequency;
+						}
+					}
+					if ( oddsNode != null && !string.IsNullOrEmpty( oddsNode.Value ) )
+					{
+						value = oddsNode.Value;
+						double odds;
+						bool parsed = double.TryParse( value, out odds );
+						if ( parsed && odds >= 0 && odds <= 1 )
+						{
+							_winChance = odds;
+						}
+					}
+				}
+			}
+		}
+
+		private void ReadModerationConfig( XmlDocument document )
+		{
+			XmlAttributeCollection attributes;
+			XmlNode moderationNode = document.DocumentElement.SelectSingleNode( "/config/moderation" );
+			if ( moderationNode != null )
+			{
+				attributes = moderationNode.Attributes;
+				if ( attributes != null )
+				{
+					XmlNode timeoutNode = attributes.GetNamedItem( "timeout-time" );
+					if ( timeoutNode != null )
+					{
+						int timeout;
+						if ( int.TryParse( timeoutNode.Value, out timeout ) )
+						{
+							_timeoutSeconds = timeout;
+						}
+					}
+				}
+
+				XmlNodeList timeoutWordNodes = moderationNode.SelectNodes( "/config/moderation/timeout-words/word" );
+				foreach ( XmlNode timoutNode in timeoutWordNodes )
+				{
+					if ( !string.IsNullOrEmpty( timoutNode.InnerText ) )
+					{
+						_timeoutWords.Add( timoutNode.InnerText );
+					}
+				}
+
+				XmlNodeList bannedWordNodes = moderationNode.SelectNodes( "/config/moderation/banned-words/word" );
+				foreach ( XmlNode bannedNode in bannedWordNodes )
+				{
+					if ( !string.IsNullOrEmpty( bannedNode.InnerText ) )
+					{
+						_bannedWords.Add( bannedNode.InnerText );
+					}
+				}
+			}
+		}
     }
 }

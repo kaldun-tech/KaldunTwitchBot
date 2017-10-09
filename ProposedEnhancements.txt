@@ -1,5 +1,7 @@
-Add a list of configurable timeout/ban words and add the ability to timeout/ban users
-
+Refactor ReadConfig into smaller methods
+Fix the timeout and ban methods because they currently do not work
+Use regex to catch delinquents who use bad words with alternative spellings
+Add a way to set up configuration from the UI
 Redo as a web application or Streamlabs plugin
 Look into a better icon perhaps
 

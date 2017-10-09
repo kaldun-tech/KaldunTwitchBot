@@ -25,6 +25,7 @@ namespace BrewBot
 			_fileDialog = new OpenFileDialog();
 			_configReader = null;
 			_automaticMessageSender = null;
+			_moderator = null;
 			_imageForm = new Images();
 			_imageForm.VisibleChanged += new EventHandler( image_VisibilityChanged );
 			_log = null;
@@ -62,6 +63,7 @@ namespace BrewBot
 		string _configFilePath = null;
 		ConfigurationReader _configReader;
 		ConfigurableMessageSender _automaticMessageSender;
+		ConfigurableModerator _moderator;
 		Casino _casino;
 
 		private Images _imageForm;
@@ -144,6 +146,10 @@ namespace BrewBot
 				if ( _automaticMessageSender != null )
 				{
 					_automaticMessageSender.Stop();
+				}
+				if ( _moderator != null )
+				{
+					_moderator.Disconnect();
 				}
 				if ( _casino != null )
 				{
@@ -251,10 +257,10 @@ namespace BrewBot
 
 		private void OnMessageReceived( object sender, OnMessageReceivedArgs e )
 		{
-			// TODO configure a list of banned words
-			if ( e.ChatMessage.Message.Contains( "badword" ) )
+			// Do any necessary moderation
+			if ( _moderator != null )
 			{
-				// TODO time user out
+				_moderator.ScrubMessage( e.ChatMessage.Username, e.ChatMessage.Message );
 			}
 
 			// Broadcaster also has moderator privileges
@@ -500,11 +506,19 @@ namespace BrewBot
 				_credentialsReaderWriter.WriteCredentials( username, oauth, _chatChannel, _configFilePath );
 			}
 
-			// Configure the automatic message sender thread
 			if ( _configReader != null )
 			{
+				// Configure the automatic message sender thread
 				_automaticMessageSender = new ConfigurableMessageSender( _connection, _configReader.ConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages );
 				_automaticMessageSender.Start();
+
+				// Configure the moderator
+				if ( _configReader.IsModerationEnabled )
+				{
+					_moderator = new ConfigurableModerator( _configReader.TimeoutSeconds, _configReader.TimeoutWords, _configReader.BannedWords, _connection );
+				}
+
+				// Configure the casino
 				if ( _configReader.IsGamblingEnabled )
 				{
 					_casino = new Casino( _userManager, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );

@@ -160,7 +160,7 @@ namespace BrewBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What kind of weeny bet is this!?  Bet at least @{0} @{1}!.
+        ///   Looks up a localized string similar to What kind of weeny bet is this!?  Bet at least {0} @{1}!.
         /// </summary>
         internal static string Gamble_BelowMinimumBet {
             get {

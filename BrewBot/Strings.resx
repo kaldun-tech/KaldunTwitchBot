@@ -154,7 +154,7 @@
     <comment>Tell a player how many drinks they have taken during drinking games</comment>
   </data>
   <data name="Gamble_BelowMinimumBet" xml:space="preserve">
-    <value>What kind of weeny bet is this!?  Bet at least @{0} @{1}!</value>
+    <value>What kind of weeny bet is this!?  Bet at least {0} @{1}!</value>
     <comment>Tell a player they have bet below the minimum</comment>
   </data>
   <data name="Gamble_InsufficentFunds" xml:space="preserve">
