@@ -133,6 +133,12 @@ namespace BrewBot
 			scrollToNewMessageToolStripMenuItem.Visible = isTrafficSelected;
 		}
 
+		private void OnConnect( object sender, EventArgs e )
+		{
+			// Get the commands from the client
+			_connection.SendRaw( "CAP REQ :twitch.tv/commands" );
+		}
+
 		private void OnDisconnect( object sender, EventArgs e )
 		{
 			if ( InvokeRequired )
@@ -490,6 +496,7 @@ namespace BrewBot
 			_configReader = new ConfigurationReader( _configFilePath );
 
 			_connection = new TwitchLibConnection( _chatChannel, username, oauth );
+			_connection.OnConnected += OnConnect;
 			_connection.OnDisconnected += OnDisconnect;
 			_connection.OnMessageReceived += OnMessageReceived;
 			_connection.OnMessageSent += OnMessageSent;

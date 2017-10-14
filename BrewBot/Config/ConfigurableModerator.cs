@@ -40,6 +40,7 @@ namespace BrewBot.Config
 					if ( message.Contains( timeoutWord ) )
 					{
 						_channelConnection.TimeoutUser( sender, _timeoutSeconds );
+						return;
 					}
 				}
 				foreach ( string bannedWord in _bannedWords )
@@ -47,6 +48,7 @@ namespace BrewBot.Config
 					if ( message.Contains( bannedWord ) )
 					{
 						_channelConnection.BanUser( sender );
+						return;
 					}
 				}
 			}
