@@ -241,6 +241,15 @@ namespace BrewBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to @{0}, your attempt to splash failed. Check that you have moderator privileges and that the splash amount is positive..
+        /// </summary>
+        internal static string SplashFail {
+            get {
+                return ResourceManager.GetString("SplashFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @{0} is making it rain! All players gained {1} {2}!.
         /// </summary>
         internal static string SplashSuccess {

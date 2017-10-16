@@ -81,10 +81,13 @@ namespace UnitTests
 		[TestMethod]
 		public void TestSplash()
 		{
-			_casino.SplashUsers( FIFTY );
+			Assert.IsTrue( _casino.SplashUsers( FIFTY ) );
 			Assert.IsTrue( _casino.GetStringBalance( ALICE ).Contains( HUNDRED.ToString() ) );
 			Assert.IsTrue( _casino.GetStringBalance( BOB ).Contains( HUNDRED_FIFTY.ToString() ) );
 			Assert.IsTrue( _casino.GetStringBalance( CHARLIE ).Contains( FIFTY.ToString() ) );
+
+			// Check that zero returns false
+			Assert.IsFalse( _casino.SplashUsers( 0 ) );
 		}
 
 		[TestCleanup]

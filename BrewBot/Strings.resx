@@ -217,4 +217,8 @@
     <value>@{0} is making it rain! All players gained {1} {2}!</value>
     <comment>Tell chat that a moderator has given everyone an amount of the channels' currency</comment>
   </data>
+  <data name="SplashFail" xml:space="preserve">
+    <value>@{0}, your attempt to splash failed. Check that you have moderator privileges and that the splash amount is positive.</value>
+    <comment>Tell a user that their splash attempt failed.</comment>
+  </data>
 </root>

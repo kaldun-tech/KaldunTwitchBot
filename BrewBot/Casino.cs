@@ -88,12 +88,18 @@ namespace BrewBot
 		/// Splash all active users with an amount of currency
 		/// </summary>
 		/// <param name="splashAmount">Amount of currency to splash with</param>
-        public void SplashUsers( uint splashAmount )
+		/// <returns>Whether the splash attempt was successful</returns>
+        public bool SplashUsers( uint splashAmount )
         {
-            lock ( _lock )
-            {
-				_userManager.SplashUserCurrency( splashAmount );
-            }
+			if ( splashAmount > 0 )
+			{
+				lock ( _lock )
+				{
+					_userManager.SplashUserCurrency( splashAmount );
+					return true;
+				}
+			}
+			return false;
         }
 
 		/// <summary>

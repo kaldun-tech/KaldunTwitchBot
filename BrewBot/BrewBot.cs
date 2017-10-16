@@ -447,21 +447,19 @@ namespace BrewBot
 			RaffleAdd( sender );
 		}
 
-		// TODO: We need the concept of an admin so randos can't just be splashing
 		private void SplashCurrencyCB( string sender, string target )
 		{
 			// Target is the splash amount
 			int splashAmount = 0;
-			if ( _casino != null && int.TryParse(target, out splashAmount) )
+			if ( _casino != null && int.TryParse(target, out splashAmount) && splashAmount > 0 && _casino.SplashUsers( (uint) splashAmount ) )
 			{
-				_casino.SplashUsers( (uint) splashAmount );
 				string message = string.Format( Strings.SplashSuccess, sender, splashAmount, _config.CurrencyName );
 				_connection.Send( message );
 			}
 			else
 			{
-				// The user is assumed to be a moderator and have whispered the bot previously
-				_connection.SendWhisper( sender, "Splash failed!" );
+				string message = string.Format( Strings.SplashFail, sender );
+				_connection.Send( message );
 			}
 		}
 
