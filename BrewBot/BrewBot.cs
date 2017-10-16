@@ -23,6 +23,7 @@ namespace BrewBot
 
 			_connection = null;
 			_fileDialog = new OpenFileDialog();
+			_config = null;
 			_configReader = null;
 			_automaticMessageSender = null;
 			_moderator = null;
@@ -61,6 +62,7 @@ namespace BrewBot
 		// Configuration
 		OpenFileDialog _fileDialog;
 		string _configFilePath = null;
+		BrewBotConfiguration _config;
 		ConfigurationReader _configReader;
 		ConfigurableMessageSender _automaticMessageSender;
 		ConfigurableModerator _moderator;
@@ -295,7 +297,7 @@ namespace BrewBot
 		private void OnNewSubscriber( object sender, OnNewSubscriberArgs e )
 		{
 			string format = e.Subscriber.IsTwitchPrime ? Strings.SubscriptionReceivedPrime : Strings.SubscriptionReceived;
-			string message = string.Format( format, e.Subscriber.DisplayName, _configReader.SubscriberTitle );
+			string message = string.Format( format, e.Subscriber.DisplayName, _config.SubscriberTitle );
 			_connection.Send( message );
 		}
 
@@ -453,6 +455,8 @@ namespace BrewBot
 			if ( _casino != null && int.TryParse(target, out splashAmount) )
 			{
 				_casino.SplashUsers( (uint) splashAmount );
+				string message = string.Format( Strings.SplashSuccess, sender, splashAmount, _config.CurrencyName );
+				_connection.Send( message );
 			}
 			else
 			{
@@ -493,7 +497,9 @@ namespace BrewBot
 			string username = textBoxUser.Text;
 			string oauth = textBoxPassword.Text;
 			_chatChannel = textBoxChat.Text;
-			_configReader = new ConfigurationReader( _configFilePath );
+			_config = new BrewBotConfiguration( _configFilePath );
+			_configReader = new ConfigurationReader( _config );
+			_configReader.ReadConfig();
 
 			_connection = new TwitchLibConnection( _chatChannel, username, oauth );
 			_connection.OnConnected += OnConnect;
@@ -513,22 +519,22 @@ namespace BrewBot
 				_credentialsReaderWriter.WriteCredentials( username, oauth, _chatChannel, _configFilePath );
 			}
 
-			if ( _configReader != null )
+			if ( _config != null )
 			{
 				// Configure the automatic message sender thread
-				_automaticMessageSender = new ConfigurableMessageSender( _connection, _configReader.ConfiguredMessageIntervalInSeconds, _configReader.GetConfiguredMessages );
+				_automaticMessageSender = new ConfigurableMessageSender( _connection, _config.SecondsBetweenMessageSend, _config.MessagesToSend );
 				_automaticMessageSender.Start();
 
 				// Configure the moderator
-				if ( _configReader.IsModerationEnabled )
+				if ( _config.IsModerationEnabled )
 				{
-					_moderator = new ConfigurableModerator( _configReader.TimeoutSeconds, _configReader.TimeoutWords, _configReader.BannedWords, _connection );
+					_moderator = new ConfigurableModerator( _config.TimeoutSeconds, _config.TimeoutWords, _config.BannedWords, _connection );
 				}
 
 				// Configure the casino
-				if ( _configReader.IsGamblingEnabled )
+				if ( _config.IsGamblingEnabled )
 				{
-					_casino = new Casino( _userManager, _configReader.CurrencyName, _configReader.CurrencyEarnedPerMinute, _configReader.MinimumGambleAmount, _configReader.ChanceToWin );
+					_casino = new Casino( _userManager, _config.CurrencyName, _config.CurrencyEarnedPerMinute, _config.MinimumGambleAmount, _config.GambleChanceToWin );
 					_casino.Start();
 				}
 			}

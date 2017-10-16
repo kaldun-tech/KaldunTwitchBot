@@ -1,6 +1,5 @@
-Fix the timeout and ban methods because they currently do not work
-Use regex to catch delinquents who use bad words with alternative spellings
 Add a way to set up configuration from the UI
+Use regex to catch delinquents who use bad words with alternative spellings
 Redo as a web application or Streamlabs plugin
 Look into a better icon perhaps
 

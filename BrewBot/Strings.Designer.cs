@@ -241,6 +241,15 @@ namespace BrewBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to @{0} is making it rain! All players gained {1} {2}!.
+        /// </summary>
+        internal static string SplashSuccess {
+            get {
+                return ResourceManager.GetString("SplashSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Welcome @{0} to the {1}!.
         /// </summary>
         internal static string SubscriptionReceived {

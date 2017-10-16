@@ -41,8 +41,9 @@ namespace BrewBot
 		{
 			if ( !IsPlaying )
 			{
-				// Notify all users
-				_connection.Send( Strings.NoDrinkingGame );
+				// Notify all users, but specify who initiated the command
+				string message = string.Format( Strings.NoDrinkingGame, username );
+				_connection.Send( message );
 			}
 		}
 

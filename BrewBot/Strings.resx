@@ -213,4 +213,8 @@
     <value>@{0} has won the raffle drawing!</value>
     <comment>Announce a raffle winner</comment>
   </data>
+  <data name="SplashSuccess" xml:space="preserve">
+    <value>@{0} is making it rain! All players gained {1} {2}!</value>
+    <comment>Tell chat that a moderator has given everyone an amount of the channels' currency</comment>
+  </data>
 </root>
