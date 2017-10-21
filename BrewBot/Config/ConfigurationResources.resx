@@ -117,112 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChoosePlayer" xml:space="preserve">
-    <value>@{0}, choose from {1}, {2}, {3} or {4}.</value>
-    <comment>Tell a viewer which players to choose from</comment>
+  <data name="ConfigTag" xml:space="preserve">
+    <value>config</value>
   </data>
-  <data name="FinishDrink" xml:space="preserve">
-    <value>@{0}, FINISH your drink!</value>
-    <comment>Tell a player to finish their drink</comment>
+  <data name="CurrencyTag" xml:space="preserve">
+    <value>currency</value>
   </data>
-  <data name="GetDrinkTicket" xml:space="preserve">
-    <value>@{0}, you got a drink ticket. Use "!give &lt;player&gt;" to give it to someone and make them drink.</value>
-    <comment>Give a player a drink ticket</comment>
+  <data name="Currency_EarnRateAttribute" xml:space="preserve">
+    <value>earn-rate</value>
   </data>
-  <data name="NoDrinkingGame" xml:space="preserve">
-    <value>@{0}, we're not currently playing a drinking game.</value>
-    <comment>Inform a user we are not currently drinking</comment>
+  <data name="Currency_NameAttribute" xml:space="preserve">
+    <value>custom-name</value>
   </data>
-  <data name="NoDrinkTickets" xml:space="preserve">
-    <value>@{0}, you do not have any drink tickets to give.</value>
-    <comment>Inform a user they do not have any drink tickets</comment>
+  <data name="GamblingTag" xml:space="preserve">
+    <value>gambling</value>
   </data>
-  <data name="NotParticipating" xml:space="preserve">
-    <value>@{0}, {1} is not participating.</value>
-    <comment>Inform a user the target is not participating</comment>
+  <data name="Gambling_IntervalAttribute" xml:space="preserve">
+    <value>gamble-interval</value>
   </data>
-  <data name="TakeDrink" xml:space="preserve">
-    <value>@{0}, take a drink.</value>
-    <comment>Tell a player to take a drink</comment>
+  <data name="Gambling_MinimumAmountAttribute" xml:space="preserve">
+    <value>minimum</value>
   </data>
-  <data name="DrinkTicketsBalance" xml:space="preserve">
-    <value>@{0}, you have {1} tickets.</value>
-    <comment>Tell a player how many drink tickets they have to give out</comment>
+  <data name="Gambling_OddsAttribute" xml:space="preserve">
+    <value>odds</value>
   </data>
-  <data name="TotalDrinksTaken" xml:space="preserve">
-    <value>@{0}, you have taken {1} drinks!</value>
-    <comment>Tell a player how many drinks they have taken during drinking games</comment>
+  <data name="MessageIntervalTag" xml:space="preserve">
+    <value>interval</value>
   </data>
-  <data name="Gamble_BelowMinimumBet" xml:space="preserve">
-    <value>What kind of weeny bet is this!?  Bet at least {0} @{1}!</value>
-    <comment>Tell a player they have bet below the minimum</comment>
+  <data name="MessageInterval_WaitTimeAttribute" xml:space="preserve">
+    <value>wait-time</value>
   </data>
-  <data name="Gamble_InsufficentFunds" xml:space="preserve">
-    <value>Your funds are grossly insufficient, @{0}!</value>
-    <comment>Tell a player they have insufficient funds</comment>
+  <data name="MessagesTag" xml:space="preserve">
+    <value>messages</value>
   </data>
-  <data name="Gamble_Result" xml:space="preserve">
-    <value>@{0}, you {1} {2} {3}!</value>
-    <comment>Tell a player they won or lost a bet</comment>
+  <data name="MessageTag" xml:space="preserve">
+    <value>message</value>
   </data>
-  <data name="Casino_InvalidBetAmount" xml:space="preserve">
-    <value>Invalid bet amount, {0}!</value>
-    <comment>Tell a player that their bet amount was invalid</comment>
+  <data name="ModerationTag" xml:space="preserve">
+    <value>moderation</value>
   </data>
-  <data name="Casino_NotOperating" xml:space="preserve">
-    <value>The casino is not currently operating, @{0}!</value>
-    <comment>Tell a player the casino is not currently operating</comment>
+  <data name="Moderation_BannedWordsTag" xml:space="preserve">
+    <value>banned-words</value>
   </data>
-  <data name="DrinkingGame_Introduction" xml:space="preserve">
-    <value>Welcome to the channel! We're playing a drinking game. If you want to join, type \"!join &lt;player&gt;\". Current players are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
-    <comment>Introduce a player to the drinking game</comment>
+  <data name="Moderation_TimeoutTimeAttribute" xml:space="preserve">
+    <value>timeout-time</value>
   </data>
-  <data name="DrinkingGame_Start" xml:space="preserve">
-    <value>A drinking game has been started! Type \"!join &lt;player&gt;\" to play. Current players are @{0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
-    <comment>Tell chat that we have started a drinking game.</comment>
+  <data name="Moderation_TimeoutWordsTag" xml:space="preserve">
+    <value>timeout-words</value>
   </data>
-  <data name="GetBalance_Result" xml:space="preserve">
-    <value>@{0}, your balance is {1} {2}</value>
-    <comment>Tell a player their casino balance</comment>
+  <data name="Moderation_WordSubtag" xml:space="preserve">
+    <value>word</value>
   </data>
-  <data name="ChannelJoined" xml:space="preserve">
-    <value>HeyGuys BrewBot ready for action!</value>
-    <comment>Tell chat that the bot is in the house</comment>
+  <data name="SubscribersTag" xml:space="preserve">
+    <value>subscribers</value>
   </data>
-  <data name="SubscriptionReceived" xml:space="preserve">
-    <value>Welcome @{0} to the {1}!</value>
-    <comment>Welcome a new subscriber</comment>
-  </data>
-  <data name="SubscriptionReceivedPrime" xml:space="preserve">
-    <value>Welcome @{0} to the {1}! So kind of you to use your Twitch Prime on this channel!</value>
-    <comment>Welcome a new TwitchPrime subscriber</comment>
-  </data>
-  <data name="CommandOnCooldown" xml:space="preserve">
-    <value>@{0}, that command is on cooldown to avoid spamming chat.</value>
-    <comment>Tell a user that the command they requested is on cooldown</comment>
-  </data>
-  <data name="Commands_InvalidCommand" xml:space="preserve">
-    <value>Sorry @{0}, your command was invalid. Use !commands to get a list of commands.</value>
-    <comment>Tell a player that their command was invalid</comment>
-  </data>
-  <data name="ChannelExited" xml:space="preserve">
-    <value>BrewBot is exiting chat. See you soon! BloodTrail</value>
-    <comment>Tell chat that the bot is no longer in the house</comment>
-  </data>
-  <data name="RaffleWinner" xml:space="preserve">
-    <value>@{0} has won the raffle drawing!</value>
-    <comment>Announce a raffle winner</comment>
-  </data>
-  <data name="SplashSuccess" xml:space="preserve">
-    <value>@{0} is making it rain! All players gained {1} {2}!</value>
-    <comment>Tell chat that a moderator has given everyone an amount of the channels' currency</comment>
-  </data>
-  <data name="SplashFail" xml:space="preserve">
-    <value>@{0}, your attempt to splash failed. Check that you have moderator privileges and that the splash amount is positive.</value>
-    <comment>Tell a user that their splash attempt failed.</comment>
-  </data>
-  <data name="Gamble_OnCooldown" xml:space="preserve">
-    <value>Sorry @{0}, you can only gamble once every {1} seconds!</value>
-    <comment>Tell a player their gamlbing is on cooldown</comment>
+  <data name="Subscriber_TitleAttribute" xml:space="preserve">
+    <value>title</value>
   </data>
 </root>

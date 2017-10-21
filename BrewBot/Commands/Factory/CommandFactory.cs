@@ -3,6 +3,7 @@ using BrewBot.Commands.Interfaces;
 using BrewBot.Interfaces;
 using static BrewBot.CommandParsing.Templates.ACommand;
 using System.Collections.Generic;
+using BrewBot.Commands.Factory;
 
 namespace BrewBot.Commands
 {
@@ -39,16 +40,16 @@ namespace BrewBot.Commands
 			_getTotalDrinksCB = getTotalDrinksCB;
 
 			// Initialize structs
-			_getCommandsStruct = new CommandStruct( "!commands - get this list of commands", "^!commands$" );
-			_casinoGetBalanceStruct = new CommandStruct( "!balance - Display your currency balance", "^!balance$" );
-			_casinoGambleStruct = new CommandStruct( "!gamble (amount) - Gamble currency", "^!gamble (.*)$" );
-			_casinoSplashStruct = new CommandStruct( "!splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency", "^!splash (.*)$" );
-			_drinkingGameGiveStruct = new CommandStruct( "!give (username) - Spend a drink ticket to make a player drink", "^!give (.*)$" );
-			_drinkingGameJoinStruct = new CommandStruct( "!join (player) - Join the drinking game as the input player", "^!join (.*)$" );
-			_drinkingGameQuitStruct = new CommandStruct( "!quit - Quit the drinking game", "^!quit$" );
-			_raffleStruct = new CommandStruct( "!raffle - Enter the current raffle", "^!raffle$" );
-			_getDrinkTicketsStruct = new CommandStruct( "!tickets - Display your drink ticket balance", "^!tickets$" );
-			_getDrinksStruct = new CommandStruct( "!drinks - Display how many drinks you have taken during active drinking games", "^!drinks$" );
+			_getCommandsStruct = new CommandStruct( CommandResources.GetCommands_Description, CommandResources.GetCommands_Regex );
+			_casinoGetBalanceStruct = new CommandStruct( CommandResources.Casino_GetBalance_Description, CommandResources.Casino_GetBalance_Regex );
+			_casinoGambleStruct = new CommandStruct( CommandResources.Casino_Gamble_Description, CommandResources.Casino_Gamble_Regex );
+			_casinoSplashStruct = new CommandStruct( CommandResources.Casino_Splash_Description, CommandResources.Casino_Splash_Regex );
+			_drinkingGameGiveStruct = new CommandStruct( CommandResources.DrinkingGame_GiveDrink_Description, CommandResources.DrinkingGame_GiveDrink_Regex );
+			_drinkingGameJoinStruct = new CommandStruct( CommandResources.DrinkingGame_Join_Description, CommandResources.DrinkingGame_Join_Regex );
+			_drinkingGameQuitStruct = new CommandStruct( CommandResources.DrinkingGame_Quit_Description, CommandResources.DrinkingGame_Quit_Regex );
+			_raffleStruct = new CommandStruct( CommandResources.Raffle_Description, CommandResources.Raffle_Regex );
+			_getDrinkTicketsStruct = new CommandStruct( CommandResources.DrinkingGame_GetTickets_Description, CommandResources.DrinkingGame_GetTickets_Regex );
+			_getDrinksStruct = new CommandStruct( CommandResources.DrinkingGame_GetDrinks_Description, CommandResources.DrinkingGame_GetDrinks_Regex );
 
 			// Initiate commands list, order represents how they are displayed in GetCommands
 			_commandList = new List<CommandStruct> { _getCommandsStruct, _casinoGetBalanceStruct, _casinoGambleStruct, _casinoSplashStruct, _drinkingGameGiveStruct, _drinkingGameJoinStruct,

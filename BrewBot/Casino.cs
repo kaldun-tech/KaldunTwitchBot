@@ -9,7 +9,8 @@ namespace BrewBot
 		{
 			CAN_GAMBLE,
 			BELOW_MINIMUM_BET,
-			INSUFFICIENT_FUNDS
+			INSUFFICIENT_FUNDS,
+			ON_COOLDOWN
 		}
 
 		/// <summary>
@@ -53,12 +54,14 @@ namespace BrewBot
 		/// <param name="currencyName">Name of the currency. Must not be null or empty.</param>
 		/// <param name="earnRate">Amount of currency earned per minute.</param>
 		/// <param name="minimumGambleAmount">Minimum amount of currency to gamble</param>
+		/// <param name="minimumGambleAmountSeconds"></param>
 		/// <param name="winChance">Chance to win when gambling. Must be greater than zero and less than or equal to one.</param>
-		public Casino( UserManager userManager, string currencyName, uint earnRate, uint minimumGambleAmount, double winChance )
+		public Casino( UserManager userManager, string currencyName, uint earnRate, uint minimumGambleAmount, uint minimumGambleAmountSeconds, double winChance )
 		{
 			_userManager = userManager;
 			_currencyName = currencyName;
 			_minimumGambleAmount = minimumGambleAmount;
+			_minimumGambleIntervalSeconds = minimumGambleAmountSeconds;
 			_earnedCurrencyPerMinute = earnRate;
 			_winChance = winChance;
 			_lock = new object();
@@ -72,6 +75,7 @@ namespace BrewBot
 		private UserManager _userManager;
 		private uint _earnedCurrencyPerMinute;
 		private uint _minimumGambleAmount;
+		private uint _minimumGambleIntervalSeconds;
 		private double _winChance;
 		private object _lock;
 		private Thread _earningsThread;
@@ -124,6 +128,9 @@ namespace BrewBot
 				case CanGambleResult.BELOW_MINIMUM_BET:
 					message = string.Format( Strings.Gamble_BelowMinimumBet, _minimumGambleAmount, username);
 					break;
+				case CanGambleResult.ON_COOLDOWN:
+					message = string.Format( Strings.Gamble_OnCooldown, username, _minimumGambleIntervalSeconds );
+					break;
 			}
 			return message;
 		}
@@ -140,6 +147,10 @@ namespace BrewBot
 			{
 				Random rand = new Random();
 				double result = rand.NextDouble();
+
+				// Set the gamble time to current time
+				_userManager.SetUserLastGambleTime( username );
+
 				if ( result <= _winChance )
 				{
 					_userManager.IncreaseUserCurrency( username, betAmount );
@@ -162,14 +173,27 @@ namespace BrewBot
 		/// <returns>Whether the input user can gamble the input amount</returns>
         public CanGambleResult CanUserGamble( string username, uint betAmount )
         {
+			// Calculate whether gamble is on cooldown for this user
+			DateTime? lastGambleTime = _userManager.GetUserLastGambleTime( username );
+			
+			if ( lastGambleTime != null )
+			{
+				DateTime gambleOffCooldown = lastGambleTime.Value.AddSeconds( _minimumGambleIntervalSeconds );
+				// We are still on cooldown if the time when we come off cooldown is after right now
+				if ( gambleOffCooldown.CompareTo( DateTime.Now ) > 0 )
+				{
+					return CanGambleResult.ON_COOLDOWN;
+				}
+			}
 			if ( betAmount < _minimumGambleAmount)
 			{
 				return CanGambleResult.BELOW_MINIMUM_BET;
 			}
-			else if ( _userManager.GetUserCasinoBalance( username ) < betAmount )
+			if ( _userManager.GetUserCasinoBalance( username ) < betAmount )
 			{
 				return CanGambleResult.INSUFFICIENT_FUNDS;
 			}
+			
 
 			return CanGambleResult.CAN_GAMBLE;
 		}

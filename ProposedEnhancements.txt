@@ -1,7 +1,7 @@
+Document moderation in README.md
 Add a way to set up configuration from the UI
+Redo as a web service
 Use regex to catch delinquents who use bad words with alternative spellings
-Redo as a web application or Streamlabs plugin
-Look into a better icon perhaps
 
 ???
 

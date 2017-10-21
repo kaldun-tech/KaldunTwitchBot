@@ -35,7 +35,7 @@ namespace BrewBot.Config
 		// Default minimum amount to gamble
 		private const int DEFAULT_MINIMUM_GAMBLE_AMOUNT = 50;
 		// Default minimum amount of seconds between allowed gamble attempts
-		private const int DEFAULT_MINIMUM_GAMBLE_INTERVAL = 60;
+		private const int DEFAULT_MINIMUM_GAMBLE_INTERVAL = 10;
 		// Default chance to win. The chance to win must be between zero and one.
 		private const double DEFAULT_WIN_CHANCE = 0.5;
 		// Default time to time users out if they have said a bad word
@@ -108,7 +108,7 @@ namespace BrewBot.Config
 		/// <summary>
 		/// Minimum amount of time between gamble commands in seconds
 		/// </summary>
-		public int MinimumTimeInSecondsBetweenGambles { get; set; }
+		public uint MinimumTimeInSecondsBetweenGambles { get; set; }
 
 		/// <summary>
 		/// Chance to win. Must be between zero and one inclusive.

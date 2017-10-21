@@ -178,6 +178,15 @@ namespace BrewBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry @{0}, you can only gamble once every {1} seconds!.
+        /// </summary>
+        internal static string Gamble_OnCooldown {
+            get {
+                return ResourceManager.GetString("Gamble_OnCooldown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to @{0}, you {1} {2} {3}!.
         /// </summary>
         internal static string Gamble_Result {

@@ -6,92 +6,107 @@ namespace BrewBot.Config
 	internal class ConfigurationReader
     {
 		/// <summary>
-		/// Create a configuration reader for a configuration file path
+		/// Create a configuration reader
 		/// </summary>
-		/// <param name="config"></param>
-        public ConfigurationReader( BrewBotConfiguration config )
-        {
-			_config = config;
-        }
-
-		private BrewBotConfiguration _config;
+        public ConfigurationReader()
+        { }
 
 		/// <summary>
-		/// Read the config file to parse values
+		/// Read the config file to parse values and generate a configuration object
 		/// </summary>
-        public void ReadConfig()
+		/// <param name="configFilePath">Path of the XML configuration file to open</param>
+		/// <returns>New configuration read from file</returns>
+		public BrewBotConfiguration ReadConfig( string configFilePath)
         {
-            if ( string.IsNullOrEmpty( _config.XMLConfigFile ) )
-            {
-                return;
-            }
-
-            using ( Stream configStream = new FileStream( _config.XMLConfigFile, FileMode.Open, FileAccess.Read ) )
+            if ( !string.IsNullOrEmpty( configFilePath ) )
 			{
 				XmlDocument document = new XmlDocument();
-				document.Load( configStream );
+				using ( Stream configStream = new FileStream( configFilePath, FileMode.Open, FileAccess.Read ) )
+				{
+					document.Load( configStream );
+				}
 
-				ReadMessageSenderConfig( document );
-				ReadSubscriberConfig( document );
-				ReadCasinoConfig( document );
-				ReadModerationConfig( document );
+				BrewBotConfiguration config = new BrewBotConfiguration( configFilePath );
+				ReadMessageSenderConfig( config, document );
+				ReadSubscriberConfig( config, document );
+				ReadCasinoConfig( config, document );
+				ReadModerationConfig( config, document );
+
+				return config;
 			}
+
+			return null;
         }
 
-		private void ReadMessageSenderConfig( XmlDocument document )
+		private const string PATH_SEPARATOR = "/";
+
+		// Build all the paths!
+		private static string configPath = PATH_SEPARATOR + ConfigurationResources.ConfigTag;
+		private static string subscriberPath = configPath + PATH_SEPARATOR + ConfigurationResources.SubscribersTag;
+		private static string intervalPath = configPath + PATH_SEPARATOR + ConfigurationResources.MessageIntervalTag;
+		private static string messagesPath = configPath + PATH_SEPARATOR + ConfigurationResources.MessagesTag + PATH_SEPARATOR + ConfigurationResources.MessageTag;
+		private static string currencyPath = configPath + PATH_SEPARATOR + ConfigurationResources.CurrencyTag;
+		private static string gamblingPath = configPath + PATH_SEPARATOR + ConfigurationResources.GamblingTag;
+		private static string moderationPath = configPath + PATH_SEPARATOR + ConfigurationResources.ModerationTag;
+		private static string moderationWordSubPath = PATH_SEPARATOR + ConfigurationResources.Moderation_WordSubtag;
+		private static string timeoutWordsPath = moderationPath + PATH_SEPARATOR + ConfigurationResources.Moderation_TimeoutWordsTag + moderationWordSubPath;
+		private static string bannedWordsPath = moderationPath + PATH_SEPARATOR + ConfigurationResources.Moderation_BannedWordsTag + moderationWordSubPath;
+
+		private void ReadMessageSenderConfig( BrewBotConfiguration config, XmlDocument document )
 		{
-			XmlNode intervalNode = document.DocumentElement.SelectSingleNode( "/config/interval" );
+			XmlNode intervalNode = document.DocumentElement.SelectSingleNode( intervalPath );
 			XmlAttributeCollection attributes;
 			XmlNode waitTimeNode;
-			if ( intervalNode != null && ( attributes = intervalNode.Attributes ) != null && ( waitTimeNode = attributes.GetNamedItem( "wait-time" ) ) != null )
+			if ( intervalNode != null && ( attributes = intervalNode.Attributes ) != null &&
+				( waitTimeNode = attributes.GetNamedItem( ConfigurationResources.MessageInterval_WaitTimeAttribute ) ) != null )
 			{
 				string value = waitTimeNode.Value;
-				_config.SecondsBetweenMessageSend = int.Parse( value );
+				config.SecondsBetweenMessageSend = int.Parse( value );
 			}
 
-			XmlNodeList messagesList = document.DocumentElement.SelectNodes( "/config/messages/message" );
+			XmlNodeList messagesList = document.DocumentElement.SelectNodes( messagesPath );
 			if ( messagesList != null )
 			{
 				foreach ( XmlNode messageNode in messagesList )
 				{
 					if ( messageNode != null && !string.IsNullOrEmpty( messageNode.InnerText ) )
 					{
-						_config.MessagesToSend.Add( messageNode.InnerText );
+						config.MessagesToSend.Add( messageNode.InnerText );
 					}
 				}
 			}
 		}
 
-		private void ReadSubscriberConfig( XmlDocument document )
+		private void ReadSubscriberConfig( BrewBotConfiguration config, XmlDocument document )
 		{
-			XmlNode subscriberNode = document.DocumentElement.SelectSingleNode( "/config/subscribers" );
+			XmlNode subscriberNode = document.DocumentElement.SelectSingleNode( subscriberPath );
 			if ( subscriberNode != null && subscriberNode.Attributes != null )
 			{
-				XmlNode titleNode = subscriberNode.Attributes.GetNamedItem( "title" );
+				XmlNode titleNode = subscriberNode.Attributes.GetNamedItem( ConfigurationResources.Subscriber_TitleAttribute );
 				if ( titleNode != null && !string.IsNullOrEmpty( titleNode.Value ) )
 				{
-					_config.SubscriberTitle = titleNode.Value;
+					config.SubscriberTitle = titleNode.Value;
 				}
 			}
 		}
 
-		private void ReadCasinoConfig( XmlDocument document )
+		private void ReadCasinoConfig( BrewBotConfiguration config, XmlDocument document )
 		{
 			XmlAttributeCollection attributes;
-			XmlNode currencyNode = document.DocumentElement.SelectSingleNode( "/config/currency" );
+			XmlNode currencyNode = document.DocumentElement.SelectSingleNode( currencyPath );
 			if ( currencyNode != null )
 			{
-				_config.IsCurrencyEnabled = true;
+				config.IsCurrencyEnabled = true;
 				attributes = currencyNode.Attributes;
 				if ( attributes != null )
 				{
-					XmlNode customNameNode = attributes.GetNamedItem( "custom-name" );
-					XmlNode earnRateNode = attributes.GetNamedItem( "earn-rate" );
+					XmlNode customNameNode = attributes.GetNamedItem( ConfigurationResources.Currency_NameAttribute );
+					XmlNode earnRateNode = attributes.GetNamedItem( ConfigurationResources.Currency_EarnRateAttribute );
 					string value;
 
 					if ( customNameNode != null && !string.IsNullOrEmpty( value = customNameNode.Value ) )
 					{
-						_config.CurrencyName = value;
+						config.CurrencyName = value;
 					}
 					if ( earnRateNode != null && !string.IsNullOrEmpty( value = earnRateNode.Value ) )
 					{
@@ -99,22 +114,22 @@ namespace BrewBot.Config
 						bool parsed = int.TryParse( value, out earnRate );
 						if ( parsed && earnRate > 0 )
 						{
-							_config.CurrencyEarnedPerMinute = (uint) earnRate;
+							config.CurrencyEarnedPerMinute = (uint) earnRate;
 						}
 					}
 				}
 			}
 
-			XmlNode gamblingNode = document.DocumentElement.SelectSingleNode( "/config/gambling" );
+			XmlNode gamblingNode = document.DocumentElement.SelectSingleNode( gamblingPath );
 			if ( gamblingNode != null )
 			{
-				_config.IsGamblingEnabled = true;
+				config.IsGamblingEnabled = true;
 				attributes = gamblingNode.Attributes;
 				if ( attributes != null )
 				{
-					XmlNode minimumGambleAmountNode = attributes.GetNamedItem( "minimum" );
-					XmlNode gamblingFrequencyNode = attributes.GetNamedItem( "frequency" );
-					XmlNode oddsNode = attributes.GetNamedItem( "odds" );
+					XmlNode minimumGambleAmountNode = attributes.GetNamedItem( ConfigurationResources.Gambling_MinimumAmountAttribute );
+					XmlNode gamblingIntervalNode = attributes.GetNamedItem( ConfigurationResources.Gambling_IntervalAttribute );
+					XmlNode oddsNode = attributes.GetNamedItem( ConfigurationResources.Gambling_OddsAttribute );
 					string value;
 
 					if ( minimumGambleAmountNode != null && !string.IsNullOrEmpty( minimumGambleAmountNode.Value ) )
@@ -124,17 +139,17 @@ namespace BrewBot.Config
 						bool parsed = uint.TryParse( value, out gambleMinimum );
 						if ( parsed && gambleMinimum > 0 )
 						{
-							_config.MinimumGambleAmount = gambleMinimum;
+							config.MinimumGambleAmount = gambleMinimum;
 						}
 					}
-					if ( gamblingFrequencyNode != null && !string.IsNullOrEmpty( gamblingFrequencyNode.Value ) )
+					if ( gamblingIntervalNode != null && !string.IsNullOrEmpty( gamblingIntervalNode.Value ) )
 					{
-						value = gamblingFrequencyNode.Value;
-						int gamblingFrequency;
-						bool parsed = int.TryParse( value, out gamblingFrequency );
-						if ( parsed && gamblingFrequency > 0 )
+						value = gamblingIntervalNode.Value;
+						uint gamblingWaitInterval;
+						bool parsed = uint.TryParse( value, out gamblingWaitInterval );
+						if ( parsed && gamblingWaitInterval > 0 )
 						{
-							_config.MinimumTimeInSecondsBetweenGambles = gamblingFrequency;
+							config.MinimumTimeInSecondsBetweenGambles = gamblingWaitInterval;
 						}
 					}
 					if ( oddsNode != null && !string.IsNullOrEmpty( oddsNode.Value ) )
@@ -144,48 +159,49 @@ namespace BrewBot.Config
 						bool parsed = double.TryParse( value, out odds );
 						if ( parsed && odds >= 0 && odds <= 1 )
 						{
-							_config.GambleChanceToWin = odds;
+							config.GambleChanceToWin = odds;
 						}
 					}
 				}
 			}
 		}
 
-		private void ReadModerationConfig( XmlDocument document )
+		private void ReadModerationConfig( BrewBotConfiguration config, XmlDocument document )
 		{
+			
 			XmlAttributeCollection attributes;
-			XmlNode moderationNode = document.DocumentElement.SelectSingleNode( "/config/moderation" );
+			XmlNode moderationNode = document.DocumentElement.SelectSingleNode( moderationPath );
 			if ( moderationNode != null )
 			{
 				attributes = moderationNode.Attributes;
 				if ( attributes != null )
 				{
-					XmlNode timeoutNode = attributes.GetNamedItem( "timeout-time" );
+					XmlNode timeoutNode = attributes.GetNamedItem( ConfigurationResources.Moderation_TimeoutTimeAttribute );
 					if ( timeoutNode != null )
 					{
 						int timeout;
 						if ( int.TryParse( timeoutNode.Value, out timeout ) )
 						{
-							_config.TimeoutSeconds = timeout;
+							config.TimeoutSeconds = timeout;
 						}
 					}
 				}
 
-				XmlNodeList timeoutWordNodes = moderationNode.SelectNodes( "/config/moderation/timeout-words/word" );
+				XmlNodeList timeoutWordNodes = moderationNode.SelectNodes( timeoutWordsPath );
 				foreach ( XmlNode timoutNode in timeoutWordNodes )
 				{
 					if ( !string.IsNullOrEmpty( timoutNode.InnerText ) )
 					{
-						_config.TimeoutWords.Add( timoutNode.InnerText );
+						config.TimeoutWords.Add( timoutNode.InnerText );
 					}
 				}
 
-				XmlNodeList bannedWordNodes = moderationNode.SelectNodes( "/config/moderation/banned-words/word" );
+				XmlNodeList bannedWordNodes = moderationNode.SelectNodes( bannedWordsPath );
 				foreach ( XmlNode bannedNode in bannedWordNodes )
 				{
 					if ( !string.IsNullOrEmpty( bannedNode.InnerText ) )
 					{
-						_config.BannedWords.Add( bannedNode.InnerText );
+						config.BannedWords.Add( bannedNode.InnerText );
 					}
 				}
 			}

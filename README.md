@@ -49,13 +49,13 @@ Configuration
  to set the rate at which currency is earned per minute while users are in the channel.
  If currency is configured, then gambling can also be configured. On the <gambling /> tag,
  use the attribute minimum="(integer minimum bet)" to set a minimum bet,
- frequency="(seconds between bets)" to set a minimum wait time between bets, and
+ gamble-interval="(seconds between bets)" to set a minimum wait time between bets, and
  odds="(decimal odds)" to set the probability of winning. The probability must be expressed
  as a decimal between 0 and 1 (inclusive)  <currency custom-name="cheddar" />
   <gambling odds="0.55"/>. For example:
  
  <currency custom-name="cheddar" earn-rate="200" />
- <gambling minimum="75" frequency="30" odds="0.55"/>
+ <gambling minimum="75" gamble-interval="30" odds="0.55"/>
  
  This configuration sets a currency named cheddar which is earned at a rate of 200
  per minute. A bet must be greater than or equal to 75 cheddar, can be executed up to

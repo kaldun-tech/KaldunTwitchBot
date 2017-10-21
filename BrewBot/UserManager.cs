@@ -27,6 +27,7 @@ namespace BrewBot
 				DrinkTickets = drinkTickets;
 				TotalDrinksTaken = drinksTaken;
 				IsActive = isActive;
+				LastGambleTime = null;
 			}
 
 			public string UserName;
@@ -34,6 +35,10 @@ namespace BrewBot
 			public uint DrinkTickets;
 			public uint TotalDrinksTaken;
 			public bool IsActive;
+			/// <summary>
+			/// Session specific last gamble time. Doesn't need to be written to or read from file
+			/// </summary>
+			public DateTime? LastGambleTime;
 
 			public override bool Equals( object obj )
 			{
@@ -213,6 +218,41 @@ namespace BrewBot
 					{
 						user.CasinoBalance -= amount;
 					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get the last gamble time for a user
+		/// </summary>
+		/// <param name="userName"></param>
+		/// <returns>Last gamble time for a user. If the user has not gambled this session, the result is null.</returns>
+		public DateTime? GetUserLastGambleTime( string userName )
+		{
+			lock ( _userLock )
+			{
+				User user;
+				if ( _users.TryGetValue( userName, out user ) )
+				{
+					return user.LastGambleTime;
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Set the last gamble time for a user to now
+		/// </summary>
+		/// <param name="userName"></param>
+		public void SetUserLastGambleTime( string userName )
+		{
+			lock ( _userLock )
+			{
+				User user;
+				if ( _users.TryGetValue( userName, out user ) )
+				{
+					user.LastGambleTime = DateTime.Now;
 				}
 			}
 		}

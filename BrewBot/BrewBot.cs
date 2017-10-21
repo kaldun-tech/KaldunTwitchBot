@@ -495,9 +495,8 @@ namespace BrewBot
 			string username = textBoxUser.Text;
 			string oauth = textBoxPassword.Text;
 			_chatChannel = textBoxChat.Text;
-			_config = new BrewBotConfiguration( _configFilePath );
-			_configReader = new ConfigurationReader( _config );
-			_configReader.ReadConfig();
+			_configReader = new ConfigurationReader();
+			_config = _configReader.ReadConfig( _configFilePath );
 
 			_connection = new TwitchLibConnection( _chatChannel, username, oauth );
 			_connection.OnConnected += OnConnect;
@@ -532,7 +531,7 @@ namespace BrewBot
 				// Configure the casino
 				if ( _config.IsGamblingEnabled )
 				{
-					_casino = new Casino( _userManager, _config.CurrencyName, _config.CurrencyEarnedPerMinute, _config.MinimumGambleAmount, _config.GambleChanceToWin );
+					_casino = new Casino( _userManager, _config.CurrencyName, _config.CurrencyEarnedPerMinute, _config.MinimumGambleAmount, _config.MinimumTimeInSecondsBetweenGambles, _config.GambleChanceToWin );
 					_casino.Start();
 				}
 			}

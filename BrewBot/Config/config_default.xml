@@ -12,7 +12,7 @@
   <!-- use earn-rate="X" to configure the amount earned per minute. The default is 100 -->
   <currency />
   <!-- use minimum="X" to set the minimum gamble amount. The default is 50 -->
-  <!-- use frequency="Y" to set the minimum interval between gambles in seconds. The default is 60 seconds -->
+  <!-- use gamble-interval="Y" to set the minimum interval between gambles in seconds. The default is 10 seconds -->
   <!-- odds="Z" to set the chance to win as a decimal between 0 and 1. The default is 0.5 (fifty-fify odds) -->
   <gambling />
   <!-- use timeout-time="X" to set the timeout time in seconds. The default is 120 ( two minutes ) -->

@@ -35,7 +35,8 @@ namespace UnitTests
 			_mockManager.IncreaseUserCurrency( ALICE, FIFTY );
 			_mockManager.IncreaseUserCurrency( BOB, HUNDRED );
 
-			_casino = new Casino( _mockManager, "dollars", 0, FIFTY, 1 );
+			// Note that we do not want to test anything timing or probablity related since this is a deterministic unit test
+			_casino = new Casino( _mockManager, "dollars", ZERO, FIFTY, ZERO, 1 );
 		}
 
 		[TestMethod]
