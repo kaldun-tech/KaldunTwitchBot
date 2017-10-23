@@ -4,8 +4,8 @@ BrewBot
 
 This is a C# application that runs a Twitch bot which is primarily used for
 playing drinking games with users in the chatroom. It supports other functionality
-as well, such as posting preconfigured messages to chat, gambling in-chat mock
-currency, running raffles, and storing configurations and login credentials.
+as well, such as posting preconfigured messages to chat, moderating chat, gambling
+in-chat mock currency, running raffles, and storing configurations and login credentials.
 
 ********************************************************************************
 
@@ -41,7 +41,13 @@ Configuration
  
  You can also configure a default title for your subscribers. This will address
  subscribers to the stream in chat using the configured title. This is done using the
- <subscribers title="Your title"/> tag and attribute.
+ <subscribers title="Your title"/> tag and attribute. For example, this configuration
+ will send a message to chat every minute.
+ 
+ <interval wait-time="60" />
+ <messages>
+	<message>Click the follow button to see my channel in your followers feed :)</message>
+ </messages>
  
  You can configure channel currency and gambling using the <currency /> and <gambling />
  tags. Add the custom-name="Your currency name" attribute to the <currency /> tag to set
@@ -60,6 +66,23 @@ Configuration
  This configuration sets a currency named cheddar which is earned at a rate of 200
  per minute. A bet must be greater than or equal to 75 cheddar, can be executed up to
  once every thirty seconds, and has a 55% probability of winning.
+ 
+ Automated moderation of chat can also be configured using the <moderation></moderation>
+ tags. You can add a "timeout-time" attribute to the tags to set the number of seconds to
+ timeout users for. The default timeout time is 120 seconds if none is set. Add the 
+ <timeout-words></timeout-words> and <banned-words></banned-words>
+ tags, and nest <word>bad word</word> inside these tags to set words that will cause users
+ to experience a timeout or ban. For example, this configuration will cause users who use the word
+ "crap" to be timed out for 30 seconds, and users who say the word "dang" to be banned.
+ 
+ <moderation timeout-time="30">
+	<timeout-words>
+		<word>crap</word>
+	</timeout-words>
+	<banned-words>
+		<word>dang</word>
+	</banned-words>
+ </moderation>
 
 ********************************************************************************
 

@@ -95,6 +95,7 @@
     <Compile Include="Commands\Factory\CommandFactory.cs" />
     <Compile Include="Commands\Templates\AModeratorOnlyCommand.cs" />
     <Compile Include="Config\BrewBotConfiguration.cs" />
+    <Compile Include="Config\BrewBotConfigurationModel.cs" />
     <Compile Include="Config\ConfigurableMessageSender.cs" />
     <Compile Include="Config\ConfigurableModerator.cs" />
     <Compile Include="Config\ConfigurationReader.cs" />

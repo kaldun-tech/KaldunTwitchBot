@@ -4,9 +4,8 @@ namespace BrewBot.Config
 {
 	internal class BrewBotConfiguration
 	{
-		public BrewBotConfiguration( string configFile )
+		public BrewBotConfiguration()
 		{
-			XMLConfigFile = configFile;
 			MessagesToSend = new List<string>();
 			SecondsBetweenMessageSend = DEFAULT_MESSAGE_INTERVAL;
 			SubscriberTitle = DEFAULT_SUBSCRIBER_TITLE;
@@ -47,17 +46,20 @@ namespace BrewBot.Config
 		private List<string> _bannedWords;
 
 		/// <summary>
-		/// The configuration file to use
+		/// Whether sending messages to chat is enabled
 		/// </summary>
-		public string XMLConfigFile { get; set; }
+		public bool IsMessageSendingEnabled
+		{
+			get { return MessagesToSend != null && MessagesToSend.Count > 0; }
+		}
 
 		/// <summary>
-		/// Get a list of configured messages to send
+		/// The list of configured messages to send
 		/// </summary>
 		public List<string> MessagesToSend { get; set; }
 
 		/// <summary>
-		/// Get the configured interval in seconds between sending messages
+		/// The configured interval in seconds between sending messages
 		/// </summary>
 		public int SecondsBetweenMessageSend
 		{

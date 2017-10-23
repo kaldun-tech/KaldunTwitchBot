@@ -15,13 +15,14 @@ namespace BrewBot.Config
 		/// Write the configuration to file as XML
 		/// </summary>
 		/// <param name="config"></param>
-		public void WriteConfig( BrewBotConfiguration config )
+		/// <param name="configFilePath"></param>
+		public void WriteConfig( BrewBotConfiguration config, string configFilePath )
 		{
-			if ( config != null && !string.IsNullOrEmpty( config.XMLConfigFile ) )
+			if ( config != null && !string.IsNullOrEmpty( configFilePath ) )
 			{
 				XmlDocument document = new XmlDocument();
 				
-				using ( Stream configStream = new FileStream( config.XMLConfigFile, FileMode.OpenOrCreate, FileAccess.Write ) )
+				using ( Stream configStream = new FileStream( configFilePath, FileMode.OpenOrCreate, FileAccess.Write ) )
 				{
 					using ( XmlWriter writer = XmlWriter.Create( configStream ) )
 					{

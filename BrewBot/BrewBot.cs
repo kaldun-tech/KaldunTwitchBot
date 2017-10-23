@@ -21,10 +21,9 @@ namespace BrewBot
 		{
 			InitializeComponent();
 
+			_config = new BrewBotConfigurationModel();
 			_connection = null;
 			_fileDialog = new OpenFileDialog();
-			_config = null;
-			_configReader = null;
 			_automaticMessageSender = null;
 			_moderator = null;
 			_imageForm = new Images();
@@ -61,9 +60,7 @@ namespace BrewBot
 
 		// Configuration
 		OpenFileDialog _fileDialog;
-		string _configFilePath = null;
-		BrewBotConfiguration _config;
-		ConfigurationReader _configReader;
+		BrewBotConfigurationModel _config;
 		ConfigurableMessageSender _automaticMessageSender;
 		ConfigurableModerator _moderator;
 		Casino _casino;
@@ -495,8 +492,7 @@ namespace BrewBot
 			string username = textBoxUser.Text;
 			string oauth = textBoxPassword.Text;
 			_chatChannel = textBoxChat.Text;
-			_configReader = new ConfigurationReader();
-			_config = _configReader.ReadConfig( _configFilePath );
+			_config.ReadConfig();
 
 			_connection = new TwitchLibConnection( _chatChannel, username, oauth );
 			_connection.OnConnected += OnConnect;
@@ -513,28 +509,29 @@ namespace BrewBot
 
 			if ( saveCredentialsCheckbox.Checked )
 			{
-				_credentialsReaderWriter.WriteCredentials( username, oauth, _chatChannel, _configFilePath );
+				_credentialsReaderWriter.WriteCredentials( username, oauth, _chatChannel, _config.ConfigFilePath );
 			}
 
-			if ( _config != null )
+			// Configure the automatic message sender thread
+			if ( _config.IsMessageSendingEnabled )
 			{
-				// Configure the automatic message sender thread
 				_automaticMessageSender = new ConfigurableMessageSender( _connection, _config.SecondsBetweenMessageSend, _config.MessagesToSend );
 				_automaticMessageSender.Start();
-
-				// Configure the moderator
-				if ( _config.IsModerationEnabled )
-				{
-					_moderator = new ConfigurableModerator( _config.TimeoutSeconds, _config.TimeoutWords, _config.BannedWords, _connection );
-				}
-
-				// Configure the casino
-				if ( _config.IsGamblingEnabled )
-				{
-					_casino = new Casino( _userManager, _config.CurrencyName, _config.CurrencyEarnedPerMinute, _config.MinimumGambleAmount, _config.MinimumTimeInSecondsBetweenGambles, _config.GambleChanceToWin );
-					_casino.Start();
-				}
 			}
+
+			// Configure the moderator
+			if ( _config.IsModerationEnabled )
+			{
+				_moderator = new ConfigurableModerator( _config.TimeoutSeconds, _config.TimeoutWords, _config.BannedWords, _connection );
+			}
+
+			// Configure the casino
+			if ( _config.IsGamblingEnabled )
+			{
+				_casino = new Casino( _userManager, _config.CurrencyName, _config.CurrencyEarnedPerMinute, _config.MinimumGambleAmount, _config.MinimumTimeInSecondsBetweenGambles, _config.GambleChanceToWin );
+				_casino.Start();
+			}
+
 			// Reconnect the user manager
 			if ( _userManager != null )
 			{
@@ -916,7 +913,7 @@ namespace BrewBot
 			_fileDialog.ShowDialog();
 			if ( !string.IsNullOrEmpty( _fileDialog.FileName ) )
 			{
-				_configFilePath = _fileDialog.FileName;
+				_config.ConfigFilePath = _fileDialog.FileName;
 			}
 		}
 
@@ -930,7 +927,7 @@ namespace BrewBot
 				textBoxChat.Text = credentials[ 2 ];
 				if ( credentials.Count >= 4 )
 				{
-					_configFilePath = credentials[ 3 ];
+					_config.ConfigFilePath = credentials[ 3 ];
 				}
 			}
 		}

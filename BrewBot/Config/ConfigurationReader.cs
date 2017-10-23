@@ -16,7 +16,7 @@ namespace BrewBot.Config
 		/// </summary>
 		/// <param name="configFilePath">Path of the XML configuration file to open</param>
 		/// <returns>New configuration read from file</returns>
-		public BrewBotConfiguration ReadConfig( string configFilePath)
+		public BrewBotConfiguration ReadConfig( string configFilePath )
         {
             if ( !string.IsNullOrEmpty( configFilePath ) )
 			{
@@ -26,7 +26,7 @@ namespace BrewBot.Config
 					document.Load( configStream );
 				}
 
-				BrewBotConfiguration config = new BrewBotConfiguration( configFilePath );
+				BrewBotConfiguration config = new BrewBotConfiguration();
 				ReadMessageSenderConfig( config, document );
 				ReadSubscriberConfig( config, document );
 				ReadCasinoConfig( config, document );
