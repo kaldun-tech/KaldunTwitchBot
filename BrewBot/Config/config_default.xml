@@ -9,7 +9,7 @@
   <!-- use title="X" to set what you want to address subscribers as -->
   <subscribers title="subscriberino" />
   <!-- use custom-name="YourName" to configure a custom currency name. The default is "cheddar" -->
-  <!-- use earn-rate="X" to configure the amount earned per minute. The default is 100 -->
+  <!-- use earn-rate="X" to configure the amount earned per minute. The default is 0 (no currency is earned) -->
   <currency />
   <!-- use minimum="X" to set the minimum gamble amount. The default is 50 -->
   <!-- use gamble-interval="Y" to set the minimum interval between gambles in seconds. The default is 10 seconds -->

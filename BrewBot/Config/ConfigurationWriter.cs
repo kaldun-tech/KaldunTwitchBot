@@ -74,18 +74,18 @@ namespace BrewBot.Config
 
 		private void WriteCasinoConfigXML( BrewBotConfiguration config, XmlWriter writer )
 		{
-			if ( config.IsCurrencyEnabled )
+			writer.WriteStartElement( ConfigurationResources.CurrencyTag );
+
+			if ( !string.IsNullOrEmpty( config.CurrencyName ) )
 			{
-				writer.WriteStartElement( ConfigurationResources.CurrencyTag );
-
-				if ( !string.IsNullOrEmpty( config.CurrencyName ) )
-				{
-					writer.WriteAttributeString( ConfigurationResources.Currency_NameAttribute, config.CurrencyName );
-				}
-				writer.WriteAttributeString( ConfigurationResources.Currency_EarnRateAttribute, config.CurrencyEarnedPerMinute.ToString() );
-
-				writer.WriteEndElement();
+				writer.WriteAttributeString( ConfigurationResources.Currency_NameAttribute, config.CurrencyName );
 			}
+			if ( config.CurrencyEarnedPerMinute > 0 )
+			{
+				writer.WriteAttributeString( ConfigurationResources.Currency_EarnRateAttribute, config.CurrencyEarnedPerMinute.ToString() );
+			}
+
+			writer.WriteEndElement();
 
 			if ( config.IsGamblingEnabled )
 			{

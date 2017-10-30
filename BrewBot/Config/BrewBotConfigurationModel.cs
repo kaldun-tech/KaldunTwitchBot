@@ -5,29 +5,28 @@ namespace BrewBot.Config
 	public class BrewBotConfigurationModel
 	{
 		/// <summary>
-		/// Initialize a model with no inital configuration
+		/// Initialize a model with a configuration file
 		/// </summary>
-		public BrewBotConfigurationModel()
+		/// <param name="configFilePath"></param>
+		public BrewBotConfigurationModel( string configFilePath )
 		{
 			_config = new BrewBotConfiguration();
 			_reader = new ConfigurationReader();
 			_writer = new ConfigurationWriter();
+			ConfigFilePath = configFilePath;
 			HasUnsavedChanges = false;
 		}
 
 		/// <summary>
-		/// Initialize a model with a configuration file
+		/// Initialize a model with no inital configuration
 		/// </summary>
-		/// <param name="configFilePath"></param>
-		public BrewBotConfigurationModel( string configFilePath ) : this()
-		{
-			ConfigFilePath = configFilePath;
-		}
+		public BrewBotConfigurationModel() : this( null )
+		{ }
 
 		private BrewBotConfiguration _config = null;
 		private ConfigurationReader _reader = null;
 		private ConfigurationWriter _writer = null;
-		private string _configFilePath = null;
+		private string _configFilePath;
 
 		/// <summary>
 		/// The configuration XML file path
@@ -37,8 +36,11 @@ namespace BrewBot.Config
 			get { return _configFilePath; }
 			set
 			{
-				HasUnsavedChanges = true;
-				_configFilePath = value;
+				if ( value != null && value != ConfigFilePath )
+				{
+					MakeDirty();
+					_configFilePath = value;
+				}
 			}
 		}
 
@@ -46,6 +48,14 @@ namespace BrewBot.Config
 		/// Whether there are modifications to the model that have not been written to file
 		/// </summary>
 		public bool HasUnsavedChanges { get; private set; }
+
+		/// <summary>
+		/// Sets HasUnsavedChanges to true
+		/// </summary>
+		private void MakeDirty()
+		{
+			HasUnsavedChanges = true;
+		}
 
 		/// <summary>
 		/// Whether sending messages to chat is enabled
@@ -63,8 +73,12 @@ namespace BrewBot.Config
 			get { return _config.MessagesToSend; }
 			set
 			{
-				_config.MessagesToSend = value;
-				HasUnsavedChanges = true;
+				// Check the count as a proxy for list equality
+				if ( value != null && value != MessagesToSend && value.Count != MessagesToSend.Count )
+				{
+					_config.MessagesToSend = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -76,8 +90,11 @@ namespace BrewBot.Config
 			get { return _config.SecondsBetweenMessageSend; }
 			set
 			{
-				_config.SecondsBetweenMessageSend = value;
-				HasUnsavedChanges = true;
+				if ( value != SecondsBetweenMessageSend )
+				{
+					_config.SecondsBetweenMessageSend = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -89,21 +106,11 @@ namespace BrewBot.Config
 			get { return _config.SubscriberTitle; }
 			set
 			{
-				_config.SubscriberTitle = value;
-				HasUnsavedChanges = true;
-			}
-		}
-
-		/// <summary>
-		/// Whether accrual of currency is enabled. This must be enabled gambling to function.
-		/// </summary>
-		public bool IsCurrencyEnabled
-		{
-			get { return _config.IsCurrencyEnabled; }
-			set
-			{
-				_config.IsCurrencyEnabled = value;
-				HasUnsavedChanges = true;
+				if ( value != null && value != SubscriberTitle )
+				{
+					_config.SubscriberTitle = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -115,8 +122,11 @@ namespace BrewBot.Config
 			get { return _config.CurrencyName; }
 			set
 			{
-				_config.CurrencyName = value;
-				HasUnsavedChanges = true;
+				if ( value != null && value != CurrencyName )
+				{
+					_config.CurrencyName = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -128,8 +138,11 @@ namespace BrewBot.Config
 			get { return _config.CurrencyEarnedPerMinute; }
 			set
 			{
-				_config.CurrencyEarnedPerMinute = value;
-				HasUnsavedChanges = true;
+				if ( value != CurrencyEarnedPerMinute )
+				{
+					_config.CurrencyEarnedPerMinute = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -139,7 +152,14 @@ namespace BrewBot.Config
 		public bool IsGamblingEnabled
 		{
 			get { return _config.IsGamblingEnabled; }
-			set { _config.IsGamblingEnabled = value; }
+			set
+			{
+				if ( value != IsGamblingEnabled )
+				{
+					_config.IsGamblingEnabled = value;
+					MakeDirty();
+				}
+			}
 		}
 
 		/// <summary>
@@ -150,8 +170,11 @@ namespace BrewBot.Config
 			get { return _config.MinimumGambleAmount; }
 			set
 			{
-				_config.MinimumGambleAmount = value;
-				HasUnsavedChanges = true;
+				if ( value != MinimumGambleAmount )
+				{
+					_config.MinimumGambleAmount = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -163,8 +186,11 @@ namespace BrewBot.Config
 			get { return _config.MinimumTimeInSecondsBetweenGambles; }
 			set
 			{
-				_config.MinimumTimeInSecondsBetweenGambles = value;
-				HasUnsavedChanges = true;
+				if ( value !=  MinimumTimeInSecondsBetweenGambles )
+				{
+					_config.MinimumTimeInSecondsBetweenGambles = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -176,8 +202,11 @@ namespace BrewBot.Config
 			get { return _config.GambleChanceToWin; }
 			set
 			{
-				_config.GambleChanceToWin = value;
-				HasUnsavedChanges = true;
+				if ( value != GambleChanceToWin )
+				{
+					_config.GambleChanceToWin = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -197,8 +226,11 @@ namespace BrewBot.Config
 			get { return _config.TimeoutSeconds; }
 			set
 			{
-				_config.TimeoutSeconds = value;
-				HasUnsavedChanges = true;
+				if ( value != TimeoutSeconds )
+				{
+					_config.TimeoutSeconds = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -210,8 +242,12 @@ namespace BrewBot.Config
 			get { return _config.TimeoutWords; }
 			set
 			{
-				_config.TimeoutWords = value;
-				HasUnsavedChanges = true;
+				// Check the count as a proxy for list equality
+				if ( value != null && value != TimeoutWords && value.Count != TimeoutWords.Count )
+				{
+					_config.TimeoutWords = value;
+					MakeDirty();
+				}
 			}
 		}
 
@@ -223,13 +259,17 @@ namespace BrewBot.Config
 			get { return _config.BannedWords; }
 			set
 			{
-				_config.BannedWords = value;
-				HasUnsavedChanges = true;
+				// Check the count as a proxy for list equality
+				if ( value != null && value != BannedWords && value.Count != BannedWords.Count )
+				{
+					_config.BannedWords = value;
+					MakeDirty();
+				}
 			}
 		}
 
 		/// <summary>
-		/// Read the configuration from file
+		/// Read the configuration from file to populate the model
 		/// </summary>
 		public void ReadConfig()
 		{
@@ -241,7 +281,7 @@ namespace BrewBot.Config
 		}
 
 		/// <summary>
-		/// Write the configuration to file
+		/// Write the configuration model to file
 		/// </summary>
 		public void WriteConfig()
 		{

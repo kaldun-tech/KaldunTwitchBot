@@ -96,7 +96,6 @@ namespace BrewBot.Config
 			XmlNode currencyNode = document.DocumentElement.SelectSingleNode( currencyPath );
 			if ( currencyNode != null )
 			{
-				config.IsCurrencyEnabled = true;
 				attributes = currencyNode.Attributes;
 				if ( attributes != null )
 				{

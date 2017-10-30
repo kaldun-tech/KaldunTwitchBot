@@ -4,7 +4,7 @@ using BrewBot;
 namespace UnitTests
 {
 	/// <summary>
-	/// Summary description for CasinoTest
+	/// Test the Casino class
 	/// </summary>
 	[TestClass]
 	public class CasinoTest

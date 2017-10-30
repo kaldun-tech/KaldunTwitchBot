@@ -9,7 +9,6 @@ namespace BrewBot.Config
 			MessagesToSend = new List<string>();
 			SecondsBetweenMessageSend = DEFAULT_MESSAGE_INTERVAL;
 			SubscriberTitle = DEFAULT_SUBSCRIBER_TITLE;
-			IsCurrencyEnabled = false;
 			CurrencyName = DEFAULT_CURRENCY_NAME;
 			CurrencyEarnedPerMinute = DEFAULT_CURRENCY_EARN_RATE;
 			IsGamblingEnabled = false;
@@ -30,7 +29,7 @@ namespace BrewBot.Config
 		// Default currency name
 		private const string DEFAULT_CURRENCY_NAME = "cheddar";
 		// Default amount of currency earned per minute
-		private const uint DEFAULT_CURRENCY_EARN_RATE = 100;
+		private const uint DEFAULT_CURRENCY_EARN_RATE = 0;
 		// Default minimum amount to gamble
 		private const int DEFAULT_MINIMUM_GAMBLE_AMOUNT = 50;
 		// Default minimum amount of seconds between allowed gamble attempts
@@ -79,11 +78,6 @@ namespace BrewBot.Config
 		public string SubscriberTitle { get; set; }
 
 		/// <summary>
-		/// Whether accrual of currency is enabled. This must be enabled gambling to function.
-		/// </summary>
-		public bool IsCurrencyEnabled { get; set; }
-
-		/// <summary>
 		/// Name of the currency
 		/// </summary>
 		public string CurrencyName { get; set; }
@@ -98,7 +92,7 @@ namespace BrewBot.Config
 		/// </summary>
 		public bool IsGamblingEnabled
 		{
-			get { return IsCurrencyEnabled && _gamblingEnabled; }
+			get { return _gamblingEnabled; }
 			set { _gamblingEnabled = value; }
 		}
 
