@@ -82,7 +82,6 @@ namespace UnitTests
 			Assert.IsFalse( _model.HasUnsavedChanges );
 
 			// Now test actual values
-
 			_model.ConfigFilePath = ALT_CONFIG_FILE_NAME;
 			Assert.IsTrue( _model.HasUnsavedChanges );
 			Assert.AreEqual( _model.ConfigFilePath, ALT_CONFIG_FILE_NAME );
