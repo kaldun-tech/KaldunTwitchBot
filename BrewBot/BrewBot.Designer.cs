@@ -119,6 +119,14 @@
 			this.checkBoxCurrencyEnabled = new System.Windows.Forms.CheckBox();
 			this.labelCurrencyName = new System.Windows.Forms.Label();
 			this.labelCurrencyEarnRate = new System.Windows.Forms.Label();
+			this.textBoxMessagingInterval = new System.Windows.Forms.TextBox();
+			this.textBoxNextMessage = new System.Windows.Forms.TextBox();
+			this.textBoxCurrencyName = new System.Windows.Forms.TextBox();
+			this.textBoxCurrencyEarnRate = new System.Windows.Forms.TextBox();
+			this.textBoxSubscriberTitle = new System.Windows.Forms.TextBox();
+			this.buttonMessageAdd = new System.Windows.Forms.Button();
+			this.labelGambling = new System.Windows.Forms.Label();
+			this.checkBoxGamblingEnabled = new System.Windows.Forms.CheckBox();
 			this.menuStripMain.SuspendLayout();
 			this.tabControlConnected.SuspendLayout();
 			this.tabPageRaffle.SuspendLayout();
@@ -976,6 +984,15 @@
 			// 
 			// tabConfiguration
 			// 
+			this.tabConfiguration.AutoScroll = true;
+			this.tabConfiguration.Controls.Add(this.checkBoxGamblingEnabled);
+			this.tabConfiguration.Controls.Add(this.labelGambling);
+			this.tabConfiguration.Controls.Add(this.buttonMessageAdd);
+			this.tabConfiguration.Controls.Add(this.textBoxSubscriberTitle);
+			this.tabConfiguration.Controls.Add(this.textBoxCurrencyEarnRate);
+			this.tabConfiguration.Controls.Add(this.textBoxCurrencyName);
+			this.tabConfiguration.Controls.Add(this.textBoxNextMessage);
+			this.tabConfiguration.Controls.Add(this.textBoxMessagingInterval);
 			this.tabConfiguration.Controls.Add(this.labelCurrencyEarnRate);
 			this.tabConfiguration.Controls.Add(this.labelCurrencyName);
 			this.tabConfiguration.Controls.Add(this.checkBoxCurrencyEnabled);
@@ -1066,7 +1083,7 @@
 			// 
 			// buttonSaveConfig
 			// 
-			this.buttonSaveConfig.Location = new System.Drawing.Point(298, 0);
+			this.buttonSaveConfig.Location = new System.Drawing.Point(248, 0);
 			this.buttonSaveConfig.Name = "buttonSaveConfig";
 			this.buttonSaveConfig.Size = new System.Drawing.Size(199, 33);
 			this.buttonSaveConfig.TabIndex = 1;
@@ -1083,7 +1100,7 @@
 			// labelMessaging
 			// 
 			this.labelMessaging.AutoSize = true;
-			this.labelMessaging.Location = new System.Drawing.Point(0, 48);
+			this.labelMessaging.Location = new System.Drawing.Point(-1, 40);
 			this.labelMessaging.Name = "labelMessaging";
 			this.labelMessaging.Size = new System.Drawing.Size(58, 13);
 			this.labelMessaging.TabIndex = 3;
@@ -1092,7 +1109,7 @@
 			// labelMessageInterval
 			// 
 			this.labelMessageInterval.AutoSize = true;
-			this.labelMessageInterval.Location = new System.Drawing.Point(40, 74);
+			this.labelMessageInterval.Location = new System.Drawing.Point(40, 62);
 			this.labelMessageInterval.Name = "labelMessageInterval";
 			this.labelMessageInterval.Size = new System.Drawing.Size(145, 13);
 			this.labelMessageInterval.TabIndex = 4;
@@ -1101,7 +1118,7 @@
 			// labelMessagesToSend
 			// 
 			this.labelMessagesToSend.AutoSize = true;
-			this.labelMessagesToSend.Location = new System.Drawing.Point(40, 103);
+			this.labelMessagesToSend.Location = new System.Drawing.Point(40, 86);
 			this.labelMessagesToSend.Name = "labelMessagesToSend";
 			this.labelMessagesToSend.Size = new System.Drawing.Size(99, 13);
 			this.labelMessagesToSend.TabIndex = 5;
@@ -1110,7 +1127,7 @@
 			// labelSubscriberTitle
 			// 
 			this.labelSubscriberTitle.AutoSize = true;
-			this.labelSubscriberTitle.Location = new System.Drawing.Point(0, 136);
+			this.labelSubscriberTitle.Location = new System.Drawing.Point(-1, 112);
 			this.labelSubscriberTitle.Name = "labelSubscriberTitle";
 			this.labelSubscriberTitle.Size = new System.Drawing.Size(80, 13);
 			this.labelSubscriberTitle.TabIndex = 6;
@@ -1119,7 +1136,7 @@
 			// labelCurrency
 			// 
 			this.labelCurrency.AutoSize = true;
-			this.labelCurrency.Location = new System.Drawing.Point(0, 161);
+			this.labelCurrency.Location = new System.Drawing.Point(-1, 136);
 			this.labelCurrency.Name = "labelCurrency";
 			this.labelCurrency.Size = new System.Drawing.Size(49, 13);
 			this.labelCurrency.TabIndex = 7;
@@ -1128,7 +1145,7 @@
 			// checkBoxCurrencyEnabled
 			// 
 			this.checkBoxCurrencyEnabled.AutoSize = true;
-			this.checkBoxCurrencyEnabled.Location = new System.Drawing.Point(298, 157);
+			this.checkBoxCurrencyEnabled.Location = new System.Drawing.Point(248, 136);
 			this.checkBoxCurrencyEnabled.Name = "checkBoxCurrencyEnabled";
 			this.checkBoxCurrencyEnabled.Size = new System.Drawing.Size(65, 17);
 			this.checkBoxCurrencyEnabled.TabIndex = 8;
@@ -1138,7 +1155,7 @@
 			// labelCurrencyName
 			// 
 			this.labelCurrencyName.AutoSize = true;
-			this.labelCurrencyName.Location = new System.Drawing.Point(40, 185);
+			this.labelCurrencyName.Location = new System.Drawing.Point(40, 158);
 			this.labelCurrencyName.Name = "labelCurrencyName";
 			this.labelCurrencyName.Size = new System.Drawing.Size(35, 13);
 			this.labelCurrencyName.TabIndex = 9;
@@ -1147,11 +1164,74 @@
 			// labelCurrencyEarnRate
 			// 
 			this.labelCurrencyEarnRate.AutoSize = true;
-			this.labelCurrencyEarnRate.Location = new System.Drawing.Point(40, 207);
+			this.labelCurrencyEarnRate.Location = new System.Drawing.Point(40, 184);
 			this.labelCurrencyEarnRate.Name = "labelCurrencyEarnRate";
 			this.labelCurrencyEarnRate.Size = new System.Drawing.Size(134, 13);
 			this.labelCurrencyEarnRate.TabIndex = 10;
 			this.labelCurrencyEarnRate.Text = "Amount Earned Per Minute";
+			// 
+			// textBoxMessagingInterval
+			// 
+			this.textBoxMessagingInterval.Location = new System.Drawing.Point(248, 62);
+			this.textBoxMessagingInterval.Name = "textBoxMessagingInterval";
+			this.textBoxMessagingInterval.Size = new System.Drawing.Size(199, 20);
+			this.textBoxMessagingInterval.TabIndex = 11;
+			// 
+			// textBoxNextMessage
+			// 
+			this.textBoxNextMessage.Location = new System.Drawing.Point(248, 83);
+			this.textBoxNextMessage.Name = "textBoxNextMessage";
+			this.textBoxNextMessage.Size = new System.Drawing.Size(199, 20);
+			this.textBoxNextMessage.TabIndex = 12;
+			// 
+			// textBoxCurrencyName
+			// 
+			this.textBoxCurrencyName.Location = new System.Drawing.Point(248, 158);
+			this.textBoxCurrencyName.Name = "textBoxCurrencyName";
+			this.textBoxCurrencyName.Size = new System.Drawing.Size(199, 20);
+			this.textBoxCurrencyName.TabIndex = 13;
+			// 
+			// textBoxCurrencyEarnRate
+			// 
+			this.textBoxCurrencyEarnRate.Location = new System.Drawing.Point(248, 184);
+			this.textBoxCurrencyEarnRate.Name = "textBoxCurrencyEarnRate";
+			this.textBoxCurrencyEarnRate.Size = new System.Drawing.Size(199, 20);
+			this.textBoxCurrencyEarnRate.TabIndex = 14;
+			// 
+			// textBoxSubscriberTitle
+			// 
+			this.textBoxSubscriberTitle.Location = new System.Drawing.Point(248, 112);
+			this.textBoxSubscriberTitle.Name = "textBoxSubscriberTitle";
+			this.textBoxSubscriberTitle.Size = new System.Drawing.Size(199, 20);
+			this.textBoxSubscriberTitle.TabIndex = 15;
+			// 
+			// buttonMessageAdd
+			// 
+			this.buttonMessageAdd.Location = new System.Drawing.Point(453, 83);
+			this.buttonMessageAdd.Name = "buttonMessageAdd";
+			this.buttonMessageAdd.Size = new System.Drawing.Size(93, 20);
+			this.buttonMessageAdd.TabIndex = 16;
+			this.buttonMessageAdd.Text = "Add";
+			this.buttonMessageAdd.UseVisualStyleBackColor = true;
+			// 
+			// labelGambling
+			// 
+			this.labelGambling.AutoSize = true;
+			this.labelGambling.Location = new System.Drawing.Point(-1, 208);
+			this.labelGambling.Name = "labelGambling";
+			this.labelGambling.Size = new System.Drawing.Size(51, 13);
+			this.labelGambling.TabIndex = 17;
+			this.labelGambling.Text = "Gambling";
+			// 
+			// checkBoxGamblingEnabled
+			// 
+			this.checkBoxGamblingEnabled.AutoSize = true;
+			this.checkBoxGamblingEnabled.Location = new System.Drawing.Point(248, 208);
+			this.checkBoxGamblingEnabled.Name = "checkBoxGamblingEnabled";
+			this.checkBoxGamblingEnabled.Size = new System.Drawing.Size(65, 17);
+			this.checkBoxGamblingEnabled.TabIndex = 18;
+			this.checkBoxGamblingEnabled.Text = "Enabled";
+			this.checkBoxGamblingEnabled.UseVisualStyleBackColor = true;
 			// 
 			// BrewBot
 			// 
@@ -1278,6 +1358,14 @@
 		private System.Windows.Forms.CheckBox checkBoxCurrencyEnabled;
 		private System.Windows.Forms.Label labelCurrency;
 		private System.Windows.Forms.Label labelSubscriberTitle;
+		private System.Windows.Forms.TextBox textBoxMessagingInterval;
+		private System.Windows.Forms.TextBox textBoxCurrencyEarnRate;
+		private System.Windows.Forms.TextBox textBoxCurrencyName;
+		private System.Windows.Forms.TextBox textBoxNextMessage;
+		private System.Windows.Forms.TextBox textBoxSubscriberTitle;
+		private System.Windows.Forms.Button buttonMessageAdd;
+		private System.Windows.Forms.Label labelGambling;
+		private System.Windows.Forms.CheckBox checkBoxGamblingEnabled;
 	}
 }
 
