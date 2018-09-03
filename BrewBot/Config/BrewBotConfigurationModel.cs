@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BrewBot.Config
 {
@@ -66,7 +67,7 @@ namespace BrewBot.Config
 		}
 
 		/// <summary>
-		/// The list of configured messages to send
+		/// The list of configured messages to send. Setting to a list with the same count does not work.
 		/// </summary>
 		public List<string> MessagesToSend
 		{
@@ -97,6 +98,44 @@ namespace BrewBot.Config
 				}
 			}
 		}
+
+		/// <summary>
+		/// The configured custom command prefix
+		/// </summary>
+		public string CustomCommandPrefix
+		{
+			get { return _config.CustomCommandPrefix; }
+			set
+			{
+				if ( value != null && value != CustomCommandPrefix )
+				{
+					_config.CustomCommandPrefix = value;
+					MakeDirty();
+				}
+			}
+		}
+
+		/// <summary>
+		/// The configured custom commands maps command names to outputs. Setting to a list with the same count does not work.
+		/// </summary>
+		public List<Tuple<string, string, string>> CustomCommands
+		{
+			get { return _config.CustomCommands; }
+			set
+			{
+				// Check the count as a proxy for list equality
+				if ( value != null && value != CustomCommands && value.Count != CustomCommands.Count )
+				{
+					_config.CustomCommands = value;
+					MakeDirty();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Whether there are command customizations
+		/// </summary>
+		public bool AreCommandsCustomized { get { return _config.AreCommandsCustomized; } }
 
 		/// <summary>
 		/// The title we will use to address our subscribers

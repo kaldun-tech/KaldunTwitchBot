@@ -32,7 +32,7 @@ namespace BrewBot
 			_windowColor = textBoxR.BackColor;
 
 			_commandFactory = new CommandFactory( InvalidCommandCB, GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinDrinkingGameCB, QuitDrinkingGameCB, RaffleCB,
-				SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB );
+				SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB, CustomCommandsCB, _config.CustomCommandPrefix, _config.CustomCommands );
 			_credentialsReaderWriter = new LoginCredentialReaderWriter();
 			_userManager = new UserManager();
 			_drinkingGame = new DrinkingGame( _userManager );
@@ -320,13 +320,13 @@ namespace BrewBot
 			_drinkingGame.RemoveParticipant( e.Username );
 		}
 
-		private void InvalidCommandCB( string sender, string target )
+		private void InvalidCommandCB( string sender, string target, string output = null )
 		{
 			string message = string.Format( Strings.Commands_InvalidCommand, sender );
 			_connection.Send( message );
 		}
 
-		private void GetCommandsCB( string sender, string target )
+		private void GetCommandsCB( string sender, string target, string output = null )
 		{
 			DateTime currentTime = DateTime.UtcNow;
 			// Send if we have waited a proper amount of time between the last send
@@ -341,47 +341,42 @@ namespace BrewBot
 			}
 			else
 			{
-				string message = string.Format( Strings.CommandOnCooldown, sender );
-				_connection.Send( message );
+				output = string.Format( Strings.CommandOnCooldown, sender );
+				_connection.Send( output );
 			}
 		}
 
-		private void GetBalanceCB( string sender, string target )
+		private void GetBalanceCB( string sender, string target, string output = null )
 		{
-			string message = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( sender );
-			_connection.Send( message );
+			output = ( _casino == null ) ? "The casino is not currently operating, kupo!" : _casino.GetStringBalance( sender );
+			_connection.Send( output );
 		}
 
-		private void GambleCB( string sender, string target )
+		private void GambleCB( string sender, string target, string output = null )
 		{
-			string message = null;
 			if ( _casino == null )
 			{
-				message = string.Format( Strings.Casino_NotOperating, sender );
+				output = string.Format( Strings.Casino_NotOperating, sender );
+			}
+			else if( int.TryParse( target, out int betAmount ) && betAmount > 0 )
+			{
+				// Target is the gamble amount
+				output = _casino.Gamble( sender, (uint) betAmount );
 			}
 			else
 			{
-				// Target is the gamble amount
-				int betAmount = 0;
-				if ( int.TryParse( target, out betAmount ) && betAmount > 0 )
-				{
-					message = _casino.Gamble( sender, (uint) betAmount );
-				}
-				else
-				{
-					message = string.Format( Strings.Casino_InvalidBetAmount, sender );
-				}
+				output = string.Format( Strings.Casino_InvalidBetAmount, sender );
 			}
-			_connection.Send( message );
+			_connection.Send( output );
 		}
 
-		private void GiveDrinksCB( string sender, string target )
+		private void GiveDrinksCB( string sender, string target, string output = null )
 		{
 			_drinkingGame.GivePlayerDrink( sender, target );
 			_drinkingGame.AddIntroducedUser( sender );
 		}
 
-		private void JoinDrinkingGameCB( string sender, string target )
+		private void JoinDrinkingGameCB( string sender, string target, string output = null )
 		{
 			if ( !_drinkingGame.IsPlaying )
 			{
@@ -424,7 +419,7 @@ namespace BrewBot
 			_drinkingGame.AddIntroducedUser( sender );
 		}
 
-		private void QuitDrinkingGameCB( string sender, string target )
+		private void QuitDrinkingGameCB( string sender, string target, string output = null )
 		{
 			if ( !_drinkingGame.IsPlaying )
 			{
@@ -439,39 +434,44 @@ namespace BrewBot
 			_drinkingGame.AddIntroducedUser( sender );
 		}
 
-		private void RaffleCB( string sender, string target )
+		private void RaffleCB( string sender, string target, string output = null )
 		{
 			RaffleAdd( sender );
 		}
 
-		private void SplashCurrencyCB( string sender, string target )
+		private void SplashCurrencyCB( string sender, string target, string output = null )
 		{
 			// Target is the splash amount
 			int splashAmount = 0;
 			if ( _casino != null && int.TryParse(target, out splashAmount) && splashAmount > 0 && _casino.SplashUsers( (uint) splashAmount ) )
 			{
-				string message = string.Format( Strings.SplashSuccess, sender, splashAmount, _config.CurrencyName );
-				_connection.Send( message );
+				output = string.Format( Strings.SplashSuccess, sender, splashAmount, _config.CurrencyName );
+				_connection.Send( output );
 			}
 			else
 			{
-				string message = string.Format( Strings.SplashFail, sender );
-				_connection.Send( message );
+				output = string.Format( Strings.SplashFail, sender );
+				_connection.Send( output );
 			}
 		}
 
-		private void GetDrinkTickets( string sender, string target )
+		private void GetDrinkTickets( string sender, string target, string output = null )
 		{
 			uint drinkTickets = _userManager.GetDrinkTickets( sender );
-			string message = string.Format( Strings.DrinkTicketsBalance, sender, drinkTickets );
-			_connection.Send( message );
+			output = string.Format( Strings.DrinkTicketsBalance, sender, drinkTickets );
+			_connection.Send( output );
 		}
 
-		private void GetTotalDrinksCB( string sender, string target )
+		private void GetTotalDrinksCB( string sender, string target, string output = null )
 		{
 			uint numberOfDrinks = _userManager.GetNumberOfDrinksTaken( sender );
-			string message = string.Format( Strings.TotalDrinksTaken, sender, numberOfDrinks );
-			_connection.Send( message );
+			output = string.Format( Strings.TotalDrinksTaken, sender, numberOfDrinks );
+			_connection.Send( output );
+		}
+
+		private void CustomCommandsCB( string sender, string target, string output )
+		{
+			_connection.Send( output );
 		}
 
 		private void buttonDoWork_Click( object sender, EventArgs e )

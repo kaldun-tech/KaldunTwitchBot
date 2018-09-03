@@ -118,83 +118,91 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Casino_Gamble_Description" xml:space="preserve">
-    <value>!gamble (amount) - Gamble currency</value>
+    <value>{0}gamble (amount) - Gamble currency</value>
     <comment>Description for gamble command</comment>
   </data>
   <data name="Casino_Gamble_Regex" xml:space="preserve">
-    <value>^!gamble (.*)$</value>
+    <value>^{0}gamble (.*)$</value>
     <comment>Regex for gamble command</comment>
   </data>
   <data name="Casino_GetBalance_Description" xml:space="preserve">
-    <value>"!balance - Display your currency balance"</value>
+    <value>"{0}balance - Display your currency balance"</value>
     <comment>Description for get balance command</comment>
   </data>
   <data name="Casino_GetBalance_Regex" xml:space="preserve">
-    <value>^!balance$</value>
+    <value>^{0}balance$</value>
     <comment>Regex for get balance command</comment>
   </data>
   <data name="Casino_Splash_Description" xml:space="preserve">
-    <value>!splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency</value>
+    <value>{0}splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency</value>
     <comment>Description for splash command</comment>
   </data>
   <data name="Casino_Splash_Regex" xml:space="preserve">
-    <value>^!splash (.*)$</value>
+    <value>^{0}splash (.*)$</value>
     <comment>Regex for splash command</comment>
   </data>
+  <data name="CustomCommand_Description" xml:space="preserve">
+    <value>{0}{1} - {2}</value>
+    <comment>Builder for custom command description</comment>
+  </data>
+  <data name="Default_Prefix" xml:space="preserve">
+    <value>!</value>
+    <comment>The default prefix for bot commands</comment>
+  </data>
   <data name="DrinkingGame_GetDrinks_Description" xml:space="preserve">
-    <value>!drinks - Display how many drinks you have taken during active drinking games</value>
+    <value>{0}drinks - Display how many drinks you have taken during active drinking games</value>
     <comment>Description for get drinks command</comment>
   </data>
   <data name="DrinkingGame_GetDrinks_Regex" xml:space="preserve">
-    <value>^!drinks$</value>
+    <value>^{0}drinks$</value>
     <comment>Regex for get drinks command</comment>
   </data>
   <data name="DrinkingGame_GetTickets_Description" xml:space="preserve">
-    <value>!tickets - Display your drink ticket balance</value>
+    <value>{0}tickets - Display your drink ticket balance</value>
     <comment>Description for get tickets command</comment>
   </data>
   <data name="DrinkingGame_GetTickets_Regex" xml:space="preserve">
-    <value>^!tickets$</value>
+    <value>^{0}tickets$</value>
     <comment>Regex for get tickets command</comment>
   </data>
   <data name="DrinkingGame_GiveDrink_Description" xml:space="preserve">
-    <value>!give (username) - Spend a drink ticket to make a player drink</value>
+    <value>{0}give (username) - Spend a drink ticket to make a player drink</value>
     <comment>Description for give drink command</comment>
   </data>
   <data name="DrinkingGame_GiveDrink_Regex" xml:space="preserve">
-    <value>^!give (.*)$</value>
+    <value>^{0}give (.*)$</value>
     <comment>Regex for give drink command</comment>
   </data>
   <data name="DrinkingGame_Join_Description" xml:space="preserve">
-    <value>!join (player) - Join the drinking game as the input player</value>
+    <value>{0}join (player) - Join the drinking game as the input player</value>
     <comment>Description for drinking game join command</comment>
   </data>
   <data name="DrinkingGame_Join_Regex" xml:space="preserve">
-    <value>^!join (.*)$</value>
+    <value>^{0}join (.*)$</value>
     <comment>Regex for drinking game join command</comment>
   </data>
   <data name="DrinkingGame_Quit_Description" xml:space="preserve">
-    <value>!quit - Quit the drinking game</value>
+    <value>{0}quit - Quit the drinking game</value>
     <comment>Description for drinking game quit command</comment>
   </data>
   <data name="DrinkingGame_Quit_Regex" xml:space="preserve">
-    <value>^!quit$</value>
+    <value>^{0}quit$</value>
     <comment>Regex for drinking game quit command</comment>
   </data>
   <data name="GetCommands_Description" xml:space="preserve">
-    <value>!commands - get this list of commands</value>
+    <value>{0}commands - get this list of commands</value>
     <comment>Description for get commands</comment>
   </data>
   <data name="GetCommands_Regex" xml:space="preserve">
-    <value>!commands$</value>
+    <value>{0}commands$</value>
     <comment>Regex for get commands command</comment>
   </data>
   <data name="Raffle_Description" xml:space="preserve">
-    <value>!raffle - Enter the current raffle</value>
+    <value>{0}raffle - Enter the current raffle</value>
     <comment>Description for raffle command</comment>
   </data>
   <data name="Raffle_Regex" xml:space="preserve">
-    <value>^!raffle$</value>
+    <value>^{0}raffle$</value>
     <comment>Regex for raffle command</comment>
   </data>
 </root>

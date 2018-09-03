@@ -75,25 +75,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Casino.cs" />
+    <Compile Include="Commands\BuiltInCommandcs.cs" />
+    <Compile Include="Commands\CustomCommand.cs" />
     <Compile Include="Commands\Factory\CommandResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CommandResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Commands\GetBalanceCommand.cs" />
-    <Compile Include="Commands\GetCommandsCommand.cs" />
-    <Compile Include="Commands\GetTicketsCommand.cs" />
-    <Compile Include="Commands\GambleCommand.cs" />
-    <Compile Include="Commands\GetTotalDrinksTakenCommand.cs" />
-    <Compile Include="Commands\GiveDrinksCommand.cs" />
     <Compile Include="Commands\Interfaces\ICommandFactory.cs" />
-    <Compile Include="Commands\JoinDrinkingGameCommand.cs" />
-    <Compile Include="Commands\QuitDrinkingGameCommand.cs" />
-    <Compile Include="Commands\RaffleCommand.cs" />
-    <Compile Include="Commands\SplashCurrencyCommand.cs" />
     <Compile Include="Commands\Templates\ACommand.cs" />
     <Compile Include="Commands\Factory\CommandFactory.cs" />
-    <Compile Include="Commands\Templates\AModeratorOnlyCommand.cs" />
+    <Compile Include="Commands\ModeratorOnlyCommand.cs" />
     <Compile Include="Config\BrewBotConfiguration.cs" />
     <Compile Include="Config\BrewBotConfigurationModel.cs" />
     <Compile Include="Config\ConfigurableMessageSender.cs" />

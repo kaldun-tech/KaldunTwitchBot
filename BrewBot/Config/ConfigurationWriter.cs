@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml;
 
 namespace BrewBot.Config
@@ -28,6 +29,7 @@ namespace BrewBot.Config
 					{
 						StartWriteConfigXML( writer );
 						WriteMessageSenderConfigXML( config, writer );
+						WriteCustomCommandsConfigXML( config, writer );
 						WriteSubscriberConfigXML( config, writer );
 						WriteCasinoConfigXML( config, writer );
 						WriteModerationConfigXML( config, writer );
@@ -58,6 +60,28 @@ namespace BrewBot.Config
 				{
 					writer.WriteElementString( ConfigurationResources.MessageTag, message );
 				}
+				writer.WriteEndElement();
+			}
+		}
+
+		private void WriteCustomCommandsConfigXML( BrewBotConfiguration config, XmlWriter writer )
+		{
+			if ( config.AreCommandsCustomized )
+			{
+				// Custom commands
+				writer.WriteStartElement( ConfigurationResources.CustomCommandsTag );
+				writer.WriteAttributeString( ConfigurationResources.CustomCommands_DefaultPrefixAttribute, config.CustomCommandPrefix );
+
+				foreach ( Tuple<string, string, string> customCommand in config.CustomCommands )
+				{
+					writer.WriteStartElement( ConfigurationResources.CustomCommands_CommandTag );
+					writer.WriteAttributeString( ConfigurationResources.CustomCommands_CommandNameAttribute, customCommand.Item1 );
+					writer.WriteAttributeString( ConfigurationResources.CustomCommands_CommandDescriptionAttribute, customCommand.Item2 );
+					writer.WriteValue( customCommand.Item3 );
+					writer.WriteEndElement();
+				}
+
+				// End custom commands
 				writer.WriteEndElement();
 			}
 		}

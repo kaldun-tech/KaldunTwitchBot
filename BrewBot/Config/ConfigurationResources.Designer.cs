@@ -19,7 +19,7 @@ namespace BrewBot.Config {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ConfigurationResources {
@@ -93,6 +93,51 @@ namespace BrewBot.Config {
         internal static string CurrencyTag {
             get {
                 return ResourceManager.GetString("CurrencyTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to description.
+        /// </summary>
+        internal static string CustomCommands_CommandDescriptionAttribute {
+            get {
+                return ResourceManager.GetString("CustomCommands_CommandDescriptionAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to name.
+        /// </summary>
+        internal static string CustomCommands_CommandNameAttribute {
+            get {
+                return ResourceManager.GetString("CustomCommands_CommandNameAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to command.
+        /// </summary>
+        internal static string CustomCommands_CommandTag {
+            get {
+                return ResourceManager.GetString("CustomCommands_CommandTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to default-prefix.
+        /// </summary>
+        internal static string CustomCommands_DefaultPrefixAttribute {
+            get {
+                return ResourceManager.GetString("CustomCommands_DefaultPrefixAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to custom-commands.
+        /// </summary>
+        internal static string CustomCommandsTag {
+            get {
+                return ResourceManager.GetString("CustomCommandsTag", resourceCulture);
             }
         }
         

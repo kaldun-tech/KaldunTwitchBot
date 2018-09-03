@@ -4,11 +4,13 @@ using BrewBot.Interfaces;
 using static BrewBot.CommandParsing.Templates.ACommand;
 using System.Collections.Generic;
 using BrewBot.Commands.Factory;
+using System;
+using BrewBot.CommandParsing.Templates;
 
 namespace BrewBot.Commands
 {
 	public class CommandFactory : ICommandFactory
-    {
+	{
 		/// <summary>
 		/// Create a commandfactory given callbacks to use for command actions.
 		/// </summary>
@@ -23,67 +25,79 @@ namespace BrewBot.Commands
 		/// <param name="splashCB"></param>
 		/// <param name="getTicketsCB"></param>
 		/// <param name="getTotalDrinksCB"></param>
-        public CommandFactory( CommandCallback invalidCommandCB, CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
-            CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB )
-        {
-			// Assign callbacks
-			_invalidCommandCB = invalidCommandCB;
-			_getCommandsCB = getCommandsCB;
-            _getBalanceCB = getBalanceCB;
-            _gambleCB = gambleCB;
-            _giveDrinksCB = giveDrinksCB;
-            _joinGameCB = joinGameCB;
-            _quitGameCB = quitGameCB;
-            _raffleCB = raffleCB;
-            _splashCB = splashCB;
-			_getTicketsCB = getTicketsCB;
-			_getTotalDrinksCB = getTotalDrinksCB;
+		public CommandFactory( CommandCallback invalidCommandCB, CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
+			CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB ) :
+			this( invalidCommandCB, getCommandsCB, getBalanceCB, gambleCB, giveDrinksCB, joinGameCB, quitGameCB, raffleCB, splashCB, getTicketsCB, getTotalDrinksCB, null, null, null ) {}
+
+		/// <summary>
+		/// Create a commandfactory given callbacks to use for command actions. Allows further customization.
+		/// </summary>
+		/// <param name="invalidCommandCB"></param>
+		/// <param name="getCommandsCB"></param>
+		/// <param name="getBalanceCB"></param>
+		/// <param name="gambleCB"></param>
+		/// <param name="giveDrinksCB"></param>
+		/// <param name="joinGameCB"></param>
+		/// <param name="quitGameCB"></param>
+		/// <param name="raffleCB"></param>
+		/// <param name="splashCB"></param>
+		/// <param name="getTicketsCB"></param>
+		/// <param name="getTotalDrinksCB"></param>
+		/// <param name="customCB"></param>
+		/// <param name="commandPrefix"></param>
+		/// <param name="customCommands"></param>
+		public CommandFactory( CommandCallback invalidCommandCB, CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB,
+			CommandCallback giveDrinksCB, CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB,
+			CommandCallback getTotalDrinksCB, CommandCallback customCB, string commandPrefix, IList<Tuple<string, string, string>> customCommands )
+		{
+			// On null just use default value
+			if ( commandPrefix != null )
+			{
+				_commandPrefix = commandPrefix;
+			}
 
 			// Initialize structs
-			_getCommandsStruct = new CommandStruct( CommandResources.GetCommands_Description, CommandResources.GetCommands_Regex );
-			_casinoGetBalanceStruct = new CommandStruct( CommandResources.Casino_GetBalance_Description, CommandResources.Casino_GetBalance_Regex );
-			_casinoGambleStruct = new CommandStruct( CommandResources.Casino_Gamble_Description, CommandResources.Casino_Gamble_Regex );
-			_casinoSplashStruct = new CommandStruct( CommandResources.Casino_Splash_Description, CommandResources.Casino_Splash_Regex );
-			_drinkingGameGiveStruct = new CommandStruct( CommandResources.DrinkingGame_GiveDrink_Description, CommandResources.DrinkingGame_GiveDrink_Regex );
-			_drinkingGameJoinStruct = new CommandStruct( CommandResources.DrinkingGame_Join_Description, CommandResources.DrinkingGame_Join_Regex );
-			_drinkingGameQuitStruct = new CommandStruct( CommandResources.DrinkingGame_Quit_Description, CommandResources.DrinkingGame_Quit_Regex );
-			_raffleStruct = new CommandStruct( CommandResources.Raffle_Description, CommandResources.Raffle_Regex );
-			_getDrinkTicketsStruct = new CommandStruct( CommandResources.DrinkingGame_GetTickets_Description, CommandResources.DrinkingGame_GetTickets_Regex );
-			_getDrinksStruct = new CommandStruct( CommandResources.DrinkingGame_GetDrinks_Description, CommandResources.DrinkingGame_GetDrinks_Regex );
+			CommandStruct getCommandsStruct = new CommandStruct( CommandResources.GetCommands_Regex, CommandResources.GetCommands_Description, getCommandsCB );
+			CommandStruct casinoGetBalanceStruct = new CommandStruct( CommandResources.Casino_GetBalance_Regex, CommandResources.Casino_GetBalance_Description, getBalanceCB );
+			CommandStruct casinoGambleStruct = new CommandStruct( CommandResources.Casino_Gamble_Regex, CommandResources.Casino_Gamble_Description, gambleCB );
+			CommandStruct casinoSplashStruct = new CommandStruct( CommandResources.Casino_Splash_Regex, CommandResources.Casino_Splash_Description, splashCB, null, true );
+			CommandStruct drinkingGameGiveStruct = new CommandStruct( CommandResources.DrinkingGame_GiveDrink_Regex, CommandResources.DrinkingGame_GiveDrink_Description, giveDrinksCB );
+			CommandStruct drinkingGameJoinStruct = new CommandStruct( CommandResources.DrinkingGame_Join_Regex, CommandResources.DrinkingGame_Join_Description, joinGameCB );
+			CommandStruct drinkingGameQuitStruct = new CommandStruct( CommandResources.DrinkingGame_Quit_Regex, CommandResources.DrinkingGame_Quit_Description, quitGameCB );
+			CommandStruct raffleStruct = new CommandStruct( CommandResources.Raffle_Regex, CommandResources.Raffle_Description, raffleCB );
+			CommandStruct getDrinkTicketsStruct = new CommandStruct( CommandResources.DrinkingGame_GetTickets_Regex, CommandResources.DrinkingGame_GetTickets_Description, getTicketsCB );
+			CommandStruct getDrinksStruct = new CommandStruct( CommandResources.DrinkingGame_GetDrinks_Regex, CommandResources.DrinkingGame_GetDrinks_Description, getTotalDrinksCB );
+
+			// Invalid commands don't have an associated struct
+			_invalidCommandCB = invalidCommandCB;
 
 			// Initiate commands list, order represents how they are displayed in GetCommands
-			_commandList = new List<CommandStruct> { _getCommandsStruct, _casinoGetBalanceStruct, _casinoGambleStruct, _casinoSplashStruct, _drinkingGameGiveStruct, _drinkingGameJoinStruct,
-				_drinkingGameQuitStruct, _raffleStruct, _getDrinkTicketsStruct, _getDrinksStruct };
+			_commandList = new List<CommandStruct> { getCommandsStruct, casinoGetBalanceStruct, casinoGambleStruct, casinoSplashStruct, drinkingGameGiveStruct, drinkingGameJoinStruct,
+				drinkingGameQuitStruct, raffleStruct, getDrinkTicketsStruct, getDrinksStruct };
+
+			// Add any custom commands. The list contains structures with name, description, and output. Custom commands are currently never moderator only.
+			if ( customCommands != null )
+			{
+				foreach ( Tuple<string, string, string> customCommand in customCommands )
+				{
+					string name = "^{0}" + customCommand.Item1;
+					string description = string.Format( CommandResources.CustomCommand_Description, CommandPrefix, customCommand.Item1, customCommand.Item2 );
+					_commandList.Add( new CommandStruct( name, description, customCB, customCommand.Item3, false ) );
+				}
+			}
 		}
 
-        private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
+		private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
+
+		private static string _commandPrefix = CommandResources.Default_Prefix;
 
 		private IList<CommandStruct> _commandList;
-
-		private static CommandStruct _getCommandsStruct;
-		private static CommandStruct _casinoGetBalanceStruct;
-		private static CommandStruct _casinoGambleStruct;
-		private static CommandStruct _casinoSplashStruct;
-		private static CommandStruct _drinkingGameGiveStruct;
-		private static CommandStruct _drinkingGameJoinStruct;
-		private static CommandStruct _drinkingGameQuitStruct;
-		private static CommandStruct _raffleStruct;
-		private static CommandStruct _getDrinkTicketsStruct;
-		private static CommandStruct _getDrinksStruct;
-
-		// Invalid command is the only one without an associated struct
 		private CommandCallback _invalidCommandCB;
 
-		private CommandCallback _getCommandsCB;
-        private CommandCallback _getBalanceCB;
-        private CommandCallback _gambleCB;
-        private CommandCallback _giveDrinksCB;
-        private CommandCallback _joinGameCB;
-        private CommandCallback _quitGameCB;
-        private CommandCallback _raffleCB;
-        private CommandCallback _splashCB;
-		private CommandCallback _getTicketsCB;
-		private CommandCallback _getTotalDrinksCB;
+		/// <summary>
+		/// Get the sequence of characters that precedes a command
+		/// </summary>
+		public static string CommandPrefix { get { return _commandPrefix; } }
 
 		/// <summary>
 		/// Tries to create a command from a given content and from line. Returns null on failure.
@@ -93,57 +107,22 @@ namespace BrewBot.Commands
 		/// <param name="senderIsModerator">A flag denoting whether the user who originated the command is a channel moderator.</param>
 		/// <returns>Executable ICommand object or nullon failure</returns>
 		public ICommand CreateCommand( string content, string sender, bool senderIsModerator )
-        {
-            Match match;
-            ICommand result = null;
-
-			if ( TryGetMatch( _getCommandsStruct.Regex, content, out match ) )
+		{
+			foreach ( CommandStruct nextCmd in _commandList )
 			{
-				result = new GetCommandsCommand( content, sender, null, _getCommandsCB );
+				if ( TryGetMatch( nextCmd.Regex, content, out Match match ) )
+				{
+					// Build the command
+					return BuildCommand( nextCmd, match, content, sender, senderIsModerator );
+				}
 			}
-			else if ( TryGetMatch( _casinoGetBalanceStruct.Regex, content, out match ) )
-            {
-                result = new GetBalanceCommand( content, sender, null, _getBalanceCB );
-            }
-            else if ( TryGetMatch( _casinoGambleStruct.Regex, content, out match ) )
-            {
-                result = new GambleCommand( content, sender, match.Groups[ 1 ].Value, _gambleCB );
-            }
-			else if ( TryGetMatch( _drinkingGameGiveStruct.Regex, content, out match ) )
-            {
-                result = new GiveDrinksCommand( content, sender, match.Groups[ 1 ].Value, _giveDrinksCB );
-            }
-			else if ( TryGetMatch( _drinkingGameJoinStruct.Regex, content, out match ) )
-            {
-                result = new JoinDrinkingGameCommand( content, sender, match.Groups[ 1 ].Value, _joinGameCB );
-            }
-			else if ( TryGetMatch( _drinkingGameQuitStruct.Regex, content, out match ) )
-            {
-                result = new QuitDrinkingGameCommand( content, sender, null, _quitGameCB );
-            }
-			else if ( TryGetMatch( _raffleStruct.Regex, content, out match ) )
-            {
-                result = new RaffleCommand( content, sender, null, _raffleCB );
-            }
-			else if ( TryGetMatch( _casinoSplashStruct.Regex, content, out match ) )
-            {
-                result = new SplashCurrencyCommand( content, sender, senderIsModerator, match.Groups[ 1 ].Value, _splashCB );
-            }
-			else if ( TryGetMatch( _getDrinkTicketsStruct.Regex, content, out match ) )
-			{
-				result = new GetTicketsCommand( content, sender, null, _getTicketsCB );
-			}
-			else if ( TryGetMatch( _getDrinksStruct.Regex, content, out match ) )
-			{
-				result = new GetTotalDrinksTakenCommand( content, sender, null, _getTotalDrinksCB );
-			}
-			else if ( !string.IsNullOrEmpty( content ) && content[ 0 ] == '!' )
+			if ( !string.IsNullOrEmpty( content ) && content.StartsWith( CommandPrefix ) )
 			{
 				// If a callback was provided for when a command is invalid, call it
 				_invalidCommandCB?.Invoke( sender, null );
 			}
 
-			return result;
+			return null;
 		}
 
 		/// <summary>
@@ -170,19 +149,42 @@ namespace BrewBot.Commands
 
 		private struct CommandStruct
 		{
-			public CommandStruct( string description, string regex )
+			/// <summary>
+			/// Create a built-in command with the input regex format, description, and callback.
+			/// </summary>
+			/// <param name="regexFormat"></param>
+			/// <param name="description"></param>
+			/// <param name="callback"></param>
+			public CommandStruct( string regexFormat, string description, CommandCallback callback ) : this( regexFormat, description, callback, null, false )
 			{
-				Description = description;
-				Regex = new Regex( regex, REGEX_OPTIONS );
+			}
+
+			/// <summary>
+			/// Create a built-in command with the input regex format, description, and custom output. Relies on the CommandPrefix.
+			/// </summary>
+			/// <param name="regexFormat"></param>
+			/// <param name="description"></param>
+			/// <param name="callback"></param>
+			/// <param name="customOutput"></param>
+			public CommandStruct( string regexFormat, string description, CommandCallback callback, string customOutput, bool moderatorOnly )
+			{
+				Description = string.Format( description, CommandPrefix );
+				Regex = new Regex( string.Format( regexFormat, CommandPrefix ), REGEX_OPTIONS );
+				CB = callback;
+				CustomOutput = customOutput;
+				IsModeratorOnly = false;
 			}
 			
 			public readonly string Description;
 			public readonly Regex Regex;
+			public readonly CommandCallback CB;
+			public readonly string CustomOutput;
+			public readonly bool IsModeratorOnly;
 		}
 
 		// Try to parse a line and see if it matches a given regex
-        private bool TryGetMatch( Regex pattern, string line, out Match match )
-        {
+		private bool TryGetMatch( Regex pattern, string line, out Match match )
+		{
 			if ( pattern != null && line != null )
 			{
 				match = pattern.Match( line );
@@ -193,6 +195,24 @@ namespace BrewBot.Commands
 				match = null;
 				return false;
 			}
-        }
-    }
+		}
+
+		// Do the actual factory work
+		private ACommand BuildCommand( CommandStruct commandStruct, Match match, string content, string sender, bool senderIsModerator )
+		{
+			string target = match.Groups.Count > 1 ? match.Groups[ 1 ].Value : null;
+			if ( commandStruct.IsModeratorOnly )
+			{
+				return new ModeratorOnlyCommand( content, sender, target, commandStruct.CB, senderIsModerator );
+			}
+			else if ( commandStruct.CustomOutput != null )
+			{
+				return new CustomCommand( content, sender, target, commandStruct.CB, commandStruct.CustomOutput );
+			}
+			else
+			{
+				return new BuiltInCommand( content, sender, target, commandStruct.CB );
+			}
+		}
+	}
 }

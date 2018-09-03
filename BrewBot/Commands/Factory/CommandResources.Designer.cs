@@ -19,7 +19,7 @@ namespace BrewBot.Commands.Factory {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class CommandResources {
@@ -61,7 +61,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !gamble (amount) - Gamble currency.
+        ///   Looks up a localized string similar to {0}gamble (amount) - Gamble currency.
         /// </summary>
         internal static string Casino_Gamble_Description {
             get {
@@ -70,7 +70,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!gamble (.*)$.
+        ///   Looks up a localized string similar to ^{0}gamble (.*)$.
         /// </summary>
         internal static string Casino_Gamble_Regex {
             get {
@@ -79,7 +79,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;!balance - Display your currency balance&quot;.
+        ///   Looks up a localized string similar to &quot;{0}balance - Display your currency balance&quot;.
         /// </summary>
         internal static string Casino_GetBalance_Description {
             get {
@@ -88,7 +88,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!balance$.
+        ///   Looks up a localized string similar to ^{0}balance$.
         /// </summary>
         internal static string Casino_GetBalance_Regex {
             get {
@@ -97,7 +97,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency.
+        ///   Looks up a localized string similar to {0}splash (currency amount) - Moderator Only : Give ALL active users the desired amount of currency.
         /// </summary>
         internal static string Casino_Splash_Description {
             get {
@@ -106,7 +106,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!splash (.*)$.
+        ///   Looks up a localized string similar to ^{0}splash (.*)$.
         /// </summary>
         internal static string Casino_Splash_Regex {
             get {
@@ -115,7 +115,25 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !drinks - Display how many drinks you have taken during active drinking games.
+        ///   Looks up a localized string similar to {0}{1} - {2}.
+        /// </summary>
+        internal static string CustomCommand_Description {
+            get {
+                return ResourceManager.GetString("CustomCommand_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to !.
+        /// </summary>
+        internal static string Default_Prefix {
+            get {
+                return ResourceManager.GetString("Default_Prefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}drinks - Display how many drinks you have taken during active drinking games.
         /// </summary>
         internal static string DrinkingGame_GetDrinks_Description {
             get {
@@ -124,7 +142,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!drinks$.
+        ///   Looks up a localized string similar to ^{0}drinks$.
         /// </summary>
         internal static string DrinkingGame_GetDrinks_Regex {
             get {
@@ -133,7 +151,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !tickets - Display your drink ticket balance.
+        ///   Looks up a localized string similar to {0}tickets - Display your drink ticket balance.
         /// </summary>
         internal static string DrinkingGame_GetTickets_Description {
             get {
@@ -142,7 +160,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!tickets$.
+        ///   Looks up a localized string similar to ^{0}tickets$.
         /// </summary>
         internal static string DrinkingGame_GetTickets_Regex {
             get {
@@ -151,7 +169,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !give (username) - Spend a drink ticket to make a player drink.
+        ///   Looks up a localized string similar to {0}give (username) - Spend a drink ticket to make a player drink.
         /// </summary>
         internal static string DrinkingGame_GiveDrink_Description {
             get {
@@ -160,7 +178,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!give (.*)$.
+        ///   Looks up a localized string similar to ^{0}give (.*)$.
         /// </summary>
         internal static string DrinkingGame_GiveDrink_Regex {
             get {
@@ -169,7 +187,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !join (player) - Join the drinking game as the input player.
+        ///   Looks up a localized string similar to {0}join (player) - Join the drinking game as the input player.
         /// </summary>
         internal static string DrinkingGame_Join_Description {
             get {
@@ -178,7 +196,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!join (.*)$.
+        ///   Looks up a localized string similar to ^{0}join (.*)$.
         /// </summary>
         internal static string DrinkingGame_Join_Regex {
             get {
@@ -187,7 +205,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !quit - Quit the drinking game.
+        ///   Looks up a localized string similar to {0}quit - Quit the drinking game.
         /// </summary>
         internal static string DrinkingGame_Quit_Description {
             get {
@@ -196,7 +214,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!quit$.
+        ///   Looks up a localized string similar to ^{0}quit$.
         /// </summary>
         internal static string DrinkingGame_Quit_Regex {
             get {
@@ -205,7 +223,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !commands - get this list of commands.
+        ///   Looks up a localized string similar to {0}commands - get this list of commands.
         /// </summary>
         internal static string GetCommands_Description {
             get {
@@ -214,7 +232,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !commands$.
+        ///   Looks up a localized string similar to {0}commands$.
         /// </summary>
         internal static string GetCommands_Regex {
             get {
@@ -223,7 +241,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !raffle - Enter the current raffle.
+        ///   Looks up a localized string similar to {0}raffle - Enter the current raffle.
         /// </summary>
         internal static string Raffle_Description {
             get {
@@ -232,7 +250,7 @@ namespace BrewBot.Commands.Factory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ^!raffle$.
+        ///   Looks up a localized string similar to ^{0}raffle$.
         /// </summary>
         internal static string Raffle_Regex {
             get {

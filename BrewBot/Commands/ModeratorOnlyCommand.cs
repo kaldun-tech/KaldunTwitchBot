@@ -1,18 +1,18 @@
 ﻿using BrewBot.CommandParsing.Templates;
 
-namespace BrewBot.Commands.Templates
+namespace BrewBot.Commands
 {
-	abstract class AModeratorOnlyCommand : ACommand
+	class ModeratorOnlyCommand : ACommand
 	{
 		/// <summary>
 		/// A moderator only command
 		/// </summary>
 		/// <param name="content"></param>
 		/// <param name="sender"></param>
-		/// <param name="senderIsModerator"></param>
 		/// <param name="target"></param>
 		/// <param name="cb"></param>
-		public AModeratorOnlyCommand( string content, string sender, bool senderIsModerator, string target, CommandCallback cb ) : base( content, sender, target, cb )
+		/// <param name="senderIsModerator"></param>
+		public ModeratorOnlyCommand( string content, string sender, string target, CommandCallback cb, bool senderIsModerator ) : base( content, sender, target, cb )
 		{
 			IsModerator = senderIsModerator;
 		}

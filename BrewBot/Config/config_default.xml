@@ -6,6 +6,10 @@
   <messages>
     <!-- use <message>"Your message here"</message> tags to configure messages to be sent to chat -->
   </messages>
+  <!-- configure custom commands with a default command prefix -->
+  <custom-commands default-prefix="!">
+    <!-- use <command name="commandName" description="commandDescription">output text</command> to create a custom command -->
+  </custom-commands>
   <!-- use title="X" to set what you want to address subscribers as -->
   <subscribers title="subscriberino" />
   <!-- use custom-name="YourName" to configure a custom currency name. The default is "cheddar" -->

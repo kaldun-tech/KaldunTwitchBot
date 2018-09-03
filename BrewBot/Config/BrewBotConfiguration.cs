@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BrewBot.Config
 {
@@ -8,6 +9,7 @@ namespace BrewBot.Config
 		{
 			MessagesToSend = new List<string>();
 			SecondsBetweenMessageSend = DEFAULT_MESSAGE_INTERVAL;
+			CustomCommandPrefix = DEFAULT_COMMAND_PREFIX;
 			SubscriberTitle = DEFAULT_SUBSCRIBER_TITLE;
 			CurrencyName = DEFAULT_CURRENCY_NAME;
 			CurrencyEarnedPerMinute = DEFAULT_CURRENCY_EARN_RATE;
@@ -18,12 +20,15 @@ namespace BrewBot.Config
 			TimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
 			TimeoutWords = new List<string>();
 			BannedWords = new List<string>();
+			CustomCommands = new List<Tuple<string, string, string>>();
 		}
 
 		// Default time between messages
 		private const int DEFAULT_MESSAGE_INTERVAL = 120;
 		// Minimum time between messages
 		private const int MINIMUM_MESSAGE_INTERVAL = 30;
+		// Default prefix for commands
+		private const string DEFAULT_COMMAND_PREFIX = "!";
 		// Default title to address subscribers with
 		private const string DEFAULT_SUBSCRIBER_TITLE = "subscriberino";
 		// Default currency name
@@ -41,6 +46,8 @@ namespace BrewBot.Config
 
 		private bool _gamblingEnabled;
 		private int _messageInterval;
+		private string _customCommandPrefix;
+		private List<Tuple<string, string, string>> _customCommands;
 		private List<string> _timeoutWords;
 		private List<string> _bannedWords;
 
@@ -69,6 +76,47 @@ namespace BrewBot.Config
 				{
 					_messageInterval = value;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Get and set the custom command prefix
+		/// </summary>
+		public string CustomCommandPrefix
+		{
+			get { return _customCommandPrefix; }
+			set
+			{
+				if ( value != null )
+				{
+					_customCommandPrefix = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Elements contain a command name, description, and output.
+		/// </summary>
+		public List<Tuple<string, string, string>> CustomCommands
+		{
+			get { return _customCommands ?? new List<Tuple<string, string, string>>(); }
+			set
+			{
+				if ( value != null )
+				{
+					_customCommands = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Whether there are command customizations
+		/// </summary>
+		public bool AreCommandsCustomized
+		{
+			get
+			{
+				return CustomCommandPrefix != "!" || CustomCommands.Count > 0;
 			}
 		}
 

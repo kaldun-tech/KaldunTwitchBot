@@ -2,17 +2,19 @@
 
 namespace BrewBot.Commands
 {
-	class GetCommandsCommand : ACommand
+	class CustomCommand : ACommand
 	{
 		/// <summary>
-		/// Get the list of commands
+		/// Custom command
 		/// </summary>
 		/// <param name="content"></param>
 		/// <param name="sender"></param>
 		/// <param name="target"></param>
 		/// <param name="cb"></param>
-		public GetCommandsCommand( string content, string sender, string target, CommandCallback cb ) : base( content, sender, target, cb )
+		/// <param name="output"></param>
+		public CustomCommand( string content, string sender, string target, CommandCallback cb, string output ) : base( content, sender, target, cb )
 		{
+			Output = output;
 		}
 	}
 }

@@ -1,15 +1,16 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml;
 
 namespace BrewBot.Config
 {
 	internal class ConfigurationReader
-    {
+	{
 		/// <summary>
 		/// Create a configuration reader
 		/// </summary>
-        public ConfigurationReader()
-        { }
+		public ConfigurationReader()
+		{ }
 
 		/// <summary>
 		/// Read the config file to parse values and generate a configuration object
@@ -17,8 +18,8 @@ namespace BrewBot.Config
 		/// <param name="configFilePath">Path of the XML configuration file to open</param>
 		/// <returns>New configuration read from file</returns>
 		public BrewBotConfiguration ReadConfig( string configFilePath )
-        {
-            if ( !string.IsNullOrEmpty( configFilePath ) )
+		{
+			if ( !string.IsNullOrEmpty( configFilePath ) )
 			{
 				XmlDocument document = new XmlDocument();
 				using ( Stream configStream = new FileStream( configFilePath, FileMode.Open, FileAccess.Read ) )
@@ -28,6 +29,7 @@ namespace BrewBot.Config
 
 				BrewBotConfiguration config = new BrewBotConfiguration();
 				ReadMessageSenderConfig( config, document );
+				ReadCustomCommandsConfig( config, document );
 				ReadSubscriberConfig( config, document );
 				ReadCasinoConfig( config, document );
 				ReadModerationConfig( config, document );
@@ -36,7 +38,7 @@ namespace BrewBot.Config
 			}
 
 			return null;
-        }
+		}
 
 		private const string PATH_SEPARATOR = "/";
 
@@ -51,6 +53,8 @@ namespace BrewBot.Config
 		private static string moderationWordSubPath = PATH_SEPARATOR + ConfigurationResources.Moderation_WordSubtag;
 		private static string timeoutWordsPath = moderationPath + PATH_SEPARATOR + ConfigurationResources.Moderation_TimeoutWordsTag + moderationWordSubPath;
 		private static string bannedWordsPath = moderationPath + PATH_SEPARATOR + ConfigurationResources.Moderation_BannedWordsTag + moderationWordSubPath;
+		private static string customCommandsPath = configPath + PATH_SEPARATOR + ConfigurationResources.CustomCommandsTag;
+		private static string customCommandsCommandPath = customCommandsPath + PATH_SEPARATOR + ConfigurationResources.CustomCommands_CommandTag;
 
 		private void ReadMessageSenderConfig( BrewBotConfiguration config, XmlDocument document )
 		{
@@ -72,6 +76,32 @@ namespace BrewBot.Config
 					if ( messageNode != null && !string.IsNullOrEmpty( messageNode.InnerText ) )
 					{
 						config.MessagesToSend.Add( messageNode.InnerText );
+					}
+				}
+			}
+		}
+
+		private void ReadCustomCommandsConfig( BrewBotConfiguration config, XmlDocument document )
+		{
+			XmlNode commandsNode = document.DocumentElement.SelectSingleNode( customCommandsPath );
+			XmlNodeList customCommandsList = document.DocumentElement.SelectNodes( customCommandsCommandPath );
+			if ( commandsNode != null )
+			{
+				XmlAttributeCollection attributes = commandsNode.Attributes;
+				XmlNode defaultPrefixNode, commandNameNode, commandDescNode;
+				if ( attributes != null && ( defaultPrefixNode = attributes.GetNamedItem( ConfigurationResources.CustomCommands_DefaultPrefixAttribute ) ) != null )
+				{
+					config.CustomCommandPrefix = defaultPrefixNode.InnerText;
+				}
+				foreach ( XmlNode commandNode in commandsNode )
+				{
+					string name, description;
+					if ( commandNode != null && ( attributes = commandNode.Attributes ) != null &&
+						( commandNameNode = attributes.GetNamedItem( ConfigurationResources.CustomCommands_CommandNameAttribute ) ) != null &&
+						( commandDescNode = attributes.GetNamedItem( ConfigurationResources.CustomCommands_CommandDescriptionAttribute ) ) != null &&
+						!string.IsNullOrEmpty( name = commandNameNode.InnerText ) && !string.IsNullOrEmpty( description = commandDescNode.InnerText ) && !string.IsNullOrEmpty( commandNode.InnerText ) )
+					{
+						config.CustomCommands.Add( new Tuple<string, string, string>( name, description, commandNode.InnerText ) );
 					}
 				}
 			}
@@ -205,5 +235,5 @@ namespace BrewBot.Config
 				}
 			}
 		}
-    }
+	}
 }

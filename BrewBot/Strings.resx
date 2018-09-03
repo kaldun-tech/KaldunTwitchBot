@@ -178,7 +178,7 @@
     <comment>Introduce a player to the drinking game</comment>
   </data>
   <data name="DrinkingGame_Start" xml:space="preserve">
-    <value>A drinking game has been started! Type \"!join &lt;player&gt;\" to play. Current players are @{0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
+    <value>A drinking game has been started! Type "!join &lt;player&gt;" to play. Current players are {0}, {1}, {2} and {3}. Type \"!quit\" to stop playing.</value>
     <comment>Tell chat that we have started a drinking game.</comment>
   </data>
   <data name="GetBalance_Result" xml:space="preserve">
