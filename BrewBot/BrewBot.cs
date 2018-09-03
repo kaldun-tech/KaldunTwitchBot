@@ -32,7 +32,7 @@ namespace BrewBot
 			_windowColor = textBoxR.BackColor;
 
 			_commandFactory = new CommandFactory( InvalidCommandCB, GetCommandsCB, GetBalanceCB, GambleCB, GiveDrinksCB, JoinDrinkingGameCB, QuitDrinkingGameCB, RaffleCB,
-				SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB, CustomCommandsCB, _config.CustomCommandPrefix, _config.CustomCommands );
+				SplashCurrencyCB, GetDrinkTickets, GetTotalDrinksCB, CustomCommandsCB );
 			_credentialsReaderWriter = new LoginCredentialReaderWriter();
 			_userManager = new UserManager();
 			_drinkingGame = new DrinkingGame( _userManager );
@@ -518,6 +518,10 @@ namespace BrewBot
 				_automaticMessageSender = new ConfigurableMessageSender( _connection, _config.SecondsBetweenMessageSend, _config.MessagesToSend );
 				_automaticMessageSender.Start();
 			}
+
+			// Configure the custom commands
+			CommandFactory.CommandPrefix = _config.CustomCommandPrefix;
+			_commandFactory.SetCustomCommands( _config.CustomCommands );
 
 			// Configure the moderator
 			if ( _config.IsModerationEnabled )

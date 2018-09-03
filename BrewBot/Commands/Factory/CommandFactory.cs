@@ -25,9 +25,12 @@ namespace BrewBot.Commands
 		/// <param name="splashCB"></param>
 		/// <param name="getTicketsCB"></param>
 		/// <param name="getTotalDrinksCB"></param>
-		public CommandFactory( CommandCallback invalidCommandCB, CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB, CommandCallback giveDrinksCB,
-			CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB, CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB ) :
-			this( invalidCommandCB, getCommandsCB, getBalanceCB, gambleCB, giveDrinksCB, joinGameCB, quitGameCB, raffleCB, splashCB, getTicketsCB, getTotalDrinksCB, null, null, null ) {}
+		/// <param name="customCB"></param>
+		public CommandFactory( CommandCallback invalidCommandCB, CommandCallback getCommandsCB, CommandCallback getBalanceCB, CommandCallback gambleCB,
+			CommandCallback giveDrinksCB, CommandCallback joinGameCB, CommandCallback quitGameCB, CommandCallback raffleCB, CommandCallback splashCB,
+			CommandCallback getTicketsCB, CommandCallback getTotalDrinksCB, CommandCallback customCB ) :
+			this( invalidCommandCB, getCommandsCB, getBalanceCB, gambleCB, giveDrinksCB, joinGameCB, quitGameCB, raffleCB, splashCB, getTicketsCB,
+				getTotalDrinksCB, customCB, null, null ) {}
 
 		/// <summary>
 		/// Create a commandfactory given callbacks to use for command actions. Allows further customization.
@@ -68,23 +71,16 @@ namespace BrewBot.Commands
 			CommandStruct getDrinkTicketsStruct = new CommandStruct( CommandResources.DrinkingGame_GetTickets_Regex, CommandResources.DrinkingGame_GetTickets_Description, getTicketsCB );
 			CommandStruct getDrinksStruct = new CommandStruct( CommandResources.DrinkingGame_GetDrinks_Regex, CommandResources.DrinkingGame_GetDrinks_Description, getTotalDrinksCB );
 
-			// Invalid commands don't have an associated struct
+			// Invalid commands don't have an associated struct and the custom is one callback to many structs
 			_invalidCommandCB = invalidCommandCB;
+			_customCB = customCB;
 
 			// Initiate commands list, order represents how they are displayed in GetCommands
 			_commandList = new List<CommandStruct> { getCommandsStruct, casinoGetBalanceStruct, casinoGambleStruct, casinoSplashStruct, drinkingGameGiveStruct, drinkingGameJoinStruct,
 				drinkingGameQuitStruct, raffleStruct, getDrinkTicketsStruct, getDrinksStruct };
 
-			// Add any custom commands. The list contains structures with name, description, and output. Custom commands are currently never moderator only.
-			if ( customCommands != null )
-			{
-				foreach ( Tuple<string, string, string> customCommand in customCommands )
-				{
-					string name = "^{0}" + customCommand.Item1;
-					string description = string.Format( CommandResources.CustomCommand_Description, CommandPrefix, customCommand.Item1, customCommand.Item2 );
-					_commandList.Add( new CommandStruct( name, description, customCB, customCommand.Item3, false ) );
-				}
-			}
+			// Add any custom commands. The list contains structures with name, description, and output.
+			SetCustomCommands( customCommands, true );
 		}
 
 		private const RegexOptions REGEX_OPTIONS = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;
@@ -93,11 +89,55 @@ namespace BrewBot.Commands
 
 		private IList<CommandStruct> _commandList;
 		private CommandCallback _invalidCommandCB;
+		private CommandCallback _customCB;
 
 		/// <summary>
-		/// Get the sequence of characters that precedes a command
+		/// Get the sequence of characters that precedes a command. An input of null resets the default value.
 		/// </summary>
-		public static string CommandPrefix { get { return _commandPrefix; } }
+		public static string CommandPrefix
+		{
+			get { return _commandPrefix; }
+			set
+			{
+				if ( value == null )
+				{
+					_commandPrefix = CommandResources.Default_Prefix;
+				}
+				else
+				{
+					_commandPrefix = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Set custom commands
+		/// </summary>
+		/// <param name="customCommands"></param>
+		public void SetCustomCommands( IList<Tuple<string, string, string>> customCommands, bool initialSetup = false )
+		{
+			if ( initialSetup )
+			{
+				// Don't worry about clearing any old custom commands when we first create the factory
+				foreach ( CommandStruct commandStruct in _commandList )
+				{
+					if ( commandStruct.IsCustom )
+					{
+						_commandList.Remove( commandStruct );
+					}
+				}
+			}
+			if ( customCommands != null )
+			{
+				foreach ( Tuple<string, string, string> customCommand in customCommands )
+				{
+					// Custom commands are currently never moderator only.
+					string name = "^{0}" + customCommand.Item1;
+					string description = string.Format( CommandResources.CustomCommand_Description, CommandPrefix, customCommand.Item1, customCommand.Item2 );
+					_commandList.Add( new CommandStruct( name, description, _customCB, customCommand.Item3, false ) );
+				}
+			}
+		}
 
 		/// <summary>
 		/// Tries to create a command from a given content and from line. Returns null on failure.
@@ -168,18 +208,25 @@ namespace BrewBot.Commands
 			/// <param name="customOutput"></param>
 			public CommandStruct( string regexFormat, string description, CommandCallback callback, string customOutput, bool moderatorOnly )
 			{
-				Description = string.Format( description, CommandPrefix );
+				DescriptionFormat = description;
 				Regex = new Regex( string.Format( regexFormat, CommandPrefix ), REGEX_OPTIONS );
 				CB = callback;
 				CustomOutput = customOutput;
 				IsModeratorOnly = false;
 			}
-			
-			public readonly string Description;
+
 			public readonly Regex Regex;
+			public readonly string DescriptionFormat;
 			public readonly CommandCallback CB;
 			public readonly string CustomOutput;
 			public readonly bool IsModeratorOnly;
+
+			public string Description
+			{
+				get { return string.Format( DescriptionFormat, CommandPrefix ); }
+			}
+
+			public bool IsCustom { get { return CustomOutput != null; } }
 		}
 
 		// Try to parse a line and see if it matches a given regex
