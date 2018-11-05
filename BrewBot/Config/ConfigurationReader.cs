@@ -21,6 +21,7 @@ namespace BrewBot.Config
 		{
 			if ( !string.IsNullOrEmpty( configFilePath ) )
 			{
+				// TODO can throw exceptions for bad xml, should be handled gracefully
 				XmlDocument document = new XmlDocument();
 				using ( Stream configStream = new FileStream( configFilePath, FileMode.Open, FileAccess.Read ) )
 				{
