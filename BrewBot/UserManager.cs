@@ -119,8 +119,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				return _users.TryGetValue( userName, out user ) && user.IsActive;
+				return _users.TryGetValue( userName, out User user ) && user.IsActive;
 			}
 		}
 
@@ -137,8 +136,7 @@ namespace BrewBot
 
 			lock ( _userLock )
 			{
-				User user;
-				if ( _users.TryGetValue( userName, out user ) )
+				if ( _users.TryGetValue( userName, out User user ) )
 				{
 					user.IsActive = true;
 				}
@@ -159,8 +157,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				if ( _users.TryGetValue( userName, out user ) )
+				if ( _users.TryGetValue( userName, out User user ) )
 				{
 					user.IsActive = false;
 				}
@@ -176,8 +173,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				return _users.TryGetValue( userName, out user ) ? user.CasinoBalance : 0 ;
+				return _users.TryGetValue( userName, out User user ) ? user.CasinoBalance : 0;
 			}
 		}
 
@@ -190,8 +186,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				if ( _users.TryGetValue( userName, out user ) )
+				if ( _users.TryGetValue( userName, out User user ) )
 				{
 					user.CasinoBalance += amount;
 				}
@@ -207,8 +202,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				if ( _users.TryGetValue( userName, out user ) )
+				if ( _users.TryGetValue( userName, out User user ) )
 				{
 					if ( amount > user.CasinoBalance )
 					{
@@ -231,8 +225,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				if ( _users.TryGetValue( userName, out user ) )
+				if ( _users.TryGetValue( userName, out User user ) )
 				{
 					return user.LastGambleTime;
 				}
@@ -284,8 +277,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				return _users.TryGetValue( userName, out user ) ? user.DrinkTickets : 0;
+				return _users.TryGetValue( userName, out User user ) ? user.DrinkTickets : 0;
 			}
 		}
 
@@ -336,8 +328,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User source, target;
-				if ( _users.TryGetValue( sourceUserName, out source ) && _users.TryGetValue( targetUserName, out target ) )
+				if ( _users.TryGetValue( sourceUserName, out User source ) && _users.TryGetValue( targetUserName, out User target ) )
 				{
 					--source.DrinkTickets;
 					++target.TotalDrinksTaken;
@@ -354,8 +345,7 @@ namespace BrewBot
 		{
 			lock ( _userLock )
 			{
-				User user;
-				return _users.TryGetValue( userName, out user ) ? user.TotalDrinksTaken : 0;
+				return _users.TryGetValue( userName, out User user ) ? user.TotalDrinksTaken : 0;
 			}
 		}
 
@@ -425,6 +415,8 @@ namespace BrewBot
 
 			try
 			{
+				Dictionary<string, User> localUsers = new Dictionary<string, User>();
+
 				using ( CsvDataReader reader = new CsvDataReader( _csvFilePath ) )
 				{
 					string[] dataArray;
@@ -433,27 +425,18 @@ namespace BrewBot
 						if ( dataArray.Length >= 4 )
 						{
 							string userName = dataArray[ 0 ];
-							uint balance = 0;
-							uint tickets = 0;
-							uint drinksTaken = 0;
-							if ( uint.TryParse( dataArray[ 1 ], out balance ) && uint.TryParse( dataArray[ 2 ], out tickets ) && uint.TryParse( dataArray[ 3 ], out drinksTaken ) )
-							{
-								User user;
-								if ( _users.TryGetValue( userName, out user ) )
-								{
-									user.CasinoBalance = balance;
-									user.DrinkTickets = tickets;
-									user.TotalDrinksTaken = drinksTaken;
-								}
-								else
-								{
-									user = new User( userName, balance, tickets, drinksTaken, false );
-									_users.Add( userName, user );
-								}
-							}
+
+							uint.TryParse( dataArray[ 1 ], out uint balance );
+							uint.TryParse( dataArray[ 2 ], out uint tickets );
+							uint.TryParse( dataArray[ 3 ], out uint drinksTaken );
+							
+							User user = new User( userName, balance, tickets, drinksTaken, false );
+							localUsers.Add( user.UserName, user );
 						}
 					}
 				}
+				lock ( _userLock )
+					_users = localUsers;
 			}
 			catch ( IOException ex )
 			{
@@ -479,15 +462,23 @@ namespace BrewBot
 
 			try
 			{
+				User[] usersCopy;
+				lock ( _userLock )
+				{
+					usersCopy = new User[ _users.Count ];
+					_users.Values.CopyTo( usersCopy, 0 );
+				}
 				using ( CsvDataWriter writer = new CsvDataWriter( _csvFilePath ) )
 				{
-					foreach ( KeyValuePair<string, User> userNameUserPair in _users )
+					foreach ( User nextUser in usersCopy )
 					{
-						List<string> dataList = new List<string>();
-						dataList.Add( userNameUserPair.Value.UserName );
-						dataList.Add( userNameUserPair.Value.CasinoBalance.ToString() );
-						dataList.Add( userNameUserPair.Value.DrinkTickets.ToString() );
-						dataList.Add( userNameUserPair.Value.TotalDrinksTaken.ToString() );
+						List<string> dataList = new List<string>
+						{
+							nextUser.UserName,
+							nextUser.CasinoBalance.ToString(),
+							nextUser.DrinkTickets.ToString(),
+							nextUser.TotalDrinksTaken.ToString()
+						};
 						writer.WriteLine( dataList );
 					}
 				}
